@@ -1,0 +1,6 @@
+{
+  "name": "Bảo Vệ Chuyên Nghiệp Lâm Sơn Động",
+  "description": "Hệ thống dịch vụ bảo vệ và an ninh doanh nghiệp chuyên nghiệp Lâm Sơn Động hàng đầu Việt Nam",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
