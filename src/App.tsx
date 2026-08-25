@@ -17,12 +17,15 @@ import { FloatingActions } from './components/FloatingActions';
 import { QuoteCalculatorModal } from './components/QuoteCalculatorModal';
 import { ServiceDetailModal } from './components/ServiceDetailModal';
 import { SearchModal } from './components/SearchModal';
+import { useTheme } from './components/ThemeProvider';
 
 import { FEATURED_SERVICES } from './data/mockData';
 import { ServiceItem, CaseStudy, ResearchArticle, NewsItem, Certification } from './types';
 import { X, ShieldCheck, Calendar, BookOpen, User, CheckCircle2 } from 'lucide-react';
 
 export default function App() {
+  const { theme } = useTheme();
+
   // Modal states
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
@@ -130,7 +133,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 font-['Be_Vietnam_Pro'] text-slate-100 selection:bg-red-600 selection:text-white antialiased">
+    <div className={`min-h-screen font-['Be_Vietnam_Pro'] selection:bg-red-600 selection:text-white antialiased theme-page ${theme === 'light' ? 'theme-light' : 'theme-dark'}`}>
       {/* 1. Main Navigation Bar */}
       <Navbar 
         onOpenQuote={() => setIsQuoteModalOpen(true)}

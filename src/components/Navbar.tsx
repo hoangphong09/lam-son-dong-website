@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTheme } from './ThemeProvider';
 import { 
   Shield, 
   Menu, 
@@ -12,7 +13,9 @@ import {
   Cpu, 
   PhoneCall, 
   ShieldCheck,
-  ArrowRight
+  ArrowRight,
+  Sun,
+  Moon
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -33,6 +36,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const [lang, setLang] = useState<'vi' | 'en'>('vi');
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -240,6 +244,17 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* RIGHT: Action Tools & Controls */}
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* Theme Switch */}
+            <button
+              id="theme-toggle-btn"
+              onClick={toggleTheme}
+              title={theme === 'dark' ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối'}
+              aria-label={theme === 'dark' ? 'Chuyển sang chế độ sáng' : 'Chuyển sang chế độ tối'}
+              className="theme-control w-8 h-8 sm:w-9 sm:h-9 border border-white/10 bg-[#111114] text-white/70 hover:text-white hover:border-[#c5a059] flex items-center justify-center transition-all"
+            >
+              {theme === 'dark' ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+            </button>
+
             {/* Search Button */}
             <button
               id="nav-search-btn"
