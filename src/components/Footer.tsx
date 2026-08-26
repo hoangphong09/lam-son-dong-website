@@ -84,8 +84,8 @@ export const Footer: React.FC<FooterProps> = ({ onScrollToSection, onOpenQuote }
           {/* Col 1: Brand Info */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-10 h-10 border border-[#c5a059]/40 bg-[#c5a059]/10 text-[#c5a059]">
-                <Shield className="w-5 h-5" />
+              <div className="flex items-center justify-center w-10 h-10 text-[#c5a059]">
+              <img src="https://i.postimg.cc/4dWvw0PJ/logo.png" alt="Logo" />
               </div>
               <div>
                 <span className="text-xl font-black tracking-tight text-white font-['Plus_Jakarta_Sans']">

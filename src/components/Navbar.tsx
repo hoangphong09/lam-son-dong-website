@@ -123,7 +123,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 LÂM SƠN ĐỘNG
               </span>
               <span className="text-[7.5px] sm:text-[8px] uppercase tracking-[0.24em] sm:tracking-[0.28em] text-[#c5a059] font-mono font-bold mt-0.5 sm:mt-1">
-                Công ty Cổ phần Dịch vụ Bảo vệ
+                DỊCH VỤ BẢO VỆ CHUYÊN NGHIỆP
               </span>
             </div>
           </div>
