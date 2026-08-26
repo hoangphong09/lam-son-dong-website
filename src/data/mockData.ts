@@ -14,30 +14,30 @@ import {
 export const HERO_SLIDES: HeroSlide[] = [
   {
     id: 'slide-1',
-    tag: 'AN NINH CHIẾN LƯỢC 2026',
-    title: 'LÂM SƠN ĐỘNG KÝ KẾT HỢP TÁC CHIẾN LƯỢC BẢO VỆ CHUỖI KHU CÔNG NGHIỆP ĐA QUỐC GIA',
-    description: 'Triển khai lực lượng an ninh tinh nhuệ 500+ quân số kết hợp hệ thống Smart Patrol & Camera AI giám sát tập trung 24/7 cho 12 khu công nghiệp trọng điểm.',
-    imageUrl: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=1920&q=80',
+    tag: 'SỰ KIỆN MỚI NHẤT',
+    title: 'LÂM SƠN ĐỘNG KÝ KẾT HỢP TÁC CHIẾN LƯỢC BẢO VỆ VỚI THÀNH PHỐ HÀ NỘI',
+    description: 'Triển khai lực lượng an ninh tinh nhuệ 500+ quân số tập trung 24/7 cho 12 trọng điểm dịp Quốc khánh 2/9.',
+    imageUrl: 'https://i.postimg.cc/RZmRSwWz/115bf4e4-5198-467e-bd43-500b7d169a5b.jpg',
     ctaText: 'Xem phương án an ninh',
     secondaryCtaText: 'Yêu cầu khảo sát',
     category: 'Mục tiêu cố định',
   },
   {
     id: 'slide-2',
-    tag: 'DỊCH VỤ VỆ SĨ VIP & YẾU NHÂN',
-    title: 'HỘ TỐNG ĐỈNH CAO - AN TOÀN TUYỆT ĐỐI CHO DOANH NHÂN & NGUYÊN THỦ QUỐC TẾ',
+    tag: 'DỊCH VỤ TIÊU BIỂU',
+    title: 'CUNG CẤP DỊCH VỤ BẢO VỆ AN TOÀN - KỈ LUẬT - TRÁCH NHIỆM',
     description: 'Đội ngũ vệ sĩ tuyển chọn từ lực lượng đặc nhiệm, tinh thông võ thuật thực chiến, chứng chỉ cứu thương quốc tế và kỹ năng lái xe phòng vệ chuyên nghiệp.',
-    imageUrl: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1920&q=80',
-    ctaText: 'Tìm hiểu dịch vụ VIP',
+    imageUrl: 'https://i.postimg.cc/DZ4sdzS5/0373a718-53f7-48e1-b2c9-9256c37285bc.jpg',
+    ctaText: 'Tìm hiểu dịch vụ',
     secondaryCtaText: 'Tư vấn bảo mật',
     category: 'Vệ sĩ cá nhân',
   },
   {
     id: 'slide-3',
     tag: 'CÔNG NGHỆ AN NINH 4.0',
-    title: 'TRUNG TÂM ĐIỀU HÀNH AN NINH TẬP TRUNG (SOC) & TUẦN TRA THÔNG MINH GPS',
+    title: 'TRUNG TÂM ĐIỀU HÀNH AN NINH TẬP TRUNG & TUẦN TRA THÔNG MINH',
     description: 'Kiểm soát lộ trình tuần tra thời gian thực, phát hiện xâm nhập và chập cháy trong 3 giây, tự động gửi tín hiệu điều động đội phản ứng nhanh cơ động.',
-    imageUrl: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1920&q=80',
+    imageUrl: 'https://i.postimg.cc/J0csPHMZ/ba79cc9a-1504-4736-b837-5a813d13a59d.jpg',
     ctaText: 'Khám phá công nghệ',
     secondaryCtaText: 'Đăng ký Demo SOC',
     category: 'An ninh công nghệ',
@@ -46,7 +46,7 @@ export const HERO_SLIDES: HeroSlide[] = [
 
 export const BREAKING_NEWS = [
   'Lâm Sơn Động Security vinh dự đón nhận Cúp Vàng "Thương hiệu Dịch vụ An ninh Uy tín Hàng đầu Việt Nam 2026"',
-  'Triển khai thành công phương án bảo vệ an ninh trật tự Lễ hội Âm nhạc Quốc tế 30.000 khán giả',
+  'Triển khai thành công phương án bảo vệ an ninh trật tự Lễ hội Âm nhạc 200 khán giả',
   'Bộ Công An chứng nhận đạt chuẩn 100% về Điều kiện An ninh Trật tự & Nghiệp vụ PCCC cứu nạn',
   'Mở rộng hệ thống Trung tâm phản ứng nhanh cơ động tại các vùng kinh tế trọng điểm',
 ];
@@ -88,13 +88,13 @@ export const CERTIFICATIONS: Certification[] = [
 
 export const KEY_STATS: StatItem[] = [
   {
-    value: '3,800 +',
+    value: '300 +',
     label: 'Nhân sự bảo vệ & Vệ sĩ',
     description: 'Huấn luyện võ thuật, nghiệp vụ, pháp luật định kỳ',
     iconName: 'Users',
   },
   {
-    value: '650 +',
+    value: '100 +',
     label: 'Mục tiêu trọng điểm bảo vệ',
     description: 'KCN, Cao ốc, Ngân hàng, Bệnh viện, Nhà máy 24/7',
     iconName: 'Building2',
@@ -106,7 +106,7 @@ export const KEY_STATS: StatItem[] = [
     iconName: 'ShieldAlert',
   },
   {
-    value: '63',
+    value: '20+',
     label: 'Tỉnh thành phủ sóng',
     description: 'Đội cơ động phản ứng nhanh có mặt trong 15 phút',
     iconName: 'MapPin',
@@ -568,28 +568,28 @@ export const RESEARCH_ARTICLES: ResearchArticle[] = [
 export const NEWS_EVENTS: NewsItem[] = [
   {
     id: 'news-1',
-    title: 'Lễ Tốt Nghiệp & Diễn Tập Võ Thuật Thực Chiến Khóa Vệ Sĩ Tinh Nhuệ K28',
+    title: 'Tăng cường đào đạo văn hoá và kĩ năng nghiệp vụ cho nhân viên Quý 2 2026',
     date: '20/08/2026',
     category: 'Huấn luyện & Đào tạo',
-    summary: '150 học viên xuất sắc vượt qua khóa huấn luyện đặc biệt 3 tháng với các bài kiểm tra bắn súng, cận chiến đối kháng, lái xe hộ tống và sơ cấp cứu khẩn cấp.',
-    imageUrl: 'https://images.unsplash.com/photo-1517649763962-0c623266ddc0?auto=format&fit=crop&w=800&q=80',
+    summary: 'Tiếp tục chương trình nâng cao nghiệp vụ kĩ năng và hiểu biết văn hoá tới toàn bộ nhân viên, cán bộ ngành.',
+    imageUrl: 'https://i.postimg.cc/k5dkdVmG/7c332534-4aaa-48bc-9d3b-46c81b752efc.jpg',
     isFeatured: true,
   },
   {
     id: 'news-2',
-    title: 'Hội Thảo Chuyên Đề "Ứng Dụng AI & IoT Trong Quản Trị An Ninh Doanh Nghiệp"',
+    title: 'Lâm Sơn Động đồng hành cùng Chuyến xe thiện nguyện vùng cao 2025',
     date: '12/08/2026',
-    category: 'Sự kiện ngành',
-    summary: 'Quy tụ hơn 200 Giám đốc An ninh và Quản lý vận hành từ các tập đoàn đa quốc gia bàn về xu hướng chuyển đổi số an ninh.',
-    imageUrl: 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=600&q=80',
+    category: 'Cộng Đồng',
+    summary: 'Cán bộ và nhân viên Lâm Sơn Động chung tay vì cộng đồng ảnh hưởng bởi lũ lụt và thiên tai.',
+    imageUrl: 'https://i.postimg.cc/ht7BnW74/de994ef0-6599-43b2-bee3-7dfd31b99313.jpg',
   },
   {
     id: 'news-3',
-    title: 'Ký Kết Hợp Đồng Bảo Vệ Chiến Lược Cho Hệ Thống 45 Siêu Thị Miền Bắc',
+    title: 'Ký Kết Hợp Đồng Bảo Vệ Chiến Lược và tham gia diễn tập PCCC thường niên',
     date: '05/08/2026',
     category: 'Hợp tác đối tác',
-    summary: 'Lâm Sơn Động chính thức tiếp quản vận hành an ninh toàn diện cho chuỗi bán lẻ hàng đầu với 600 nhân viên bảo vệ được chuyển giao.',
-    imageUrl: 'https://images.unsplash.com/photo-1556740738-b6a63e27c4df?auto=format&fit=crop&w=600&q=80',
+    summary: 'Lâm Sơn Động chính thức cùng Trung ương thành phố Hà Nội diễn tập PCCC thường niên..',
+    imageUrl: 'https://i.postimg.cc/J0csPHMZ/ba79cc9a-1504-4736-b837-5a813d13a59d.jpg',
   },
 ];
 
@@ -608,9 +608,9 @@ export const CLIENT_PARTNERS: ClientPartner[] = [
 
 export const FOOTER_DATA = {
   companyInfo: {
-    headquarters: 'Tòa nhà Lâm Sơn Động Building, Số 88 Đường Phạm Hùng, Nam Từ Liêm, Hà Nội',
-    hotline: '0908.113.888',
-    email: 'contact@lamsondong.vn',
+    headquarters: 'Thôn Nội Am, Xã Liên Ninh, Huyện Thanh Trì, Hà Nội, Việt Nam',
+    hotline: '(024) 38777012',
+    email: 'congtybaovelamsondong@gmail.com',
     license: 'Giấy phép C06/BCA số 118/GCN-ANBV cấp bởi Cục Cảnh sát QLHC về TTXH - Bộ Công An',
     taxId: '0108992348 - Sở Kế hoạch & Đầu tư TP. Hà Nội',
   },

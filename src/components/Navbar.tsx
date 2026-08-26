@@ -115,15 +115,15 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => handleNavClick('hero-section')}
             className="flex items-center gap-2.5 sm:gap-3.5 cursor-pointer group select-none shrink-0"
           >
-            <div className="relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 border border-[#c5a059]/40 bg-[#c5a059]/10 text-[#c5a059] group-hover:bg-[#c5a059] group-hover:text-black transition-all">
-              <Shield className="w-4 h-4 sm:w-5 sm:h-5" />
+            <div className="relative flex items-center justify-center w-11 h-11 sm:w-10 sm:h-10 text-[#c5a059] group-hover:bg-[#c5a059] group-hover:text-black transition-all">
+              <img src="https://i.postimg.cc/4dWvw0PJ/logo.png" alt="Logo" />
             </div>
             <div className="flex flex-col">
               <span className="text-base sm:text-lg lg:text-xl font-black tracking-tight leading-none uppercase font-['Plus_Jakarta_Sans'] text-white">
                 LÂM SƠN ĐỘNG
               </span>
               <span className="text-[7.5px] sm:text-[8px] uppercase tracking-[0.24em] sm:tracking-[0.28em] text-[#c5a059] font-mono font-bold mt-0.5 sm:mt-1">
-                Security Solutions
+                Công ty Cổ phần Dịch vụ Bảo vệ
               </span>
             </div>
           </div>
@@ -173,7 +173,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="text-[9px] text-[#c5a059] font-bold opacity-60">0{idx + 1}.</span>
                             <h4 className="text-xs font-bold text-white group-hover:text-[#c5a059] transition-colors uppercase tracking-wider">
                               {item.title}
                             </h4>
@@ -186,10 +185,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                     );
                   })}
                   <div className="col-span-2 pt-3 border-t border-white/5 flex items-center justify-between text-[10px] uppercase tracking-wider">
-                    <span className="text-gray-400 flex items-center gap-1.5 normal-case font-normal">
-                      <ShieldCheck className="w-4 h-4 text-[#c5a059]" />
-                      100% Cán bộ đạt chứng chỉ Bộ Công An C06
-                    </span>
                     <button
                       onClick={() => handleNavClick('featured-services-section')}
                       className="text-[#c5a059] font-bold hover:underline font-mono"
@@ -249,24 +244,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <Search className="w-3.5 h-3.5" />
             </button>
-
-            {/* Language Switcher (Desktop) */}
-            <div className="hidden lg:flex items-center border border-white/10 bg-[#111114] p-0.5 text-[10px] font-mono font-bold text-white/70">
-              <button
-                id="lang-vi-btn"
-                onClick={() => setLang('vi')}
-                className={`px-2 py-1 transition-all ${lang === 'vi' ? 'bg-[#c5a059] text-black font-black' : 'hover:text-white'}`}
-              >
-                VN
-              </button>
-              <button
-                id="lang-en-btn"
-                onClick={() => setLang('en')}
-                className={`px-2 py-1 transition-all ${lang === 'en' ? 'bg-[#c5a059] text-black font-black' : 'hover:text-white'}`}
-              >
-                EN
-              </button>
-            </div>
 
             {/* Primary Quote CTA Button */}
             <button

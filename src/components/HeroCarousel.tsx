@@ -72,14 +72,6 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
       {/* Ambient gold glow */}
       <div className="absolute top-1/4 left-1/4 -translate-x-1/2 w-96 h-96 bg-[#c5a059]/5 blur-[130px] rounded-full pointer-events-none z-10"></div>
 
-      {/* Editorial Vertical Label (Desktop) */}
-      <div className="hidden xl:flex absolute left-8 top-1/2 -translate-y-1/2 items-center gap-3 select-none pointer-events-none z-20">
-        <span className="line-vertical text-[9px] uppercase tracking-[0.35em] text-[#c5a059]/70 font-semibold">
-          SECURITY INTELLIGENCE • MMVIII
-        </span>
-        <div className="w-px h-16 bg-white/10"></div>
-      </div>
-
       {/* Main Content Container */}
       <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
@@ -90,9 +82,6 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
               <span className="inline-block bg-[#c5a059]/10 border border-[#c5a059]/30 text-[#c5a059] text-[10px] sm:text-xs font-mono font-bold uppercase tracking-[0.3em] px-3.5 py-1">
                 {currentSlide.tag}
               </span>
-              <span className="text-[10px] text-white/40 uppercase tracking-widest font-mono hidden sm:inline">
-                [ GIAO THỨC: SEC-0{currentIndex + 1} ]
-              </span>
             </div>
 
             {/* Slide Title */}
@@ -101,7 +90,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
             </h1>
 
             {/* Slide Description */}
-            <p className="text-sm sm:text-lg text-gray-300 font-light leading-relaxed max-w-2xl">
+            <p className="text-sm sm:text-lg text-gray-300 font-light leading-relaxed max-w-2xl ">
               {currentSlide.description}
             </p>
 
@@ -124,22 +113,6 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
                 <span>Đánh giá rủi ro an ninh</span>
               </button>
             </div>
-
-            {/* Key Highlights */}
-            <div className="pt-6 border-t border-white/5 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-gray-300 font-mono">
-              <div className="flex items-center gap-2 bg-[#111114]/80 border border-white/5 p-2.5">
-                <span className="w-1.5 h-1.5 bg-[#c5a059]"></span>
-                <span className="text-[11px] uppercase tracking-wider">100% Chuẩn C06 Công An</span>
-              </div>
-              <div className="flex items-center gap-2 bg-[#111114]/80 border border-white/5 p-2.5">
-                <span className="w-1.5 h-1.5 bg-[#c5a059]"></span>
-                <span className="text-[11px] uppercase tracking-wider">Bảo hiểm 20 Tỷ VNĐ</span>
-              </div>
-              <div className="flex items-center gap-2 bg-[#111114]/80 border border-white/5 p-2.5">
-                <span className="w-1.5 h-1.5 bg-[#c5a059]"></span>
-                <span className="text-[11px] uppercase tracking-wider">Cơ động ≤ 15 Phút</span>
-              </div>
-            </div>
           </div>
 
           {/* Right Floating Console Card */}
@@ -149,24 +122,17 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#22c55e]"></span>
                   <span className="text-[10px] uppercase font-bold tracking-widest text-white/80">
-                    STATUS: ACTIVE 24/7
+                    Trạng thái hoạt động: Đang tuần tra
                   </span>
                 </div>
-                <span className="text-[9px] text-[#c5a059] font-mono font-bold uppercase tracking-wider">
-                  C06 COMPLIANT
-                </span>
               </div>
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-gray-400 font-light">Lực lượng thường trực:</span>
-                  <strong className="text-white font-mono text-sm">3.500+ Quân số</strong>
+                  <strong className="text-white font-mono text-sm">250+ Quân số</strong>
                 </div>
 
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-gray-400 font-light">Bảo hiểm rủi ro:</span>
-                  <strong className="text-[#c5a059] font-mono text-sm">20 Tỷ VNĐ</strong>
-                </div>
 
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-gray-400 font-light">Tỷ lệ an toàn mục tiêu:</span>
@@ -175,7 +141,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
 
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-gray-400 font-light">Địa bàn phủ sóng:</span>
-                  <strong className="text-white font-mono text-sm">32 Tỉnh thành</strong>
+                  <strong className="text-white font-mono text-sm">07 tỉnh thành</strong>
                 </div>
               </div>
 

@@ -24,7 +24,7 @@ export const BreakingNewsTicker: React.FC<BreakingNewsTickerProps> = ({ onOpenNe
           {/* Gold Pill Badge */}
           <div className="flex items-center gap-1.5 bg-[#c5a059]/15 border border-[#c5a059]/30 text-[#c5a059] text-[9px] font-mono font-bold uppercase tracking-[0.25em] px-2.5 py-1 shrink-0">
             <span className="w-1.5 h-1.5 rounded-full bg-[#c5a059]"></span>
-            <span>BẢN TIN:</span>
+            <span>TIN NHANH:</span>
           </div>
 
           {/* Scrolling text */}

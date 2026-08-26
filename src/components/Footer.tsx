@@ -98,7 +98,7 @@ export const Footer: React.FC<FooterProps> = ({ onScrollToSection, onOpenQuote }
             </div>
 
             <p className="text-xs text-gray-400 font-light leading-relaxed pr-4">
-              Công ty Bảo vệ Lâm Sơn Động là đơn vị tiên phong trong lĩnh vực bảo vệ chuyên nghiệp và giải pháp an ninh doanh nghiệp toàn diện tại Việt Nam. Chúng tôi cam kết mang lại sự an tâm tuyệt đối với tinh thần trách nhiệm, kỷ luật quân đội và công nghệ giám sát hiện đại.
+              Công ty Cổ phần Dịch vụ Bảo vệ Lâm Sơn Động là đơn vị tiên phong trong lĩnh vực bảo vệ chuyên nghiệp và giải pháp an ninh doanh nghiệp toàn diện tại Việt Nam. Chúng tôi cam kết mang lại sự an tâm tuyệt đối với tinh thần trách nhiệm, kỷ luật quân đội và công nghệ giám sát hiện đại.
             </p>
 
             <div className="pt-2 space-y-2 text-xs text-gray-300">
