@@ -620,7 +620,6 @@ export const FOOTER_DATA = {
     'Dịch Vụ Vệ Sĩ VIP & Yếu Nhân',
     'Bảo Vệ Sự Kiện, Lễ Hội & Triển Lãm',
     'Áp Tải Tiền Mặt & Kim Loại Quý',
-    'Hệ Thống Smart Patrol & SOC 24/7'
   ],
   solutions: [
     'Giải pháp An ninh KCN & Nhà máy FDI',

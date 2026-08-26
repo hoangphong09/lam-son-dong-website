@@ -114,7 +114,7 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
               </div>
               <div>
                 <h3 className="text-sm sm:text-base font-bold text-white uppercase tracking-tight font-mono">
-                  LÂM SƠN ĐỘNG INTELLIGENT SECURITY AUDIT
+                  ĐÁNH GIÁ RỦI RO
                 </h3>
                 <p className="text-xs text-gray-400 font-light">
                   Hệ thống phân tích rủi ro an ninh & đề xuất bố trí phương án bảo vệ

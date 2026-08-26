@@ -21,7 +21,7 @@ export const PartnersAndClients: React.FC = () => {
             LÂM SƠN ĐỘNG Tự Hào Đồng Hành Cùng Các Doanh Nghiệp Hàng Đầu
           </h2>
           <p className="mt-2 text-xs sm:text-sm text-gray-400 font-light">
-            Hơn 650+ tập đoàn đa quốc gia và thương hiệu lớn tin tưởng trao gửi sứ mệnh bảo vệ an ninh, tài sản và con người.
+            Hơn 50+ tập đoàn đa quốc gia và thương hiệu lớn tin tưởng trao gửi sứ mệnh bảo vệ an ninh, tài sản và con người.
           </p>
         </div>
 
