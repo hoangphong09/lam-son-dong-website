@@ -9,7 +9,6 @@ import {
   Lock, 
   ArrowRight, 
   FileCheck, 
-  Zap, 
   RotateCcw,
   Sparkles
 } from 'lucide-react';
@@ -58,17 +57,17 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
     score = Math.min(Math.max(score, 25), 96);
 
     let level = 'Trung Bình';
-    let levelColor = 'text-amber-400';
-    let badgeBg = 'bg-amber-950/80 border-amber-500/40';
+    let levelColor = 'text-amber-800';
+    let badgeBg = 'bg-amber-100 border-amber-300';
 
     if (score >= 70) {
       level = 'Rất Cao - Nguy cơ tiềm ẩn lớn';
-      levelColor = 'text-[#c5a059]';
-      badgeBg = 'bg-[#c5a059]/10 border-[#c5a059]/40';
+      levelColor = 'text-red-700';
+      badgeBg = 'bg-red-100 border-red-300';
     } else if (score < 50) {
       level = 'Thấp đến Trung Bình';
-      levelColor = 'text-emerald-400';
-      badgeBg = 'bg-emerald-950/80 border-emerald-500/40';
+      levelColor = 'text-emerald-700';
+      badgeBg = 'bg-emerald-100 border-emerald-300';
     }
 
     return { score, level, levelColor, badgeBg };
@@ -88,35 +87,35 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
   return (
     <section 
       id="risk-assessment-section" 
-      className="bg-[#0d0d0f] text-white py-20 border-b border-white/10 relative overflow-hidden"
+      className="bg-slate-50 text-slate-900 py-20 border-b border-slate-200 relative overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <div className="inline-block px-3 py-1 bg-[#111114] border border-white/10 text-[#c5a059] text-[10px] font-bold uppercase tracking-[0.25em] font-mono mb-3">
+          <div className="inline-block px-3 py-1 bg-amber-100 border border-amber-300 text-amber-900 text-[10px] font-bold uppercase tracking-[0.25em] font-mono mb-3 rounded">
             CÔNG CỤ QUÉT AN NINH TRỰC TUYẾN
           </div>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white uppercase tracking-tight font-['Plus_Jakarta_Sans']">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 uppercase tracking-tight font-['Plus_Jakarta_Sans']">
             Kiểm Tra Mức Độ Rủi Ro An Ninh Cho Doanh Nghiệp
           </h2>
-          <p className="mt-3 text-xs sm:text-sm text-gray-400 font-light leading-relaxed">
+          <p className="mt-3 text-xs sm:text-sm text-slate-600 font-normal leading-relaxed">
             Doanh nghiệp của bạn có đang đối mặt với nguy cơ thất thoát tài sản, xâm nhập trái phép hay sự cố PCCC? Kiểm tra ngay chỉ trong 1 phút để nhận phương án bố trí lực lượng tối ưu.
           </p>
         </div>
 
         {/* Interactive Scanner Console */}
-        <div className="bg-[#111114] border border-white/10 p-6 sm:p-8 lg:p-10 shadow-2xl relative">
+        <div className="bg-white border border-slate-200 rounded p-6 sm:p-8 lg:p-10 shadow-lg relative">
           {/* Scanner Header Steps */}
-          <div className="flex items-center justify-between border-b border-white/10 pb-6 mb-8 flex-wrap gap-4">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-6 mb-8 flex-wrap gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 border border-[#c5a059]/40 bg-[#c5a059]/10 flex items-center justify-center text-[#c5a059]">
+              <div className="w-10 h-10 border border-amber-300 bg-amber-50 rounded flex items-center justify-center text-amber-800">
                 <Activity className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-sm sm:text-base font-bold text-white uppercase tracking-tight font-mono">
+                <h3 className="text-sm sm:text-base font-bold text-slate-900 uppercase tracking-tight font-mono">
                   ĐÁNH GIÁ RỦI RO
                 </h3>
-                <p className="text-xs text-gray-400 font-light">
+                <p className="text-xs text-slate-600 font-normal">
                   Hệ thống phân tích rủi ro an ninh & đề xuất bố trí phương án bảo vệ
                 </p>
               </div>
@@ -127,12 +126,12 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
               {[1, 2, 3, 4].map((s) => (
                 <div
                   key={s}
-                  className={`flex items-center justify-center w-8 h-8 transition-all border ${
+                  className={`flex items-center justify-center w-8 h-8 transition-all rounded border ${
                     step === s
-                      ? 'bg-[#c5a059] text-black border-[#c5a059] font-black'
+                      ? 'bg-[#c5a059] text-slate-950 border-[#b8860b] font-black shadow-xs'
                       : step > s
-                      ? 'bg-[#0d0d0f] text-[#c5a059] border-[#c5a059]/40'
-                      : 'bg-[#0d0d0f] text-gray-600 border-white/5'
+                      ? 'bg-amber-50 text-amber-800 border-amber-300'
+                      : 'bg-slate-100 text-slate-400 border-slate-200'
                   }`}
                 >
                   {step > s ? <CheckCircle2 className="w-4 h-4" /> : s}
@@ -145,10 +144,10 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
           {step === 1 && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
-                <h4 className="text-base font-bold text-white uppercase tracking-wider mb-1">
+                <h4 className="text-base font-bold text-slate-900 uppercase tracking-wider mb-1">
                   Bước 1: Chọn mô hình cơ sở & mục tiêu cần bảo vệ
                 </h4>
-                <p className="text-xs text-gray-400 font-light">
+                <p className="text-xs text-slate-600 font-normal">
                   Mỗi loại hình có đặc thù rủi ro và tiêu chuẩn kiểm soát hoàn toàn khác nhau.
                 </p>
               </div>
@@ -166,17 +165,17 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
                     key={item.id}
                     id={`facility-option-${item.id}`}
                     onClick={() => setFacilityType(item.id)}
-                    className={`p-4 border cursor-pointer transition-all ${
+                    className={`p-4 border rounded cursor-pointer transition-all ${
                       facilityType === item.id
-                        ? 'bg-[#c5a059]/10 border-[#c5a059] text-white'
-                        : 'bg-[#0d0d0f] border-white/10 text-gray-400 hover:border-white/20'
+                        ? 'bg-amber-50 border-amber-400 text-slate-900 shadow-xs'
+                        : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className="font-bold text-xs uppercase tracking-wide text-white">{item.label}</span>
-                      {facilityType === item.id && <CheckCircle2 className="w-4 h-4 text-[#c5a059]" />}
+                      <span className="font-bold text-xs uppercase tracking-wide text-slate-900">{item.label}</span>
+                      {facilityType === item.id && <CheckCircle2 className="w-4 h-4 text-amber-700" />}
                     </div>
-                    <p className="text-xs text-gray-400 font-light">{item.desc}</p>
+                    <p className="text-xs text-slate-600 font-normal">{item.desc}</p>
                   </div>
                 ))}
               </div>
@@ -185,7 +184,7 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
                 <button
                   id="risk-step1-next-btn"
                   onClick={() => setStep(2)}
-                  className="flex items-center gap-2 bg-[#c5a059] hover:brightness-110 text-black font-black text-xs uppercase tracking-widest px-6 py-3 transition-all"
+                  className="flex items-center gap-2 bg-[#c5a059] hover:bg-[#b8860b] text-slate-950 font-black text-xs uppercase tracking-widest px-6 py-3 transition-all rounded shadow"
                 >
                   <span>Tiếp tục: Quy mô & Diện tích</span>
                   <ArrowRight className="w-4 h-4" />
@@ -198,17 +197,17 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
           {step === 2 && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
-                <h4 className="text-base font-bold text-white uppercase tracking-wider mb-1">
+                <h4 className="text-base font-bold text-slate-900 uppercase tracking-wider mb-1">
                   Bước 2: Quy mô diện tích & Hiện trạng an ninh
                 </h4>
-                <p className="text-xs text-gray-400 font-light">
+                <p className="text-xs text-slate-600 font-normal">
                   Cung cấp thông tin diện tích để ước tính số lượng chốt gác cần thiết.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-[11px] font-bold text-gray-300 uppercase tracking-wider mb-2">
+                  <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">
                     Diện tích mục tiêu
                   </label>
                   <div className="space-y-2">
@@ -220,10 +219,10 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
                       <div
                         key={sz.id}
                         onClick={() => setAreaSize(sz.id)}
-                        className={`p-3.5 border cursor-pointer text-xs font-semibold transition-all ${
+                        className={`p-3.5 border rounded cursor-pointer text-xs font-semibold transition-all ${
                           areaSize === sz.id
-                            ? 'bg-[#c5a059]/10 border-[#c5a059] text-white'
-                            : 'bg-[#0d0d0f] border-white/10 text-gray-400 hover:border-white/20'
+                            ? 'bg-amber-50 border-amber-400 text-amber-900 shadow-xs'
+                            : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
                         }`}
                       >
                         {sz.label}
@@ -233,7 +232,7 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-gray-300 uppercase tracking-wider mb-2">
+                  <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">
                     Hiện trạng lực lượng bảo vệ hiện tại
                   </label>
                   <div className="space-y-2">
@@ -245,10 +244,10 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
                       <div
                         key={cg.id}
                         onClick={() => setCurrentGuards(cg.id)}
-                        className={`p-3.5 border cursor-pointer text-xs font-semibold transition-all ${
+                        className={`p-3.5 border rounded cursor-pointer text-xs font-semibold transition-all ${
                           currentGuards === cg.id
-                            ? 'bg-[#c5a059]/10 border-[#c5a059] text-white'
-                            : 'bg-[#0d0d0f] border-white/10 text-gray-400 hover:border-white/20'
+                            ? 'bg-amber-50 border-amber-400 text-amber-900 shadow-xs'
+                            : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
                         }`}
                       >
                         {cg.label}
@@ -261,14 +260,14 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
               <div className="flex justify-between pt-4">
                 <button
                   onClick={() => setStep(1)}
-                  className="px-5 py-2.5 border border-white/10 text-gray-300 text-xs font-bold uppercase tracking-wider hover:bg-white/5"
+                  className="px-5 py-2.5 border border-slate-300 text-slate-700 text-xs font-bold uppercase tracking-wider hover:bg-slate-50 rounded"
                 >
                   Quay lại
                 </button>
                 <button
                   id="risk-step2-next-btn"
                   onClick={() => setStep(3)}
-                  className="flex items-center gap-2 bg-[#c5a059] hover:brightness-110 text-black font-black text-xs uppercase tracking-widest px-6 py-3 transition-all"
+                  className="flex items-center gap-2 bg-[#c5a059] hover:bg-[#b8860b] text-slate-950 font-black text-xs uppercase tracking-widest px-6 py-3 transition-all rounded shadow"
                 >
                   <span>Tiếp tục: Chọn các lỗ hổng lo ngại</span>
                   <ArrowRight className="w-4 h-4" />
@@ -281,10 +280,10 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
           {step === 3 && (
             <div className="space-y-6 animate-in fade-in duration-300">
               <div>
-                <h4 className="text-base font-bold text-white uppercase tracking-wider mb-1">
+                <h4 className="text-base font-bold text-slate-900 uppercase tracking-wider mb-1">
                   Bước 3: Các mối lo ngại an ninh mục tiêu đang gặp phải (Chọn nhiều)
                 </h4>
-                <p className="text-xs text-gray-400 font-light">
+                <p className="text-xs text-slate-600 font-normal">
                   Hệ thống đối chiếu với cơ sở dữ liệu các sự cố an ninh thực tế để đưa ra cảnh báo chính xác.
                 </p>
               </div>
@@ -305,17 +304,17 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
                       key={item.id}
                       id={`risk-item-${item.id}`}
                       onClick={() => toggleRisk(item.id)}
-                      className={`p-4 border cursor-pointer flex items-center gap-3 transition-all ${
+                      className={`p-4 border rounded cursor-pointer flex items-center gap-3 transition-all ${
                         isChecked
-                          ? 'bg-[#c5a059]/10 border-[#c5a059] text-white'
-                          : 'bg-[#0d0d0f] border-white/10 text-gray-400 hover:border-white/20'
+                          ? 'bg-amber-50 border-amber-400 text-slate-900 shadow-xs'
+                          : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-slate-300'
                       }`}
                     >
-                      <div className={`w-4 h-4 flex items-center justify-center border ${isChecked ? 'bg-[#c5a059] border-[#c5a059] text-black' : 'border-white/20'}`}>
+                      <div className={`w-4 h-4 flex items-center justify-center border rounded-xs ${isChecked ? 'bg-[#c5a059] border-[#b8860b] text-slate-950' : 'border-slate-300 bg-white'}`}>
                         {isChecked && <CheckCircle2 className="w-3.5 h-3.5" />}
                       </div>
-                      <Icon className={`w-4 h-4 ${isChecked ? 'text-[#c5a059]' : 'text-gray-500'}`} />
-                      <span className="text-xs font-medium">{item.title}</span>
+                      <Icon className={`w-4 h-4 ${isChecked ? 'text-amber-800' : 'text-slate-400'}`} />
+                      <span className="text-xs font-bold text-slate-800">{item.title}</span>
                     </div>
                   );
                 })}
@@ -324,16 +323,16 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
               <div className="flex justify-between pt-4">
                 <button
                   onClick={() => setStep(2)}
-                  className="px-5 py-2.5 border border-white/10 text-gray-300 text-xs font-bold uppercase tracking-wider hover:bg-white/5"
+                  className="px-5 py-2.5 border border-slate-300 text-slate-700 text-xs font-bold uppercase tracking-wider hover:bg-slate-50 rounded"
                 >
                   Quay lại
                 </button>
                 <button
                   id="risk-scan-complete-btn"
                   onClick={handleFinishScan}
-                  className="flex items-center gap-2 bg-[#c5a059] hover:brightness-110 text-black font-black text-xs uppercase tracking-widest px-7 py-3 transition-all"
+                  className="flex items-center gap-2 bg-[#c5a059] hover:bg-[#b8860b] text-slate-950 font-black text-xs uppercase tracking-widest px-7 py-3 transition-all rounded shadow"
                 >
-                  <Sparkles className="w-4 h-4 text-black" />
+                  <Sparkles className="w-4 h-4 text-slate-950" />
                   <span>Xem Báo Cáo Đánh Giá Rủi Ro Tức Thì</span>
                 </button>
               </div>
@@ -344,26 +343,26 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
           {step === 4 && (
             <div className="space-y-8 animate-in zoom-in-95 duration-400">
               {/* Score Header */}
-              <div className="bg-[#0d0d0f] border border-white/10 p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="bg-slate-50 border border-slate-200 rounded p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
                 <div className="flex items-center gap-6">
                   {/* Circular Score Gauge */}
-                  <div className="relative w-24 h-24 shrink-0 flex items-center justify-center bg-[#111114] border-2 border-[#c5a059]">
+                  <div className="relative w-24 h-24 shrink-0 flex items-center justify-center bg-white border-2 border-amber-500 rounded">
                     <div className="text-center">
-                      <span className="text-2xl font-black text-white font-mono">
+                      <span className="text-2xl font-black text-slate-900 font-mono">
                         {metrics.score}
                       </span>
-                      <span className="text-[9px] block text-gray-400 uppercase font-mono">/ 100 Điểm</span>
+                      <span className="text-[9px] block text-slate-500 uppercase font-mono">/ 100 Điểm</span>
                     </div>
                   </div>
 
                   <div>
-                    <span className={`inline-block px-2.5 py-0.5 text-[10px] font-mono font-bold uppercase border mb-2 ${metrics.badgeBg} ${metrics.levelColor}`}>
+                    <span className={`inline-block px-2.5 py-0.5 text-[10px] font-mono font-bold uppercase border mb-2 rounded ${metrics.badgeBg} ${metrics.levelColor}`}>
                       Cảnh báo: {metrics.level}
                     </span>
-                    <h4 className="text-base font-bold text-white uppercase tracking-tight">
+                    <h4 className="text-base font-bold text-slate-900 uppercase tracking-tight">
                       Báo Cáo Đánh Giá Rủi Ro Cơ Sở Của Bạn
                     </h4>
-                    <p className="text-xs text-gray-400 font-light mt-1 max-w-md leading-relaxed">
+                    <p className="text-xs text-slate-600 font-normal mt-1 max-w-md leading-relaxed">
                       Dựa trên phân tích 1.200+ sự cố an ninh thực tế, cơ sở của bạn cần khẩn trương kiện toàn các chốt kiểm soát cổng và tăng cường tuần tra đêm.
                     </p>
                   </div>
@@ -371,7 +370,7 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
 
                 <button
                   onClick={handleReset}
-                  className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-[#c5a059] border border-white/10 hover:border-[#c5a059]/50 px-3 py-2 transition-all font-mono uppercase"
+                  className="flex items-center gap-1.5 text-xs text-slate-600 hover:text-amber-800 border border-slate-300 hover:border-amber-600 px-3 py-2 transition-all font-mono uppercase rounded bg-white"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>Kiểm tra lại</span>
@@ -380,60 +379,60 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
 
               {/* Recommended Security Layout & Guard Allocation */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-[#0d0d0f] border border-white/10 p-5">
-                  <div className="flex items-center gap-2 text-[#c5a059] font-bold text-xs uppercase mb-3 font-mono">
+                <div className="bg-slate-50 border border-slate-200 rounded p-5">
+                  <div className="flex items-center gap-2 text-amber-800 font-bold text-xs uppercase mb-3 font-mono">
                     <Lock className="w-4 h-4" />
                     <span>Phương Án Bố Trí Đề Xuất</span>
                   </div>
-                  <ul className="space-y-2.5 text-xs text-gray-300 font-light">
+                  <ul className="space-y-2.5 text-xs text-slate-700 font-normal">
                     <li className="flex items-start gap-2">
-                      <span className="text-[#c5a059] font-mono font-bold text-xs shrink-0">—</span>
+                      <span className="text-amber-700 font-mono font-bold text-xs shrink-0">—</span>
                       <span><strong>02 Vị trí Chốt Cổng:</strong> Kiểm soát người & phương tiện ra vào 24/7</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-[#c5a059] font-mono font-bold text-xs shrink-0">—</span>
+                      <span className="text-amber-700 font-mono font-bold text-xs shrink-0">—</span>
                       <span><strong>01 Vị trí Tuần Tra Cơ Động:</strong> Tuần tra hàng rào điểm mù bằng Smart Patrol</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-[#c5a059] font-mono font-bold text-xs shrink-0">—</span>
+                      <span className="text-amber-700 font-mono font-bold text-xs shrink-0">—</span>
                       <span><strong>01 Vị trí Trực Camera / SOC:</strong> Giám sát báo động khẩn cấp</span>
                     </li>
                   </ul>
                 </div>
 
-                <div className="bg-[#0d0d0f] border border-white/10 p-5">
-                  <div className="flex items-center gap-2 text-[#c5a059] font-bold text-xs uppercase mb-3 font-mono">
+                <div className="bg-slate-50 border border-slate-200 rounded p-5">
+                  <div className="flex items-center gap-2 text-amber-800 font-bold text-xs uppercase mb-3 font-mono">
                     <Flame className="w-4 h-4" />
                     <span>Kiện Toàn An Toàn & PCCC</span>
                   </div>
-                  <ul className="space-y-2.5 text-xs text-gray-300 font-light">
+                  <ul className="space-y-2.5 text-xs text-slate-700 font-normal">
                     <li className="flex items-start gap-2">
-                      <span className="text-[#c5a059] font-mono font-bold text-xs shrink-0">—</span>
+                      <span className="text-amber-700 font-mono font-bold text-xs shrink-0">—</span>
                       <span>Kiểm tra áp lực van vòi PCCC & bình bọt định kỳ thứ Hai hàng tuần</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-[#c5a059] font-mono font-bold text-xs shrink-0">—</span>
+                      <span className="text-amber-700 font-mono font-bold text-xs shrink-0">—</span>
                       <span>Tập huấn sơ tán khẩn cấp cho toàn bộ nhân viên nhà máy/tòa nhà</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-[#c5a059] font-mono font-bold text-xs shrink-0">—</span>
+                      <span className="text-amber-700 font-mono font-bold text-xs shrink-0">—</span>
                       <span>Bảo hiểm trách nhiệm 20 Tỷ cam kết bồi thường 100% tài sản</span>
                     </li>
                   </ul>
                 </div>
 
-                <div className="bg-[#0d0d0f] border border-white/10 p-5 flex flex-col justify-between">
+                <div className="bg-slate-50 border border-slate-200 rounded p-5 flex flex-col justify-between">
                   <div>
-                    <div className="flex items-center gap-2 text-[#c5a059] font-bold text-xs uppercase mb-3 font-mono">
+                    <div className="flex items-center gap-2 text-amber-800 font-bold text-xs uppercase mb-3 font-mono">
                       <FileCheck className="w-4 h-4" />
                       <span>Ước Tính Ngân Sách</span>
                     </div>
-                    <p className="text-xs text-gray-400 font-light leading-relaxed">
+                    <p className="text-xs text-slate-600 font-normal leading-relaxed">
                       Tiết kiệm <strong>25% - 35%</strong> so với chi phí tự tuyển dụng, đào tạo và chịu rủi ro bồi thường tài sản.
                     </p>
-                    <div className="mt-3 p-3 bg-[#111114] border border-white/10 text-center">
-                      <span className="text-[10px] text-gray-400 uppercase font-mono block">Dự toán sơ bộ</span>
-                      <span className="text-sm font-black text-[#c5a059] font-mono">Từ 16.000.000 VNĐ / Vị trí 24/7</span>
+                    <div className="mt-3 p-3 bg-white border border-slate-200 rounded text-center">
+                      <span className="text-[10px] text-slate-500 uppercase font-mono block">Dự toán sơ bộ</span>
+                      <span className="text-sm font-black text-amber-800 font-mono">Từ 16.000.000 VNĐ / Vị trí 24/7</span>
                     </div>
                   </div>
 
@@ -445,7 +444,7 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
                       selectedRisks,
                       metrics
                     })}
-                    className="w-full mt-4 py-3 bg-[#c5a059] hover:brightness-110 text-black font-black text-xs uppercase tracking-widest transition-all text-center"
+                    className="w-full mt-4 py-3 bg-[#c5a059] hover:bg-[#b8860b] text-slate-950 font-black text-xs uppercase tracking-widest transition-all text-center rounded shadow"
                   >
                     Nhận Bản Phương Án Chi Tiết
                   </button>
@@ -458,4 +457,3 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
     </section>
   );
 };
-

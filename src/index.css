@@ -4,8 +4,8 @@
   html {
     font-family: 'Be Vietnam Pro', 'Inter', system-ui, -apple-system, sans-serif;
     scroll-behavior: smooth;
-    background-color: #0d0d0f;
-    color: #f2f2f2;
+    background-color: #f8fafc;
+    color: #0f172a;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -14,6 +14,7 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Plus Jakarta Sans', 'Be Vietnam Pro', sans-serif;
     letter-spacing: -0.02em;
+    color: #0f172a;
   }
 }
 
@@ -28,12 +29,12 @@
 
 /* Editorial Aesthetic specific utility classes */
 .text-outline {
-  -webkit-text-stroke: 1px rgba(197, 160, 89, 0.65);
+  -webkit-text-stroke: 1px rgba(184, 134, 11, 0.75);
   color: transparent;
 }
 
-.text-outline-white {
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.4);
+.text-outline-dark {
+  -webkit-text-stroke: 1px rgba(15, 23, 42, 0.4);
   color: transparent;
 }
 
@@ -41,20 +42,20 @@
   writing-mode: vertical-rl;
 }
 
-/* Custom subtle dark scrollbar */
+/* Clean subtle light scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0d0d0f;
+  background: #f1f5f9;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1f1f26;
+  background: #cbd5e1;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #c5a059;
+  background: #b8860b;
 }
 
 @keyframes pulse-subtle {

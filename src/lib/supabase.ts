@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
-import { HeroSlide } from '../types';
-import { HERO_SLIDES as DEFAULT_HERO_SLIDES, NEWS_EVENTS } from '../data/mockData';
+import { HeroSlide, CaseStudy, QuoteRequest, StatMetric } from '../types';
+import { HERO_SLIDES as DEFAULT_HERO_SLIDES, NEWS_EVENTS, CASE_STUDIES as DEFAULT_CASE_STUDIES } from '../data/mockData';
 
 // Priority: Vite environment variables, with fallback to provided project credentials
 const supabaseUrl =
@@ -35,6 +35,57 @@ export interface Post {
 // Local cache keys for offline/fallback stability
 const POSTS_STORAGE_KEY = 'lsd_cached_posts';
 const HERO_STORAGE_KEY = 'lsd_cached_hero_slides';
+const CASE_STUDIES_STORAGE_KEY = 'lsd_cached_case_studies';
+const QUOTES_STORAGE_KEY = 'lsd_cached_quote_requests';
+const STATS_STORAGE_KEY = 'lsd_cached_stats';
+
+// Initial stats for fallback
+export const INITIAL_STATS: StatMetric[] = [
+  {
+    id: 1,
+    title: 'Nhân sự bảo vệ & Vệ sĩ',
+    numeric_value: '300',
+    unit: '+',
+    suffix: '+',
+    description: 'Huấn luyện võ thuật, nghiệp vụ, pháp luật định kỳ',
+    display_order: 1,
+    is_active: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 2,
+    title: 'Mục tiêu trọng điểm bảo vệ',
+    numeric_value: '100',
+    unit: '+',
+    suffix: '+',
+    description: 'KCN, Cao ốc, Ngân hàng, Bệnh viện, Nhà máy 24/7',
+    display_order: 2,
+    is_active: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 3,
+    title: 'Chứng chỉ PCCC & Võ thuật',
+    numeric_value: '100',
+    unit: '%',
+    suffix: '%',
+    description: 'Được cấp chứng chỉ hành nghề chính quy bởi Bộ Công An',
+    display_order: 3,
+    is_active: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 4,
+    title: 'Tỉnh thành phủ sóng',
+    numeric_value: '20',
+    unit: '+',
+    suffix: '+',
+    description: 'Đội cơ động phản ứng nhanh có mặt trong 15 phút',
+    display_order: 4,
+    is_active: true,
+    created_at: new Date().toISOString(),
+  },
+];
 
 // Helper to generate SEO friendly slugs
 export function generateSlug(text: string): string {
@@ -268,11 +319,569 @@ export async function saveHeroSlides(slides: HeroSlide[]): Promise<{ success: bo
 }
 
 /**
+ * Get Case Studies - either from Supabase `case_studies` table or local cache/defaults
+ */
+export async function getCaseStudies(): Promise<CaseStudy[]> {
+  try {
+    const { data, error } = await supabase
+      .from('case_studies')
+      .select('*')
+      .order('id', { ascending: false });
+
+    if (!error && data && data.length > 0) {
+      localStorage.setItem(CASE_STUDIES_STORAGE_KEY, JSON.stringify(data));
+      return data as CaseStudy[];
+    }
+  } catch (err) {
+    console.warn('Case studies query fallback:', err);
+  }
+
+  const saved = localStorage.getItem(CASE_STUDIES_STORAGE_KEY);
+  if (saved) {
+    try {
+      return JSON.parse(saved);
+    } catch {
+      // ignore
+    }
+  }
+  return DEFAULT_CASE_STUDIES;
+}
+
+/**
+ * Create or save Case Study
+ */
+export async function saveCaseStudy(cs: CaseStudy): Promise<{ success: boolean; data?: CaseStudy; error?: string }> {
+  try {
+    const current = await getCaseStudies();
+    const existingIdx = current.findIndex((item) => item.id === cs.id);
+    let updated: CaseStudy[];
+    if (existingIdx !== -1) {
+      updated = [...current];
+      updated[existingIdx] = cs;
+    } else {
+      updated = [cs, ...current];
+    }
+    localStorage.setItem(CASE_STUDIES_STORAGE_KEY, JSON.stringify(updated));
+
+    const { error } = await supabase.from('case_studies').upsert([cs]);
+    if (error) {
+      return { success: true, data: cs, error: error.message };
+    }
+    return { success: true, data: cs };
+  } catch (err: any) {
+    return { success: true, data: cs, error: err.message };
+  }
+}
+
+/**
+ * Delete Case Study
+ */
+export async function deleteCaseStudy(id: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const current = await getCaseStudies();
+    const filtered = current.filter((item) => item.id !== id);
+    localStorage.setItem(CASE_STUDIES_STORAGE_KEY, JSON.stringify(filtered));
+
+    const { error } = await supabase.from('case_studies').delete().eq('id', id);
+    if (error) {
+      return { success: true, error: error.message };
+    }
+    return { success: true };
+  } catch (err: any) {
+    return { success: true, error: err.message };
+  }
+}
+
+/**
+ * ==============================================================================
+ * STATS (HIỆU QUẢ THỰC TẾ / CHỈ SỐ NĂNG LỰC)
+ * ==============================================================================
+ */
+
+/**
+ * Fetch all stats metrics ordered by display_order
+ */
+export async function getStats(): Promise<StatMetric[]> {
+  try {
+    const { data, error } = await supabase
+      .from('stats')
+      .select('*')
+      .order('display_order', { ascending: true });
+
+    if (!error && data && data.length > 0) {
+      const normalized: StatMetric[] = data.map((d: any) => ({
+        id: String(d.id),
+        title: d.title,
+        numeric_value: String(d.numeric_value),
+        unit: d.unit || d.suffix || '',
+        suffix: d.suffix || d.unit || '',
+        description: d.description || '',
+        display_order: Number(d.display_order) || 0,
+        is_active: d.is_active !== false,
+        created_at: d.created_at || new Date().toISOString(),
+      }));
+      localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(normalized));
+      return normalized;
+    }
+  } catch (err) {
+    console.warn('Stats fetch fallback to local:', err);
+  }
+
+  const saved = localStorage.getItem(STATS_STORAGE_KEY);
+  if (saved) {
+    try {
+      return JSON.parse(saved);
+    } catch {
+      // ignore
+    }
+  }
+
+  localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(INITIAL_STATS));
+  return INITIAL_STATS;
+}
+
+/**
+ * Create or update a stat metric
+ */
+export async function saveStat(stat: Partial<StatMetric>): Promise<{ success: boolean; data?: StatMetric; error?: string }> {
+  try {
+    const current = await getStats();
+    let savedRecord: StatMetric;
+    const isEdit = Boolean(stat.id && current.some((s) => String(s.id) === String(stat.id)));
+
+    if (isEdit) {
+      const idx = current.findIndex((s) => String(s.id) === String(stat.id));
+      savedRecord = {
+        ...current[idx],
+        ...stat,
+        unit: stat.unit ?? stat.suffix ?? current[idx].unit ?? '+',
+        suffix: stat.suffix ?? stat.unit ?? current[idx].suffix ?? '+',
+        display_order: Number(stat.display_order ?? current[idx].display_order ?? 0),
+        is_active: stat.is_active !== undefined ? stat.is_active : current[idx].is_active !== false,
+      };
+      current[idx] = savedRecord;
+    } else {
+      savedRecord = {
+        id: stat.id || `stat-${Date.now()}`,
+        title: stat.title || 'Chỉ số an ninh mới',
+        numeric_value: stat.numeric_value || '100',
+        unit: stat.unit || stat.suffix || '+',
+        suffix: stat.suffix || stat.unit || '+',
+        description: stat.description || '',
+        display_order: Number(stat.display_order ?? (current.length + 1)),
+        is_active: stat.is_active !== false,
+        created_at: new Date().toISOString(),
+      };
+      current.push(savedRecord);
+    }
+
+    current.sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
+    localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(current));
+
+    // Persist to Supabase
+    const payload: any = {
+      title: savedRecord.title,
+      numeric_value: String(savedRecord.numeric_value),
+      unit: savedRecord.unit,
+      suffix: savedRecord.suffix,
+      description: savedRecord.description,
+      display_order: savedRecord.display_order,
+      is_active: savedRecord.is_active !== false,
+    };
+
+    if (isEdit && !isNaN(Number(savedRecord.id))) {
+      await supabase.from('stats').update(payload).eq('id', Number(savedRecord.id));
+    } else {
+      const { data, error } = await supabase
+        .from('stats')
+        .upsert(payload)
+        .select()
+        .single();
+      if (!error && data) {
+        savedRecord.id = String(data.id);
+      }
+    }
+
+    return { success: true, data: savedRecord };
+  } catch (err: any) {
+    return { success: true, error: err.message };
+  }
+}
+
+/**
+ * Delete a stat metric
+ */
+export async function deleteStat(id: string | number): Promise<{ success: boolean; error?: string }> {
+  try {
+    const current = await getStats();
+    const filtered = current.filter((s) => String(s.id) !== String(id));
+    localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(filtered));
+
+    if (!isNaN(Number(id))) {
+      await supabase.from('stats').delete().eq('id', Number(id));
+    } else {
+      await supabase.from('stats').delete().eq('id', id);
+    }
+    return { success: true };
+  } catch (err: any) {
+    return { success: true, error: err.message };
+  }
+}
+
+/**
+ * Toggle visibility of a stat metric
+ */
+export async function toggleStatVisibility(id: string | number, is_active: boolean): Promise<{ success: boolean; error?: string }> {
+  try {
+    const current = await getStats();
+    const idx = current.findIndex((s) => String(s.id) === String(id));
+    if (idx !== -1) {
+      current[idx].is_active = is_active;
+      localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(current));
+    }
+
+    if (!isNaN(Number(id))) {
+      await supabase.from('stats').update({ is_active }).eq('id', Number(id));
+    } else {
+      await supabase.from('stats').update({ is_active }).eq('id', id);
+    }
+    return { success: true };
+  } catch (err: any) {
+    return { success: true, error: err.message };
+  }
+}
+
+/**
+ * Reorder stats list
+ */
+export async function reorderStats(stats: StatMetric[]): Promise<{ success: boolean; error?: string }> {
+  try {
+    const updated = stats.map((s, idx) => ({ ...s, display_order: idx + 1 }));
+    localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(updated));
+
+    for (const item of updated) {
+      if (!isNaN(Number(item.id))) {
+        await supabase.from('stats').update({ display_order: item.display_order }).eq('id', Number(item.id));
+      }
+    }
+    return { success: true };
+  } catch (err: any) {
+    return { success: true, error: err.message };
+  }
+}
+
+/**
+ * ==============================================================================
+ * QUOTE REQUESTS (YÊU CẦU BÁO GIÁ & KHÁCH HÀNG TIỀM NĂNG)
+ * ==============================================================================
+ */
+
+/**
+ * Get Quote Requests from Supabase or local cache
+ */
+export async function getQuoteRequests(): Promise<QuoteRequest[]> {
+  try {
+    const { data, error } = await supabase
+      .from('quote_requests')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (!error && data) {
+      const normalized: QuoteRequest[] = data.map((item: any) => {
+        const clientName = item.client_name || item.contactName || item.contact_name || 'Khách hàng';
+        const phone = item.phone || item.contactPhone || item.contact_phone || '';
+        const email = item.email || item.contactEmail || item.contact_email || '';
+        const serviceNeeded = item.service_needed || item.serviceType || item.service_type || 'Bảo vệ Mục tiêu Cố định';
+        const companyName = item.company_name || item.companyName || '';
+        let status = item.status || 'new';
+        if (status === 'processing') status = 'contacted';
+        if (status === 'completed') status = 'closed';
+
+        return {
+          ...item,
+          id: String(item.id),
+          client_name: clientName,
+          contactName: clientName,
+          phone,
+          contactPhone: phone,
+          email,
+          contactEmail: email,
+          service_needed: serviceNeeded,
+          serviceType: serviceNeeded,
+          company_name: companyName,
+          companyName,
+          message: item.message || '',
+          status: status as any,
+          created_at: item.created_at || new Date().toISOString(),
+        };
+      });
+
+      localStorage.setItem(QUOTES_STORAGE_KEY, JSON.stringify(normalized));
+      return normalized;
+    }
+  } catch (err) {
+    console.warn('Quote requests query fallback:', err);
+  }
+
+  const saved = localStorage.getItem(QUOTES_STORAGE_KEY);
+  if (saved) {
+    try {
+      return JSON.parse(saved);
+    } catch {
+      // ignore
+    }
+  }
+
+  // Default initial sample leads for admin review
+  return [
+    {
+      id: 'quote-sample-1',
+      source: 'consultation_form',
+      client_name: 'Trần Văn Minh',
+      contactName: 'Trần Văn Minh',
+      phone: '0912.345.678',
+      contactPhone: '0912.345.678',
+      email: 'minh.tv@dong-a-logistics.vn',
+      contactEmail: 'minh.tv@dong-a-logistics.vn',
+      companyName: 'Công ty Cổ phần Logistics Đông Á',
+      company_name: 'Công ty Cổ phần Logistics Đông Á',
+      jobTitle: 'Trưởng phòng An ninh & Pháp chế',
+      region: 'Hà Nội & KCN Bắc Ninh',
+      service_needed: 'Bảo vệ KCN & Kho Vận',
+      serviceType: 'Bảo vệ KCN & Kho Vận',
+      targetType: 'Kho ngoại quan & trung tâm phân phối 30.000m2',
+      guards24h: 3,
+      guards12h: 2,
+      totalEstimate: 68500000,
+      estimatedPriceFormatted: '68.500.000 ₫/tháng',
+      message: 'Cần khảo sát thực địa trong tuần này để triển khai từ đầu tháng tới.',
+      status: 'new',
+      notes: 'Đã liên hệ sơ bộ qua điện thoại, xếp lịch khảo sát sáng thứ Năm.',
+      created_at: new Date(Date.now() - 3600000 * 4).toISOString(),
+    },
+    {
+      id: 'quote-sample-2',
+      source: 'consultation_form',
+      client_name: 'Nguyễn Thị Hồng Hạnh',
+      contactName: 'Nguyễn Thị Hồng Hạnh',
+      phone: '0988.765.432',
+      contactPhone: '0988.765.432',
+      email: 'hanh.nguyen@apex-tower.com',
+      contactEmail: 'hanh.nguyen@apex-tower.com',
+      companyName: 'BQL Tòa Nhà Apex Tower',
+      company_name: 'BQL Tòa Nhà Apex Tower',
+      jobTitle: 'Phó Ban Quản Lý',
+      region: 'Hà Nội',
+      service_needed: 'Bảo vệ Tòa Nhà & Cao Ốc Văn Phòng',
+      serviceType: 'Bảo vệ Tòa Nhà & Cao Ốc Văn Phòng',
+      targetType: 'Tòa nhà văn phòng hạng A 25 tầng',
+      guards24h: 4,
+      guards12h: 4,
+      totalEstimate: 104000000,
+      estimatedPriceFormatted: '104.000.000 ₫/tháng',
+      message: 'Yêu cầu lực lượng ngoại hình chuẩn, đào tạo bài bản về giao tiếp khách hàng văn phòng cao cấp.',
+      status: 'contacted',
+      notes: 'Đang gửi hồ sơ năng lực và phương án phân công ca trực.',
+      created_at: new Date(Date.now() - 3600000 * 28).toISOString(),
+    },
+    {
+      id: 'quote-sample-3',
+      source: 'consultation_form',
+      client_name: 'Phạm Đức Long',
+      contactName: 'Phạm Đức Long',
+      phone: '0903.118.999',
+      contactPhone: '0903.118.999',
+      email: 'long.pd@vinasteel.com.vn',
+      contactEmail: 'long.pd@vinasteel.com.vn',
+      companyName: 'Tập Đoàn Thép VinaSteel',
+      company_name: 'Tập Đoàn Thép VinaSteel',
+      jobTitle: 'Giám Đốc Nhà Máy',
+      region: 'Hải Phòng',
+      service_needed: 'Bảo vệ Nhà Máy Luyện Kim & PCCC Chuyên Sâu',
+      serviceType: 'Bảo vệ Nhà Máy Luyện Kim & PCCC Chuyên Sâu',
+      message: 'Đã hoàn tất ký hợp đồng dịch vụ an ninh 2 năm cho nhà xưởng 50.000m2.',
+      status: 'closed',
+      notes: 'Hợp đồng đã ký kết, chính thức tiếp quản mục tiêu.',
+      created_at: new Date(Date.now() - 86400000 * 4).toISOString(),
+    },
+  ];
+}
+
+/**
+ * Create a new Quote Request
+ */
+export async function createQuoteRequest(req: Partial<QuoteRequest>): Promise<{ success: boolean; data?: QuoteRequest; error?: string }> {
+  const clientName = req.client_name || req.contactName || 'Khách hàng';
+  const phone = req.phone || req.contactPhone || '';
+  const email = req.email || req.contactEmail || '';
+  const serviceNeeded = req.service_needed || req.serviceType || 'Bảo vệ Mục tiêu Cố định';
+  const companyName = req.company_name || req.companyName || '';
+  const message = req.message || '';
+  const status = req.status || 'new';
+
+  const newRecord: QuoteRequest = {
+    ...req,
+    id: `quote-${Date.now()}`,
+    client_name: clientName,
+    contactName: clientName,
+    phone,
+    contactPhone: phone,
+    email,
+    contactEmail: email,
+    company_name: companyName,
+    companyName,
+    service_needed: serviceNeeded,
+    serviceType: serviceNeeded,
+    message,
+    status: status as any,
+    created_at: new Date().toISOString(),
+  };
+
+  try {
+    const current = await getQuoteRequests();
+    const updated = [newRecord, ...current];
+    localStorage.setItem(QUOTES_STORAGE_KEY, JSON.stringify(updated));
+
+    const dbPayload: any = {
+      client_name: clientName,
+      phone,
+      email: email || null,
+      service_needed: serviceNeeded,
+      message: message || null,
+      status,
+      company_name: companyName || null,
+      source: req.source || 'consultation_form',
+      total_estimate: req.totalEstimate || null,
+      estimated_price_formatted: req.estimatedPriceFormatted || null,
+      notes: req.notes || null,
+    };
+
+    const { error } = await supabase.from('quote_requests').insert([dbPayload]);
+    if (error) {
+      console.warn('Supabase quote insert error, saved locally:', error.message);
+      return { success: true, data: newRecord, error: error.message };
+    }
+    return { success: true, data: newRecord };
+  } catch (err: any) {
+    return { success: true, data: newRecord, error: err.message };
+  }
+}
+
+/**
+ * Update Quote Request Status & Notes
+ */
+export async function updateQuoteRequest(
+  id: string,
+  updates: Partial<Pick<QuoteRequest, 'status' | 'notes'>>
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const current = await getQuoteRequests();
+    const index = current.findIndex((item) => String(item.id) === String(id));
+    if (index !== -1) {
+      current[index] = { ...current[index], ...updates };
+      localStorage.setItem(QUOTES_STORAGE_KEY, JSON.stringify(current));
+    }
+
+    if (!isNaN(Number(id))) {
+      await supabase.from('quote_requests').update(updates).eq('id', Number(id));
+    } else {
+      await supabase.from('quote_requests').update(updates).eq('id', id);
+    }
+    return { success: true };
+  } catch (err: any) {
+    return { success: true, error: err.message };
+  }
+}
+
+/**
+ * Update specifically the quote request status ('new' | 'contacted' | 'closed')
+ */
+export async function updateQuoteRequestStatus(
+  id: string,
+  status: 'new' | 'contacted' | 'closed' | 'processing' | 'completed' | 'cancelled',
+  notes?: string
+): Promise<{ success: boolean; error?: string }> {
+  return updateQuoteRequest(id, notes !== undefined ? { status, notes } : { status });
+}
+
+/**
+ * Delete Quote Request (remove spam submission)
+ */
+export async function deleteQuoteRequest(id: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const current = await getQuoteRequests();
+    const filtered = current.filter((item) => String(item.id) !== String(id));
+    localStorage.setItem(QUOTES_STORAGE_KEY, JSON.stringify(filtered));
+
+    if (!isNaN(Number(id))) {
+      await supabase.from('quote_requests').delete().eq('id', Number(id));
+    } else {
+      await supabase.from('quote_requests').delete().eq('id', id);
+    }
+    return { success: true };
+  } catch (err: any) {
+    return { success: true, error: err.message };
+  }
+}
+
+/**
  * Recommended SQL snippet for user's Supabase dashboard
  */
-export const SUPABASE_SETUP_SQL = `-- SQL Script tạo bảng bài viết và hero slides trên Supabase
--- Mở SQL Editor trong Supabase Dashboard và nhấn Run:
+export const SUPABASE_SETUP_SQL = `-- SQL Script thiết lập toàn bộ cơ sở dữ liệu trên Supabase
+-- Mở SQL Editor trong Supabase Dashboard (https://supabase.com/dashboard) và nhấn RUN:
 
+-- 1. BẢNG HIỆU QUẢ THỰC TẾ / CHỈ SỐ NĂNG LỰC (STATS)
+CREATE TABLE IF NOT EXISTS public.stats (
+  id BIGSERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  numeric_value TEXT NOT NULL,
+  unit TEXT DEFAULT '+',
+  suffix TEXT DEFAULT '+',
+  description TEXT NOT NULL,
+  display_order INTEGER DEFAULT 0,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.stats ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Cho phép xem stats công khai" ON public.stats;
+CREATE POLICY "Cho phép xem stats công khai" ON public.stats FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Cho phép quản trị viên quản lý stats" ON public.stats;
+CREATE POLICY "Cho phép quản trị viên quản lý stats" ON public.stats FOR ALL USING (true);
+
+-- Chèn dữ liệu ban đầu cho stats
+INSERT INTO public.stats (id, title, numeric_value, unit, suffix, description, display_order, is_active)
+VALUES 
+  (1, 'Nhân sự bảo vệ & Vệ sĩ', '300', '+', '+', 'Huấn luyện võ thuật, nghiệp vụ, pháp luật định kỳ', 1, true),
+  (2, 'Mục tiêu trọng điểm bảo vệ', '100', '+', '+', 'KCN, Cao ốc, Ngân hàng, Bệnh viện, Nhà máy 24/7', 2, true),
+  (3, 'Chứng chỉ PCCC & Võ thuật', '100', '%', '%', 'Được cấp chứng chỉ hành nghề chính quy bởi Bộ Công An', 3, true),
+  (4, 'Tỉnh thành phủ sóng', '20', '+', '+', 'Đội cơ động phản ứng nhanh có mặt trong 15 phút', 4, true)
+ON CONFLICT (id) DO NOTHING;
+
+-- 2. BẢNG YÊU CẦU BÁO GIÁ & KHÁCH HÀNG TIỀM NĂNG (QUOTE_REQUESTS)
+CREATE TABLE IF NOT EXISTS public.quote_requests (
+  id BIGSERIAL PRIMARY KEY,
+  client_name TEXT NOT NULL,
+  phone TEXT NOT NULL,
+  email TEXT,
+  service_needed TEXT DEFAULT 'Bảo vệ Mục tiêu Cố định',
+  message TEXT,
+  status TEXT DEFAULT 'new' CHECK (status IN ('new', 'contacted', 'closed', 'processing', 'completed', 'cancelled')),
+  company_name TEXT,
+  total_estimate NUMERIC,
+  estimated_price_formatted TEXT,
+  source TEXT DEFAULT 'consultation_form',
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.quote_requests ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Cho phép thêm yêu cầu báo giá" ON public.quote_requests;
+CREATE POLICY "Cho phép thêm yêu cầu báo giá" ON public.quote_requests FOR INSERT WITH CHECK (true);
+DROP POLICY IF EXISTS "Cho phép xem và cập nhật yêu cầu báo giá" ON public.quote_requests;
+CREATE POLICY "Cho phép xem và cập nhật yêu cầu báo giá" ON public.quote_requests FOR ALL USING (true);
+
+-- 3. BẢNG BÀI VIẾT (POSTS)
 CREATE TABLE IF NOT EXISTS public.posts (
   id BIGSERIAL PRIMARY KEY,
   title TEXT NOT NULL,
@@ -287,22 +896,13 @@ CREATE TABLE IF NOT EXISTS public.posts (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Cho phép đọc công khai và cho phép tạo/sửa/xóa
 ALTER TABLE public.posts ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Cho phép xem bài viết công khai" ON public.posts;
+CREATE POLICY "Cho phép xem bài viết công khai" ON public.posts FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Cho phép quản lý bài viết" ON public.posts;
+CREATE POLICY "Cho phép quản lý bài viết" ON public.posts FOR ALL USING (true);
 
-CREATE POLICY "Cho phép xem bài viết công khai" 
-  ON public.posts FOR SELECT USING (true);
-
-CREATE POLICY "Cho phép thêm bài viết" 
-  ON public.posts FOR INSERT WITH CHECK (true);
-
-CREATE POLICY "Cho phép sửa bài viết" 
-  ON public.posts FOR UPDATE USING (true);
-
-CREATE POLICY "Cho phép xóa bài viết" 
-  ON public.posts FOR DELETE USING (true);
-
--- Bảng Hero Slides (nếu cần đồng bộ từ xa)
+-- 4. BẢNG HERO SLIDES
 CREATE TABLE IF NOT EXISTS public.hero_slides (
   id TEXT PRIMARY KEY,
   tag TEXT NOT NULL,
@@ -315,6 +915,27 @@ CREATE TABLE IF NOT EXISTS public.hero_slides (
 );
 
 ALTER TABLE public.hero_slides ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Cho phép xem hero slides" ON public.hero_slides FOR SELECT USING (true);
-CREATE POLICY "Cho phép cập nhật hero slides" ON public.hero_slides FOR ALL USING (true);
+DROP POLICY IF EXISTS "Cho phép xem hero slides" ON public.hero_slides FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Cho phép quản lý hero slides" ON public.hero_slides FOR ALL USING (true);
+
+-- 5. BẢNG DỰ ÁN TIÊU BIỂU (CASE_STUDIES)
+CREATE TABLE IF NOT EXISTS public.case_studies (
+  id TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  client TEXT NOT NULL,
+  sector TEXT NOT NULL,
+  imageUrl TEXT NOT NULL,
+  challenge TEXT NOT NULL,
+  solution TEXT NOT NULL,
+  result TEXT NOT NULL,
+  readTime TEXT DEFAULT '5 phút đọc',
+  summary TEXT,
+  period TEXT,
+  guardCount TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.case_studies ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Cho phép xem case studies" ON public.case_studies FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Cho phép quản lý case studies" ON public.case_studies FOR ALL USING (true);
 `;

@@ -21,23 +21,25 @@ import { AdminLogin } from './components/admin/AdminLogin';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 
 import { FEATURED_SERVICES } from './data/mockData';
-import { ServiceItem, CaseStudy, ResearchArticle, NewsItem, Certification, HeroSlide } from './types';
-import { supabase, getPosts, getHeroSlides, Post } from './lib/supabase';
-import { X, ShieldCheck, Calendar, BookOpen, User, CheckCircle2 } from 'lucide-react';
+import { ServiceItem, CaseStudy, ResearchArticle, NewsItem, Certification, HeroSlide, StatMetric } from './types';
+import { supabase, getPosts, getHeroSlides, getCaseStudies, getStats, Post } from './lib/supabase';
+import { X, Calendar, User } from 'lucide-react';
 
 export default function App() {
   // Admin route & session states
   const [isAdminView, setIsAdminView] = useState(() => {
-    return window.location.pathname === '/admin' || window.location.hash === '#admin';
+    return window.location.pathname.startsWith('/admin') || window.location.hash.startsWith('#admin');
   });
   const [adminUser, setAdminUser] = useState<any>(() => {
     const saved = localStorage.getItem('lsd_admin_session');
     return saved ? JSON.parse(saved) : null;
   });
 
-  // Dynamic hero slides & posts
+  // Dynamic hero slides & posts & case studies & stats
   const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
   const [posts, setPosts] = useState<Post[]>([]);
+  const [caseStudies, setCaseStudies] = useState<CaseStudy[]>([]);
+  const [stats, setStats] = useState<StatMetric[]>([]);
 
   // Modal states
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
@@ -74,19 +76,25 @@ export default function App() {
 
     // Listen to hash and popstate for /admin and #admin
     const handleLocationCheck = () => {
-      const isAdm = window.location.pathname === '/admin' || window.location.hash === '#admin';
+      const isAdm = window.location.pathname.startsWith('/admin') || window.location.hash.startsWith('#admin');
       setIsAdminView(isAdm);
     };
 
     window.addEventListener('popstate', handleLocationCheck);
     window.addEventListener('hashchange', handleLocationCheck);
 
-    // Initial load of hero slides and posts from Supabase / cache
+    // Initial load of hero slides, posts, case studies, and stats
     getHeroSlides().then((slides) => {
       if (slides && slides.length > 0) setHeroSlides(slides);
     });
     getPosts().then(({ data }) => {
       if (data && data.length > 0) setPosts(data);
+    });
+    getCaseStudies().then((cs) => {
+      if (cs && cs.length > 0) setCaseStudies(cs);
+    });
+    getStats().then((st) => {
+      if (st && st.length > 0) setStats(st);
     });
 
     return () => {
@@ -102,19 +110,29 @@ export default function App() {
   };
 
   const closeAdminView = () => {
-    if (window.location.hash === '#admin') {
-      window.location.hash = '';
-    }
-    if (window.location.pathname === '/admin') {
-      window.history.pushState(null, '', '/');
-    }
+    window.location.hash = '';
+    window.history.pushState(null, '', '/');
     setIsAdminView(false);
+    // Refresh content after admin changes
+    getHeroSlides().then((slides) => {
+      if (slides && slides.length > 0) setHeroSlides(slides);
+    });
+    getPosts().then(({ data }) => {
+      if (data && data.length > 0) setPosts(data);
+    });
+    getCaseStudies().then((cs) => {
+      if (cs && cs.length > 0) setCaseStudies(cs);
+    });
+    getStats().then((st) => {
+      if (st && st.length > 0) setStats(st);
+    });
   };
 
   const handleAdminLogout = async () => {
     await supabase.auth.signOut();
     localStorage.removeItem('lsd_admin_session');
     setAdminUser(null);
+    closeAdminView();
   };
 
   const scrollToSection = (sectionId: string) => {
@@ -125,16 +143,18 @@ export default function App() {
   };
 
   const handleSelectServiceById = (serviceId: string) => {
-    const srv = FEATURED_SERVICES.find((s) => s.id === serviceId) || FEATURED_SERVICES[0];
-    setSelectedService(srv);
+    const srv = FEATURED_SERVICES.find((s) => s.id === serviceId);
+    if (srv) {
+      setSelectedService(srv);
+    }
   };
 
   const handleSelectCaseStudy = (cs: CaseStudy) => {
     setInfoModalData({
       title: cs.title,
-      category: `Dự Án / ${cs.client}`,
-      date: cs.period || cs.readTime,
-      content: `${cs.challenge}\n\nGIẢI PHÁP TRIỂN KHAI BỞI LÂM SƠN ĐỘNG:\n${cs.solution}\n\nKẾT QUẢ ĐẠT ĐƯỢC:\n${cs.result}`,
+      category: `Thực Tế Dự Án / ${cs.client}`,
+      date: cs.sector,
+      content: `${cs.challenge}\n\nGIẢI PHÁP LÂM SƠN ĐỘNG:\n${cs.solution}\n\nKẾT QUẢ ĐẠT ĐƯỢC:\n${cs.result}`,
       imageUrl: cs.imageUrl,
       bullets: [
         `Khách hàng: ${cs.client}`,
@@ -219,12 +239,13 @@ export default function App() {
         onLogout={handleAdminLogout}
         onBackToHome={closeAdminView}
         onHeroSlidesUpdated={(newSlides) => setHeroSlides(newSlides)}
+        onStatsUpdated={(newStats) => setStats(newStats)}
       />
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 font-['Be_Vietnam_Pro'] text-slate-100 selection:bg-red-600 selection:text-white antialiased">
+    <div className="min-h-screen bg-slate-50 font-['Be_Vietnam_Pro'] text-slate-900 selection:bg-amber-500 selection:text-white antialiased">
       {/* 1. Main Navigation Bar */}
       <Navbar 
         onOpenQuote={() => setIsQuoteModalOpen(true)}
@@ -248,7 +269,7 @@ export default function App() {
       <CertificationsCarousel onSelectCert={handleSelectCert} />
 
       {/* 6. Key Stats & National Footprint */}
-      <KeyStatsFootprint />
+      <KeyStatsFootprint stats={stats} />
 
       {/* 7. Interactive Security Risk Assessment Tool (AI Scanner) */}
       <SecurityRiskAssessment onOpenConsultationWithData={handleOpenConsultationWithData} />
@@ -261,6 +282,7 @@ export default function App() {
 
       {/* 10. Case Studies & Success Stories */}
       <CaseStudiesSection 
+        caseStudies={caseStudies.length > 0 ? caseStudies : undefined}
         onSelectCaseStudy={handleSelectCaseStudy}
         onOpenAllCaseStudies={() => scrollToSection('featured-services-section')}
       />
@@ -309,70 +331,70 @@ export default function App() {
 
       {/* Generic Info Detail Dialog */}
       {infoModalData && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-[#111114] border border-white/10 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl text-white relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white border border-slate-200 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl text-slate-900 rounded relative">
             <button
               onClick={() => setInfoModalData(null)}
-              className="absolute top-5 right-5 w-8 h-8 border border-white/10 bg-[#0d0d0f] hover:border-[#c5a059] text-gray-400 hover:text-[#c5a059] flex items-center justify-center transition-all z-10"
+              className="absolute top-5 right-5 w-8 h-8 border border-slate-300 bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-950 flex items-center justify-center transition-all z-10 rounded"
             >
               <X className="w-4 h-4" />
             </button>
 
             {infoModalData.imageUrl && (
-              <div className="h-56 overflow-hidden bg-[#0d0d0f] border-b border-white/10">
+              <div className="h-56 overflow-hidden bg-slate-100 border-b border-slate-200">
                 <img
                   src={infoModalData.imageUrl}
                   alt={infoModalData.title}
-                  className="w-full h-full object-cover brightness-75"
+                  className="w-full h-full object-cover"
                 />
               </div>
             )}
 
             <div className="p-6 sm:p-8 space-y-4">
               {infoModalData.category && (
-                <span className="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-[#c5a059] bg-[#c5a059]/10 border border-[#c5a059]/30 px-2.5 py-1">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-amber-900 bg-amber-100 border border-amber-300 px-2.5 py-1 rounded">
                   {infoModalData.category}
                 </span>
               )}
 
-              <h3 className="text-xl sm:text-2xl font-bold text-white leading-snug uppercase tracking-tight font-['Plus_Jakarta_Sans']">
+              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 leading-snug uppercase tracking-tight font-['Plus_Jakarta_Sans']">
                 {infoModalData.title}
               </h3>
 
-              <div className="flex items-center gap-4 text-xs font-mono text-gray-400 pb-2 border-b border-white/10">
+              <div className="flex items-center gap-4 text-xs font-mono text-slate-500 pb-2 border-b border-slate-200">
                 {infoModalData.date && (
                   <span className="flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5 text-[#c5a059]" />
+                    <Calendar className="w-3.5 h-3.5 text-amber-700" />
                     {infoModalData.date}
                   </span>
                 )}
                 {infoModalData.author && (
                   <span className="flex items-center gap-1.5">
-                    <User className="w-3.5 h-3.5 text-[#c5a059]" />
+                    <User className="w-3.5 h-3.5 text-amber-700" />
                     {infoModalData.author}
                   </span>
                 )}
               </div>
 
-              <div className="text-xs sm:text-sm text-gray-300 font-light leading-relaxed whitespace-pre-line">
+              <div className="text-xs sm:text-sm text-slate-600 font-normal leading-relaxed whitespace-pre-line">
                 {infoModalData.content}
               </div>
 
               {infoModalData.bullets && (
-                <div className="p-4 bg-[#0d0d0f] border border-white/10 space-y-2 text-xs font-light">
+                <div className="p-4 bg-slate-50 border border-slate-200 rounded space-y-2 text-xs font-normal">
                   {infoModalData.bullets.map((b, i) => (
-                    <div key={i} className="flex items-start gap-2 text-gray-300">
-                      <span className="text-[#c5a059] font-mono font-bold text-xs shrink-0">—</span>
+                    <div key={i} className="flex items-start gap-2 text-slate-700">
+                      <span className="text-amber-700 font-mono font-bold text-xs shrink-0">—</span>
                       <span>{b}</span>
                     </div>
                   ))}
                 </div>
               )}
 
-              <div className="pt-4 border-t border-white/10 flex justify-end">
+              <div className="pt-4 border-t border-slate-200 flex justify-end">
                 <button
                   onClick={() => setInfoModalData(null)}
-                  className="px-6 py-2.5 bg-[#0d0d0f] hover:bg-[#c5a059] text-gray-300 hover:text-black border border-white/10 hover:border-[#c5a059] font-bold text-xs uppercase tracking-widest transition-all"
+                  className="px-6 py-2.5 bg-slate-100 hover:bg-[#c5a059] text-slate-700 hover:text-slate-950 border border-slate-300 hover:border-amber-600 font-bold text-xs uppercase tracking-widest transition-all rounded shadow-xs"
                 >
                   Đóng
                 </button>

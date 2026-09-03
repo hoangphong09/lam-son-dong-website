@@ -106,21 +106,21 @@ export const PostModal: React.FC<PostModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md overflow-y-auto">
-      <div className="bg-[#111114] border border-white/15 w-full max-w-3xl shadow-2xl text-white relative my-auto max-h-[92vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
+      <div className="bg-white border border-slate-200 w-full max-w-3xl shadow-2xl text-slate-900 relative my-auto max-h-[92vh] flex flex-col rounded-sm">
         {/* Header */}
-        <div className="p-5 sm:p-6 border-b border-white/10 flex items-center justify-between shrink-0">
+        <div className="p-5 sm:p-6 border-b border-slate-200 bg-slate-50 flex items-center justify-between shrink-0">
           <div>
-            <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-[#c5a059] font-bold">
+            <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-[#b8860b] font-bold">
               {postToEdit ? 'CẬP NHẬT BÀI ĐĂNG' : 'TẠO MỚI BÀI ĐĂNG'}
             </span>
-            <h2 className="text-lg sm:text-xl font-bold uppercase tracking-tight text-white font-['Plus_Jakarta_Sans']">
+            <h2 className="text-lg sm:text-xl font-bold uppercase tracking-tight text-slate-900 font-['Plus_Jakarta_Sans']">
               {postToEdit ? 'Chỉnh sửa thông tin bài viết' : 'Soạn thảo bài viết mới lên Supabase'}
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 border border-white/10 bg-[#0d0d0f] hover:border-[#c5a059] text-gray-400 hover:text-white flex items-center justify-center transition-all"
+            className="w-8 h-8 border border-slate-200 bg-white hover:bg-slate-100 text-slate-500 hover:text-slate-900 flex items-center justify-center transition-all rounded"
           >
             <X className="w-4 h-4" />
           </button>
@@ -130,8 +130,8 @@ export const PostModal: React.FC<PostModalProps> = ({
         <form onSubmit={handleSubmit} className="p-5 sm:p-6 overflow-y-auto space-y-5 flex-1">
           {/* Title */}
           <div>
-            <label className="block text-[11px] font-mono uppercase tracking-wider text-gray-300 font-bold mb-1.5">
-              Tiêu đề bài viết <span className="text-[#c5a059]">*</span>
+            <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-700 font-bold mb-1.5">
+              Tiêu đề bài viết <span className="text-[#b8860b]">*</span>
             </label>
             <input
               type="text"
@@ -139,7 +139,7 @@ export const PostModal: React.FC<PostModalProps> = ({
               value={title}
               onChange={handleTitleChange}
               placeholder="Nhập tiêu đề sự kiện, diễn tập, hợp tác an ninh..."
-              className="w-full px-4 py-2.5 bg-[#0d0d0f] border border-white/15 focus:border-[#c5a059] text-white text-sm focus:outline-none transition-all placeholder:text-gray-600 font-medium"
+              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 focus:border-[#b8860b] focus:bg-white text-slate-900 text-sm focus:outline-none transition-all placeholder:text-slate-400 font-medium rounded"
             />
           </div>
 
@@ -147,13 +147,13 @@ export const PostModal: React.FC<PostModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-[11px] font-mono uppercase tracking-wider text-gray-300 font-bold">
+                <label className="text-[11px] font-mono uppercase tracking-wider text-slate-700 font-bold">
                   Đường dẫn (Slug)
                 </label>
                 <button
                   type="button"
                   onClick={handleGenerateSlug}
-                  className="text-[10px] font-mono text-[#c5a059] hover:underline flex items-center gap-1"
+                  className="text-[10px] font-mono text-[#b8860b] hover:underline flex items-center gap-1 font-bold"
                 >
                   <RefreshCw className="w-3 h-3" />
                   Tạo từ tiêu đề
@@ -168,18 +168,18 @@ export const PostModal: React.FC<PostModalProps> = ({
                   setAutoSlug(false);
                 }}
                 placeholder="duong-dan-bai-viet-seo"
-                className="w-full px-3.5 py-2.5 bg-[#0d0d0f] border border-white/15 focus:border-[#c5a059] text-gray-200 text-xs font-mono focus:outline-none transition-all"
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 focus:border-[#b8860b] focus:bg-white text-slate-800 text-xs font-mono focus:outline-none transition-all rounded"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-mono uppercase tracking-wider text-gray-300 font-bold mb-1.5">
+              <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-700 font-bold mb-1.5">
                 Chuyên mục
               </label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-[#0d0d0f] border border-white/15 focus:border-[#c5a059] text-white text-xs font-mono focus:outline-none transition-all"
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 focus:border-[#b8860b] focus:bg-white text-slate-900 text-xs font-mono focus:outline-none transition-all rounded"
               >
                 {CATEGORY_PRESETS.map((cat) => (
                   <option key={cat} value={cat}>
@@ -192,7 +192,7 @@ export const PostModal: React.FC<PostModalProps> = ({
 
           {/* Cover Image URL & Quick Select */}
           <div>
-            <label className="block text-[11px] font-mono uppercase tracking-wider text-gray-300 font-bold mb-1.5">
+            <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-700 font-bold mb-1.5">
               Ảnh bìa (Cover Image URL)
             </label>
             <div className="flex gap-2">
@@ -201,24 +201,24 @@ export const PostModal: React.FC<PostModalProps> = ({
                 value={coverImage}
                 onChange={(e) => setCoverImage(e.target.value)}
                 placeholder="https://images.unsplash.com/... hoặc https://i.postimg.cc/..."
-                className="flex-1 px-3.5 py-2 bg-[#0d0d0f] border border-white/15 focus:border-[#c5a059] text-white text-xs font-mono focus:outline-none transition-all"
+                className="flex-1 px-3.5 py-2 bg-slate-50 border border-slate-300 focus:border-[#b8860b] focus:bg-white text-slate-800 text-xs font-mono focus:outline-none transition-all rounded"
               />
             </div>
 
             {/* Quick Presets */}
             <div className="mt-2 flex flex-wrap items-center gap-1.5">
-              <span className="text-[10px] text-gray-500 font-mono flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-[#c5a059]" /> Ảnh mẫu:
+              <span className="text-[10px] text-slate-500 font-mono flex items-center gap-1">
+                <Sparkles className="w-3 h-3 text-[#b8860b]" /> Ảnh mẫu:
               </span>
               {SAMPLE_IMAGES.map((img, i) => (
                 <button
                   key={i}
                   type="button"
                   onClick={() => setCoverImage(img.url)}
-                  className={`text-[10px] font-mono px-2 py-0.5 border transition-all ${
+                  className={`text-[10px] font-mono px-2 py-0.5 border rounded transition-all ${
                     coverImage === img.url
                       ? 'bg-[#c5a059] text-black border-[#c5a059] font-bold'
-                      : 'bg-white/5 border-white/10 text-gray-300 hover:text-white hover:border-[#c5a059]/50'
+                      : 'bg-slate-100 border-slate-200 text-slate-700 hover:text-black hover:border-slate-400'
                   }`}
                 >
                   {img.label}
@@ -228,7 +228,7 @@ export const PostModal: React.FC<PostModalProps> = ({
 
             {/* Image Preview Thumbnail */}
             {coverImage && (
-              <div className="mt-3 relative h-32 w-full bg-black/40 border border-white/10 overflow-hidden flex items-center justify-center">
+              <div className="mt-3 relative h-32 w-full bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center rounded">
                 <img
                   src={coverImage}
                   alt="Xem trước ảnh bìa"
@@ -237,8 +237,8 @@ export const PostModal: React.FC<PostModalProps> = ({
                     (e.target as HTMLElement).style.display = 'none';
                   }}
                 />
-                <div className="absolute bottom-2 left-2 bg-black/80 px-2 py-1 text-[9px] font-mono text-[#c5a059] border border-white/10 flex items-center gap-1">
-                  <ImageIcon className="w-3 h-3" /> Xem trước ảnh bìa
+                <div className="absolute bottom-2 left-2 bg-slate-900/80 px-2 py-1 text-[9px] font-mono text-white border border-slate-700 flex items-center gap-1 rounded">
+                  <ImageIcon className="w-3 h-3 text-[#c5a059]" /> Xem trước ảnh bìa
                 </div>
               </div>
             )}
@@ -246,7 +246,7 @@ export const PostModal: React.FC<PostModalProps> = ({
 
           {/* Excerpt / Tóm tắt */}
           <div>
-            <label className="block text-[11px] font-mono uppercase tracking-wider text-gray-300 font-bold mb-1.5">
+            <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-700 font-bold mb-1.5">
               Tóm tắt ngắn (Excerpt)
             </label>
             <textarea
@@ -254,14 +254,14 @@ export const PostModal: React.FC<PostModalProps> = ({
               value={excerpt}
               onChange={(e) => setExcerpt(e.target.value)}
               placeholder="Tóm tắt ngắn 1-2 câu hiển thị ngoài trang chủ và thẻ tin tức..."
-              className="w-full p-3 bg-[#0d0d0f] border border-white/15 focus:border-[#c5a059] text-white text-xs font-light focus:outline-none transition-all placeholder:text-gray-600 resize-none"
+              className="w-full p-3 bg-slate-50 border border-slate-300 focus:border-[#b8860b] focus:bg-white text-slate-900 text-xs font-light focus:outline-none transition-all placeholder:text-slate-400 resize-none rounded"
             />
           </div>
 
           {/* Full Content */}
           <div>
-            <label className="block text-[11px] font-mono uppercase tracking-wider text-gray-300 font-bold mb-1.5">
-              Nội dung bài viết chi tiết <span className="text-[#c5a059]">*</span>
+            <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-700 font-bold mb-1.5">
+              Nội dung bài viết chi tiết <span className="text-[#b8860b]">*</span>
             </label>
             <textarea
               rows={6}
@@ -269,21 +269,21 @@ export const PostModal: React.FC<PostModalProps> = ({
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Nhập nội dung chi tiết bài viết, các bước thực hiện, diễn biến sự kiện, tuyên bố của lãnh đạo..."
-              className="w-full p-3 bg-[#0d0d0f] border border-white/15 focus:border-[#c5a059] text-white text-xs font-light leading-relaxed focus:outline-none transition-all placeholder:text-gray-600"
+              className="w-full p-3 bg-slate-50 border border-slate-300 focus:border-[#b8860b] focus:bg-white text-slate-900 text-xs font-light leading-relaxed focus:outline-none transition-all placeholder:text-slate-400 rounded"
             />
           </div>
 
           {/* Author & Publish Status */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-white/10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-200">
             <div>
-              <label className="block text-[11px] font-mono uppercase tracking-wider text-gray-300 font-bold mb-1.5">
+              <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-700 font-bold mb-1.5">
                 Tác giả / Ban đăng tin
               </label>
               <input
                 type="text"
                 value={author}
                 onChange={(e) => setAuthor(e.target.value)}
-                className="w-full px-3.5 py-2 bg-[#0d0d0f] border border-white/15 focus:border-[#c5a059] text-white text-xs font-mono focus:outline-none"
+                className="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 focus:border-[#b8860b] focus:bg-white text-slate-900 text-xs font-mono focus:outline-none rounded"
               />
             </div>
 
@@ -295,36 +295,36 @@ export const PostModal: React.FC<PostModalProps> = ({
                   onChange={(e) => setPublished(e.target.checked)}
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-[#0d0d0f] border border-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#c5a059]"></div>
+                <div className="w-11 h-6 bg-slate-200 border border-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#c5a059]"></div>
               </label>
-              <span className="text-xs font-mono font-bold text-gray-300">
+              <span className="text-xs font-mono font-bold text-slate-700">
                 {published ? (
-                  <span className="text-emerald-400">Xuất bản công khai</span>
+                  <span className="text-emerald-700">Xuất bản công khai</span>
                 ) : (
-                  <span className="text-amber-400">Lưu bản nháp</span>
+                  <span className="text-amber-700">Lưu bản nháp</span>
                 )}
               </span>
             </div>
           </div>
 
           {/* Actions */}
-          <div className="pt-4 border-t border-white/10 flex items-center justify-end gap-3">
+          <div className="pt-4 border-t border-slate-200 flex items-center justify-end gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white border border-white/10 text-xs font-mono uppercase tracking-wider transition-all"
+              className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-mono uppercase tracking-wider transition-all rounded"
             >
               Hủy bỏ
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-6 py-2.5 bg-[#c5a059] hover:bg-[#d6b26b] text-black font-black text-xs uppercase tracking-widest transition-all disabled:opacity-50 flex items-center gap-2"
+              className="px-6 py-2.5 bg-[#c5a059] hover:bg-[#b8860b] text-slate-950 font-black text-xs uppercase tracking-widest transition-all disabled:opacity-50 flex items-center gap-2 rounded shadow"
             >
               {isSubmitting ? (
-                <span className="w-3.5 h-3.5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                <span className="w-3.5 h-3.5 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
               ) : (
-                <Save className="w-3.5 h-3.5 text-black" />
+                <Save className="w-3.5 h-3.5 text-slate-950" />
               )}
               <span>{postToEdit ? 'Lưu thay đổi' : 'Đăng bài lên Supabase'}</span>
             </button>

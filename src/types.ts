@@ -123,3 +123,43 @@ export interface RiskAssessmentAnswers {
   currentIssues: string[];
   staffCount: string;
 }
+
+export interface StatMetric {
+  id: string | number;
+  title: string;
+  numeric_value: string | number;
+  unit?: string;
+  suffix?: string;
+  description: string;
+  display_order: number;
+  is_active?: boolean;
+  created_at?: string;
+}
+
+export interface QuoteRequest {
+  id: string;
+  client_name?: string;
+  phone?: string;
+  email?: string;
+  service_needed?: string;
+  message?: string;
+  status: 'new' | 'contacted' | 'closed' | 'processing' | 'completed' | 'cancelled';
+  created_at: string;
+  // Additional / alias fields for backwards compatibility with calculator modal
+  source?: 'quote_calculator' | 'consultation_form' | 'direct';
+  contactName?: string;
+  contactPhone?: string;
+  contactEmail?: string;
+  companyName?: string;
+  company_name?: string;
+  jobTitle?: string;
+  region?: string;
+  serviceType?: string;
+  targetType?: string;
+  guards24h?: number;
+  guards12h?: number;
+  totalEstimate?: number;
+  estimatedPriceFormatted?: string;
+  options?: string[];
+  notes?: string;
+}

@@ -6,7 +6,6 @@ import {
   Calendar, 
   ShoppingBag, 
   ArrowRight, 
-  CheckCircle2, 
   ShieldCheck,
   ChevronRight
 } from 'lucide-react';
@@ -39,17 +38,17 @@ export const SolutionMatrixTabs: React.FC<SolutionMatrixTabsProps> = ({ onOpenSo
   };
 
   return (
-    <section id="solutions-matrix-section" className="bg-[#0d0d0f] text-white py-20 border-b border-white/10">
+    <section id="solutions-matrix-section" className="bg-slate-50 text-slate-900 py-20 border-b border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Title */}
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <span className="text-[10px] font-bold text-[#c5a059] uppercase tracking-[0.25em] font-mono">
+          <span className="text-[10px] font-bold text-amber-900 uppercase tracking-[0.25em] font-mono bg-amber-100 border border-amber-300 px-3 py-1 rounded">
             MA TRẬN GIẢI PHÁP AN NINH
           </span>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white uppercase tracking-tight mt-2 font-['Plus_Jakarta_Sans']">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 uppercase tracking-tight mt-3 font-['Plus_Jakarta_Sans']">
             Giải Pháp Chuyên Sâu Theo Từng Ngành Nghề
           </h2>
-          <p className="mt-3 text-xs sm:text-sm text-gray-400 font-light leading-relaxed">
+          <p className="mt-3 text-xs sm:text-sm text-slate-600 font-normal leading-relaxed">
             Mỗi lĩnh vực đòi hỏi một phương án bảo vệ chuyên biệt. Khám phá các giải pháp an ninh tiêu chuẩn được Lâm Sơn Động thiết kế riêng cho từng loại hình cơ sở.
           </p>
         </div>
@@ -66,19 +65,19 @@ export const SolutionMatrixTabs: React.FC<SolutionMatrixTabsProps> = ({ onOpenSo
                   key={cat.id}
                   id={`solution-tab-${cat.id}`}
                   onClick={() => setActiveTab(cat.id)}
-                  className={`flex items-center justify-between p-4 font-bold text-xs uppercase tracking-wider text-left transition-all whitespace-nowrap lg:whitespace-normal border ${
+                  className={`flex items-center justify-between p-4 font-bold text-xs uppercase tracking-wider text-left transition-all whitespace-nowrap lg:whitespace-normal border rounded ${
                     isActive
-                      ? 'bg-[#c5a059] text-black border-[#c5a059]'
-                      : 'bg-[#111114] text-gray-400 hover:text-white hover:border-white/20 border-white/10'
+                      ? 'bg-[#c5a059] text-slate-950 border-[#b8860b] shadow-xs'
+                      : 'bg-white text-slate-700 hover:text-slate-950 hover:border-slate-300 border-slate-200 shadow-xs'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`p-2 border ${isActive ? 'bg-black/10 border-black/20 text-black' : 'bg-[#0d0d0f] border-white/10 text-[#c5a059]'}`}>
+                    <div className={`p-2 border rounded ${isActive ? 'bg-black/10 border-black/20 text-slate-950' : 'bg-amber-50 border-amber-200 text-amber-800'}`}>
                       <Icon className="w-4 h-4" />
                     </div>
                     <span>{cat.name}</span>
                   </div>
-                  <ChevronRight className={`w-4 h-4 hidden lg:block ${isActive ? 'text-black translate-x-1' : 'text-gray-600'} transition-transform`} />
+                  <ChevronRight className={`w-4 h-4 hidden lg:block ${isActive ? 'text-slate-950 translate-x-1' : 'text-slate-400'} transition-transform`} />
                 </button>
               );
             })}
@@ -90,29 +89,29 @@ export const SolutionMatrixTabs: React.FC<SolutionMatrixTabsProps> = ({ onOpenSo
               <div
                 key={sol.id}
                 id={`sol-card-${sol.id}`}
-                className="bg-[#111114] border border-white/10 hover:border-[#c5a059]/50 p-6 flex flex-col justify-between transition-all duration-300 group"
+                className="bg-white border border-slate-200 hover:border-amber-500 rounded p-6 flex flex-col justify-between transition-all duration-300 group shadow-sm hover:shadow-md"
               >
                 <div>
                   {/* Tag */}
-                  <span className="inline-block text-[9px] font-mono font-bold uppercase tracking-[0.25em] text-[#c5a059] bg-[#c5a059]/10 border border-[#c5a059]/30 px-2 py-0.5 mb-3">
+                  <span className="inline-block text-[9px] font-mono font-bold uppercase tracking-[0.25em] text-amber-900 bg-amber-100 border border-amber-300 px-2 py-0.5 mb-3 rounded">
                     {sol.tag}
                   </span>
 
                   {/* Title */}
-                  <h3 className="text-sm sm:text-base font-bold text-white group-hover:text-[#c5a059] transition-colors leading-snug uppercase tracking-tight">
+                  <h3 className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-amber-800 transition-colors leading-snug uppercase tracking-tight font-['Plus_Jakarta_Sans']">
                     {sol.title}
                   </h3>
 
                   {/* Description */}
-                  <p className="text-xs text-gray-400 font-light mt-2.5 leading-relaxed">
+                  <p className="text-xs text-slate-600 font-normal mt-2.5 leading-relaxed">
                     {sol.description}
                   </p>
 
                   {/* Specs */}
-                  <div className="mt-4 pt-3 border-t border-white/10 space-y-1.5 text-xs text-gray-300 font-light">
+                  <div className="mt-4 pt-3 border-t border-slate-100 space-y-1.5 text-xs text-slate-700 font-normal">
                     {sol.keySpecs.map((spec, idx) => (
                       <div key={idx} className="flex items-center gap-2">
-                        <span className="text-[#c5a059] font-mono font-bold text-xs shrink-0">—</span>
+                        <span className="text-amber-700 font-mono font-bold text-xs shrink-0">—</span>
                         <span>{spec}</span>
                       </div>
                     ))}
@@ -123,7 +122,7 @@ export const SolutionMatrixTabs: React.FC<SolutionMatrixTabsProps> = ({ onOpenSo
                 <div className="mt-6 pt-2">
                   <button
                     onClick={() => onOpenSolutionDetail(sol)}
-                    className="w-full py-2.5 bg-[#0d0d0f] hover:bg-[#c5a059] text-gray-300 hover:text-black border border-white/10 hover:border-[#c5a059] font-bold text-xs uppercase font-mono tracking-widest transition-all flex items-center justify-center gap-2 group/btn"
+                    className="w-full py-2.5 bg-slate-50 hover:bg-[#c5a059] text-slate-800 hover:text-slate-950 border border-slate-200 hover:border-[#b8860b] font-bold text-xs uppercase font-mono tracking-widest transition-all flex items-center justify-center gap-2 rounded group/btn shadow-xs"
                   >
                     <span>Chi tiết giải pháp</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
@@ -137,4 +136,3 @@ export const SolutionMatrixTabs: React.FC<SolutionMatrixTabsProps> = ({ onOpenSo
     </section>
   );
 };
-
