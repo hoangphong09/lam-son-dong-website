@@ -18,13 +18,20 @@ import {
   deleteStat,
   toggleStatVisibility,
   reorderStats,
+  getQuoteOptions,
+  saveQuoteOption,
+  deleteQuoteOption,
+  toggleQuoteOptionVisibility,
+  reorderQuoteOptions,
+  resetQuoteOptionsToDefault,
   SUPABASE_SETUP_SQL,
 } from '../../lib/supabase';
-import { HeroSlide, CaseStudy, QuoteRequest, StatMetric } from '../../types';
+import { HeroSlide, CaseStudy, QuoteRequest, StatMetric, QuoteOption, QuoteOptionCategory } from '../../types';
 import { PostModal } from './PostModal';
 import { HeroSlideModal } from './HeroSlideModal';
 import { CaseStudyModal } from './CaseStudyModal';
 import { StatModal } from './StatModal';
+import { QuoteOptionModal } from './QuoteOptionModal';
 import {
   Shield,
   FileText,
@@ -57,7 +64,12 @@ import {
   User,
   PhoneCall,
   Hash,
-  AlertCircle
+  AlertCircle,
+  SlidersHorizontal,
+  Layers,
+  Tag,
+  DollarSign,
+  RotateCcw,
 } from 'lucide-react';
 
 interface AdminDashboardProps {
@@ -75,26 +87,31 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   onHeroSlidesUpdated,
   onStatsUpdated,
 }) => {
-  // Navigation tabs support routing: /admin/stats, /admin/quote-requests, etc.
-  const getInitialTab = (): 'stats' | 'quotes' | 'posts' | 'hero' | 'casestudies' | 'database' => {
+  // Navigation tabs support routing: /admin/stats, /admin/quote-requests, /admin/quote-settings, etc.
+  type AdminTab = 'stats' | 'quotes' | 'quote-settings' | 'posts' | 'hero' | 'casestudies' | 'database';
+
+  const getInitialTab = (): AdminTab => {
     const path = window.location.pathname;
     const hash = window.location.hash;
     if (path === '/admin/stats' || hash === '#admin/stats' || hash.includes('tab=stats')) return 'stats';
     if (path === '/admin/quote-requests' || path === '/admin/quotes' || hash === '#admin/quote-requests' || hash.includes('tab=quotes')) return 'quotes';
+    if (path === '/admin/quote-settings' || path === '/admin/quote-options' || path === '/admin/pricing' || hash === '#admin/quote-settings' || hash.includes('tab=quote-settings') || hash.includes('tab=pricing')) return 'quote-settings';
     if (path === '/admin/hero' || hash.includes('tab=hero')) return 'hero';
     if (path === '/admin/casestudies' || hash.includes('tab=casestudies')) return 'casestudies';
     if (path === '/admin/database' || hash.includes('tab=database')) return 'database';
     return 'stats';
   };
 
-  const [activeTab, setActiveTab] = useState<'stats' | 'quotes' | 'posts' | 'hero' | 'casestudies' | 'database'>(getInitialTab);
+  const [activeTab, setActiveTab] = useState<AdminTab>(getInitialTab);
 
-  const switchTab = (tab: 'stats' | 'quotes' | 'posts' | 'hero' | 'casestudies' | 'database') => {
+  const switchTab = (tab: AdminTab) => {
     setActiveTab(tab);
     if (tab === 'stats') {
       window.history.replaceState(null, '', '#admin/stats');
     } else if (tab === 'quotes') {
       window.history.replaceState(null, '', '#admin/quote-requests');
+    } else if (tab === 'quote-settings') {
+      window.history.replaceState(null, '', '#admin/quote-settings');
     } else {
       window.history.replaceState(null, '', `#admin/${tab}`);
     }
@@ -117,6 +134,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [quoteDateFilter, setQuoteDateFilter] = useState<'all' | 'today' | 'week' | 'month'>('all');
   const [viewingQuote, setViewingQuote] = useState<QuoteRequest | null>(null);
   const [deletingQuoteId, setDeletingQuoteId] = useState<string | null>(null);
+
+  // Quote Options state (CẤU HÌNH BÁO GIÁ & GÓI DỊCH VỤ)
+  const [quoteOptions, setQuoteOptions] = useState<QuoteOption[]>([]);
+  const [isLoadingQuoteOptions, setIsLoadingQuoteOptions] = useState(true);
+  const [quoteOptionSearchTerm, setQuoteOptionSearchTerm] = useState('');
+  const [quoteOptionCategoryFilter, setQuoteOptionCategoryFilter] = useState<'all' | QuoteOptionCategory>('all');
+  const [editingQuoteOption, setEditingQuoteOption] = useState<QuoteOption | null>(null);
+  const [isQuoteOptionModalOpen, setIsQuoteOptionModalOpen] = useState(false);
+  const [deletingQuoteOptionId, setDeletingQuoteOptionId] = useState<string | number | null>(null);
+  const [quoteOptionNotice, setQuoteOptionNotice] = useState<string | null>(null);
 
   // Posts state
   const [posts, setPosts] = useState<Post[]>([]);
@@ -152,6 +179,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       const hash = window.location.hash;
       if (hash === '#admin/stats') setActiveTab('stats');
       else if (hash === '#admin/quote-requests' || hash === '#admin/quotes') setActiveTab('quotes');
+      else if (hash === '#admin/quote-settings' || hash === '#admin/quote-options' || hash === '#admin/pricing') setActiveTab('quote-settings');
       else if (hash === '#admin/posts') setActiveTab('posts');
       else if (hash === '#admin/hero') setActiveTab('hero');
       else if (hash === '#admin/casestudies') setActiveTab('casestudies');
@@ -235,13 +263,78 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     }
   };
 
+  // Fetch Quote Options (CẤU HÌNH BÁO GIÁ)
+  const loadQuoteOptions = async () => {
+    setIsLoadingQuoteOptions(true);
+    setQuoteOptionNotice(null);
+    try {
+      const data = await getQuoteOptions();
+      setQuoteOptions(data || []);
+    } catch (err: any) {
+      console.error(err);
+      setQuoteOptionNotice('Lỗi khi tải danh sách tùy chọn báo giá.');
+    } finally {
+      setIsLoadingQuoteOptions(false);
+    }
+  };
+
   useEffect(() => {
     loadStats();
     loadQuoteRequests();
+    loadQuoteOptions();
     loadPosts();
     loadHeroSlides();
     loadCaseStudies();
   }, []);
+
+  // QUOTE OPTIONS HANDLERS
+  const handleSaveQuoteOption = async (optionData: Partial<QuoteOption>) => {
+    const res = await saveQuoteOption(optionData);
+    if (res.success) {
+      await loadQuoteOptions();
+      setIsQuoteOptionModalOpen(false);
+      setEditingQuoteOption(null);
+    }
+    return res;
+  };
+
+  const handleConfirmDeleteQuoteOption = async () => {
+    if (!deletingQuoteOptionId) return;
+    await deleteQuoteOption(deletingQuoteOptionId);
+    setDeletingQuoteOptionId(null);
+    await loadQuoteOptions();
+  };
+
+  const handleToggleQuoteOption = async (id: string | number, currentActive: boolean) => {
+    await toggleQuoteOptionVisibility(id, !currentActive);
+    await loadQuoteOptions();
+  };
+
+  const handleMoveQuoteOptionOrder = async (opt: QuoteOption, direction: 'up' | 'down') => {
+    const sorted = [...quoteOptions].sort((a, b) => (Number(a.display_order) || 0) - (Number(b.display_order) || 0));
+    const currentIndex = sorted.findIndex((s) => String(s.id) === String(opt.id));
+    if (currentIndex === -1) return;
+    const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    if (targetIndex < 0 || targetIndex >= sorted.length) return;
+
+    const temp = sorted[currentIndex];
+    sorted[currentIndex] = sorted[targetIndex];
+    sorted[targetIndex] = temp;
+
+    sorted.forEach((item, idx) => {
+      item.display_order = idx + 1;
+    });
+
+    setQuoteOptions([...sorted]);
+    await reorderQuoteOptions(sorted);
+  };
+
+  const handleResetQuoteOptions = async () => {
+    if (window.confirm('Khôi phục danh mục tùy chọn báo giá về cấu hình tiêu chuẩn ban đầu của hệ thống?')) {
+      const res = await resetQuoteOptionsToDefault();
+      setQuoteOptions(res);
+    }
+  };
 
   // STATS HANDLERS
   const handleSaveStat = async (statData: Partial<StatMetric>) => {
@@ -411,6 +504,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     return matchesSearch && matchesStatus && matchesDate;
   });
 
+  // Filter Quote Options (CẤU HÌNH BÁO GIÁ)
+  const filteredQuoteOptions = quoteOptions
+    .filter((opt) => {
+      const s = quoteOptionSearchTerm.toLowerCase();
+      const matchesSearch =
+        opt.label.toLowerCase().includes(s) ||
+        opt.value.toLowerCase().includes(s) ||
+        (opt.description && opt.description.toLowerCase().includes(s));
+      const matchesCat = quoteOptionCategoryFilter === 'all' || opt.category === quoteOptionCategoryFilter;
+      return matchesSearch && matchesCat;
+    })
+    .sort((a, b) => (Number(a.display_order) || 0) - (Number(b.display_order) || 0));
+
   // Filter Posts
   const filteredPosts = posts.filter((p) => {
     const matchesSearch =
@@ -455,7 +561,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </span>
               </div>
               <p className="text-[11px] text-slate-500 font-mono hidden sm:block">
-                Bảo Vệ Chuyên Nghiệp Lâm Sơn Động • {user?.email || 'admin@lamsondong.vn'}
+                Bảo Vệ Chuyên Nghiệp Lâm Sơn Động • {user?.email || 'admin@lamsondong.com'}
               </p>
             </div>
           </div>
@@ -511,6 +617,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             {quoteRequests.filter(q => q.status === 'new').length > 0 && (
               <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
             )}
+          </button>
+
+          {/* TAB 2.5: CẤU HÌNH BÁO GIÁ & ĐƠN GIÁ (DYNAMIC OPTIONS) */}
+          <button
+            onClick={() => switchTab('quote-settings')}
+            className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-all shrink-0 ${
+              activeTab === 'quote-settings'
+                ? 'border-[#c5a059] text-amber-900 font-bold bg-amber-50/60'
+                : 'border-transparent text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <SlidersHorizontal className="w-4 h-4 text-amber-700" />
+            <span>Cấu Hình Báo Giá ({quoteOptions.length})</span>
           </button>
 
           {/* TAB 3: BÀI VIẾT */}
@@ -835,6 +954,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <span className="text-slate-500 ml-1">
                   (Tổng {filteredQuotes.length} yêu cầu)
                 </span>
+                <button
+                  onClick={() => switchTab('quote-settings')}
+                  className="ml-auto sm:ml-2 px-3 py-1 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded text-xs font-mono font-bold flex items-center gap-1.5 transition-colors shadow-2xs"
+                  title="Mở cấu hình tùy chọn và đơn giá form báo giá"
+                >
+                  <SlidersHorizontal className="w-3.5 h-3.5 text-amber-700" />
+                  <span>Cấu hình form báo giá</span>
+                </button>
               </div>
             </div>
 
@@ -1000,6 +1127,347 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                   onClick={() => setDeletingQuoteId(q.id)}
                                   className="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded"
                                   title="Xóa yêu cầu spam"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================= */}
+        {/* TAB 2.5: CẤU HÌNH BÁO GIÁ & GÓI DỊCH VỤ (QUOTE SETTINGS)   */}
+        {/* ========================================================= */}
+        {activeTab === 'quote-settings' && (
+          <div className="space-y-6 animate-fadeIn">
+            {/* Top Filter & Actions Bar */}
+            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 bg-white p-4 border border-slate-200 rounded shadow-xs">
+              <div className="flex flex-wrap items-center gap-3 flex-1">
+                {/* Search input */}
+                <div className="relative flex-1 min-w-[220px]">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={quoteOptionSearchTerm}
+                    onChange={(e) => setQuoteOptionSearchTerm(e.target.value)}
+                    placeholder="Tìm kiếm tùy chọn theo nhãn, mã value, mô tả..."
+                    className="w-full pl-9 pr-3.5 py-2 bg-slate-50 border border-slate-300 focus:border-amber-600 focus:bg-white text-slate-900 text-xs rounded focus:outline-hidden"
+                  />
+                  {quoteOptionSearchTerm && (
+                    <button
+                      onClick={() => setQuoteOptionSearchTerm('')}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs"
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+
+                {/* Category Filter */}
+                <div className="flex items-center gap-1.5">
+                  <Filter className="w-3.5 h-3.5 text-slate-400" />
+                  <select
+                    value={quoteOptionCategoryFilter}
+                    onChange={(e) => setQuoteOptionCategoryFilter(e.target.value as any)}
+                    className="px-3 py-2 bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded focus:outline-hidden font-medium"
+                  >
+                    <option value="all">Tất cả danh mục ({quoteOptions.length})</option>
+                    <option value="target_objective">
+                      1. Loại hình mục tiêu ({quoteOptions.filter((o) => o.category === 'target_objective').length})
+                    </option>
+                    <option value="pricing_tier">
+                      2. Ca trực & Đơn giá ({quoteOptions.filter((o) => o.category === 'pricing_tier').length})
+                    </option>
+                    <option value="service_type">
+                      3. Gói dịch vụ kèm ({quoteOptions.filter((o) => o.category === 'service_type').length})
+                    </option>
+                  </select>
+                </div>
+
+                {/* Refresh button */}
+                <button
+                  onClick={loadQuoteOptions}
+                  className="p-2 bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-600 hover:text-slate-900 rounded transition-colors"
+                  title="Tải lại danh sách"
+                >
+                  <RefreshCw className={`w-4 h-4 ${isLoadingQuoteOptions ? 'animate-spin' : ''}`} />
+                </button>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleResetQuoteOptions}
+                  className="px-3 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-300 text-xs font-mono font-bold flex items-center gap-1.5 rounded transition-colors"
+                  title="Khôi phục các tùy chọn mặc định chuẩn từ nhà máy"
+                >
+                  <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
+                  <span className="hidden sm:inline">Khôi Phục Mặc Định</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setEditingQuoteOption(null);
+                    setIsQuoteOptionModalOpen(true);
+                  }}
+                  className="px-4 py-2 bg-[#c5a059] hover:bg-[#b8860b] text-slate-950 text-xs font-black uppercase tracking-wider flex items-center gap-2 rounded shadow transition-all"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Thêm Tùy Chọn Mới</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Quick Summary Cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="bg-white p-4 border border-slate-200 rounded shadow-2xs">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold block mb-1">
+                  Tổng tùy chọn
+                </span>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-2xl font-bold font-['Plus_Jakarta_Sans'] text-slate-900">
+                    {quoteOptions.length}
+                  </span>
+                  <span className="text-[11px] text-slate-500 font-mono">mục</span>
+                </div>
+              </div>
+
+              <div className="bg-white p-4 border border-slate-200 rounded shadow-2xs">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-700 font-bold block mb-1">
+                  Đang kích hoạt
+                </span>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-2xl font-bold font-['Plus_Jakarta_Sans'] text-emerald-800">
+                    {quoteOptions.filter((o) => o.is_active !== false).length}
+                  </span>
+                  <span className="text-[11px] text-emerald-600 font-mono">hiển thị công khai</span>
+                </div>
+              </div>
+
+              <div className="bg-white p-4 border border-slate-200 rounded shadow-2xs">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-blue-700 font-bold block mb-1">
+                  Mục tiêu bảo vệ
+                </span>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-2xl font-bold font-['Plus_Jakarta_Sans'] text-blue-900">
+                    {quoteOptions.filter((o) => o.category === 'target_objective').length}
+                  </span>
+                  <span className="text-[11px] text-blue-600 font-mono">loại hình</span>
+                </div>
+              </div>
+
+              <div className="bg-white p-4 border border-slate-200 rounded shadow-2xs">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-amber-700 font-bold block mb-1">
+                  Ca trực & Gói kèm
+                </span>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-2xl font-bold font-['Plus_Jakarta_Sans'] text-amber-900">
+                    {quoteOptions.filter((o) => o.category !== 'target_objective').length}
+                  </span>
+                  <span className="text-[11px] text-amber-700 font-mono">đơn vị / gói</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Notice Alert if any */}
+            {quoteOptionNotice && (
+              <div className="p-3 bg-amber-50 border border-amber-300 text-amber-900 text-xs rounded flex items-center justify-between">
+                <span>{quoteOptionNotice}</span>
+                <button
+                  onClick={() => setQuoteOptionNotice(null)}
+                  className="text-amber-700 font-bold text-sm"
+                >
+                  ×
+                </button>
+              </div>
+            )}
+
+            {/* Quote Options Table */}
+            <div className="bg-white border border-slate-200 rounded shadow-xs overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-slate-50 border-b border-slate-200 text-slate-700 font-mono uppercase tracking-wider">
+                    <tr>
+                      <th className="py-3.5 px-4 text-center w-24">Thứ Tự</th>
+                      <th className="py-3.5 px-4 w-44">Phân Loại</th>
+                      <th className="py-3.5 px-4">Tiêu Đề & Mã Định Danh</th>
+                      <th className="py-3.5 px-4 text-right w-44">Đơn Giá Dự Toán</th>
+                      <th className="py-3.5 px-4">Mô Tả Nghiệp Vụ</th>
+                      <th className="py-3.5 px-4 text-center w-32">Hiển Thị</th>
+                      <th className="py-3.5 px-4 text-right w-28">Thao Tác</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {isLoadingQuoteOptions ? (
+                      <tr>
+                        <td colSpan={7} className="py-12 text-center text-slate-500 font-mono">
+                          <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-amber-600" />
+                          Đang tải dữ liệu cấu hình tùy chọn báo giá...
+                        </td>
+                      </tr>
+                    ) : filteredQuoteOptions.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="py-12 text-center text-slate-500 font-mono">
+                          <div className="max-w-sm mx-auto space-y-2">
+                            <p>Không tìm thấy tùy chọn nào phù hợp với bộ lọc.</p>
+                            <button
+                              onClick={() => {
+                                setQuoteOptionSearchTerm('');
+                                setQuoteOptionCategoryFilter('all');
+                              }}
+                              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs"
+                            >
+                              Xóa bộ lọc tìm kiếm
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredQuoteOptions.map((opt, index) => {
+                        const formatPrice = (val: number) => {
+                          return new Intl.NumberFormat('vi-VN', {
+                            style: 'currency',
+                            currency: 'VND',
+                          }).format(val);
+                        };
+
+                        const categoryMeta = {
+                          target_objective: {
+                            label: 'Loại Mục Tiêu',
+                            color: 'bg-blue-50 text-blue-900 border-blue-200',
+                          },
+                          pricing_tier: {
+                            label: 'Ca Trực / Đơn Giá',
+                            color: 'bg-amber-50 text-amber-900 border-amber-300',
+                          },
+                          service_type: {
+                            label: 'Gói Dịch Vụ Kèm',
+                            color: 'bg-emerald-50 text-emerald-900 border-emerald-300',
+                          },
+                        }[opt.category] || {
+                          label: opt.category,
+                          color: 'bg-slate-50 text-slate-800 border-slate-200',
+                        };
+
+                        return (
+                          <tr key={opt.id || index} className="hover:bg-slate-50 transition-colors">
+                            {/* Order & Reorder Controls */}
+                            <td className="py-3 px-4 text-center">
+                              <div className="inline-flex items-center gap-1 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded font-mono font-bold text-slate-800 text-xs">
+                                <span>#{opt.display_order}</span>
+                                <div className="flex flex-col ml-1">
+                                  <button
+                                    type="button"
+                                    disabled={index === 0}
+                                    onClick={() => handleMoveQuoteOptionOrder(opt, 'up')}
+                                    className="text-slate-400 hover:text-amber-800 disabled:opacity-20 transition-colors"
+                                    title="Di chuyển lên trên"
+                                  >
+                                    <ArrowUp className="w-3 h-3" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    disabled={index === filteredQuoteOptions.length - 1}
+                                    onClick={() => handleMoveQuoteOptionOrder(opt, 'down')}
+                                    className="text-slate-400 hover:text-amber-800 disabled:opacity-20 transition-colors"
+                                    title="Di chuyển xuống dưới"
+                                  >
+                                    <ArrowDown className="w-3 h-3" />
+                                  </button>
+                                </div>
+                              </div>
+                            </td>
+
+                            {/* Category Badge */}
+                            <td className="py-3 px-4">
+                              <span
+                                className={`inline-block px-2 py-0.5 rounded text-[10px] font-mono font-bold border uppercase tracking-wider ${categoryMeta.color}`}
+                              >
+                                {categoryMeta.label}
+                              </span>
+                            </td>
+
+                            {/* Label & Value */}
+                            <td className="py-3 px-4">
+                              <div className="font-bold text-slate-900 text-xs">{opt.label}</div>
+                              <div className="mt-0.5 flex items-center gap-1.5">
+                                <span className="font-mono text-[10px] px-1.5 py-0.2 bg-slate-100 text-slate-600 border border-slate-200 rounded">
+                                  value: {opt.value}
+                                </span>
+                              </div>
+                            </td>
+
+                            {/* Price Estimate */}
+                            <td className="py-3 px-4 text-right">
+                              {Number(opt.price_estimate) > 0 ? (
+                                <span className="font-mono font-bold text-amber-800 text-xs">
+                                  {formatPrice(Number(opt.price_estimate))}
+                                </span>
+                              ) : (
+                                <span className="font-mono text-slate-400 text-[11px] italic">
+                                  0 đ (Mặc định)
+                                </span>
+                              )}
+                            </td>
+
+                            {/* Description */}
+                            <td className="py-3 px-4 text-slate-600 max-w-xs">
+                              <p className="line-clamp-2 text-[11px] leading-relaxed">
+                                {opt.description || '—'}
+                              </p>
+                            </td>
+
+                            {/* Visibility Toggle */}
+                            <td className="py-3 px-4 text-center">
+                              <button
+                                type="button"
+                                onClick={() => handleToggleQuoteOption(opt.id, opt.is_active !== false)}
+                                className={`px-2.5 py-1 rounded font-mono font-bold text-[11px] border inline-flex items-center gap-1.5 transition-all ${
+                                  opt.is_active !== false
+                                    ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
+                                    : 'bg-slate-100 text-slate-500 border-slate-300 hover:bg-slate-200'
+                                }`}
+                                title="Bấm để bật / tắt hiển thị trên form báo giá"
+                              >
+                                {opt.is_active !== false ? (
+                                  <>
+                                    <Eye className="w-3 h-3 text-emerald-600" />
+                                    <span>Hiển thị</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <EyeOff className="w-3 h-3 text-slate-400" />
+                                    <span>Tạm ẩn</span>
+                                  </>
+                                )}
+                              </button>
+                            </td>
+
+                            {/* Action Buttons */}
+                            <td className="py-3 px-4 text-right">
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  onClick={() => {
+                                    setEditingQuoteOption(opt);
+                                    setIsQuoteOptionModalOpen(true);
+                                  }}
+                                  className="p-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 rounded"
+                                  title="Chỉnh sửa tùy chọn"
+                                >
+                                  <Edit2 className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  onClick={() => setDeletingQuoteOptionId(opt.id)}
+                                  className="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded"
+                                  title="Xóa tùy chọn"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
                                 </button>
@@ -1433,6 +1901,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         caseStudy={editingCaseStudy}
       />
 
+      {/* 4.5. Quote Option Modal (Create/Edit) */}
+      <QuoteOptionModal
+        isOpen={isQuoteOptionModalOpen}
+        onClose={() => {
+          setIsQuoteOptionModalOpen(false);
+          setEditingQuoteOption(null);
+        }}
+        onSave={handleSaveQuoteOption}
+        option={editingQuoteOption}
+      />
+
       {/* 5. Delete Stat Modal */}
       {deletingStatId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
@@ -1548,6 +2027,37 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </button>
               <button
                 onClick={handleConfirmDeleteQuote}
+                className="px-5 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs font-mono uppercase tracking-wider rounded"
+              >
+                Xác nhận xóa
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 8.5. Delete Quote Option Modal */}
+      {deletingQuoteOptionId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+          <div className="bg-white border border-red-200 p-6 max-w-md w-full space-y-4 shadow-xl text-slate-900 rounded">
+            <div className="flex items-center gap-3 text-red-600">
+              <AlertTriangle className="w-6 h-6" />
+              <h3 className="font-bold uppercase tracking-tight text-base font-['Plus_Jakarta_Sans']">
+                Xác nhận xóa tùy chọn báo giá
+              </h3>
+            </div>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Hành động này sẽ xóa tùy chọn này khỏi cơ sở dữ liệu và không còn hiển thị trên biểu mẫu báo giá khách hàng.
+            </p>
+            <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-3">
+              <button
+                onClick={() => setDeletingQuoteOptionId(null)}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs font-mono uppercase"
+              >
+                Hủy bỏ
+              </button>
+              <button
+                onClick={handleConfirmDeleteQuoteOption}
                 className="px-5 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs font-mono uppercase tracking-wider rounded"
               >
                 Xác nhận xóa

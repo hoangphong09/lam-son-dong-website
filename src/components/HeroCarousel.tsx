@@ -4,7 +4,13 @@ import {
   ChevronRight, 
   ArrowRight, 
   ShieldCheck,
-  Award
+  Award,
+  Radio,
+  Clock,
+  MapPin,
+  Users,
+  CheckCircle2,
+  Sparkles
 } from 'lucide-react';
 import { HERO_SLIDES } from '../data/mockData';
 import { HeroSlide } from '../types';
@@ -47,7 +53,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
   return (
     <section 
       id="hero-section"
-      className="relative bg-slate-50 text-slate-900 overflow-hidden min-h-[580px] sm:min-h-[660px] lg:min-h-[700px] flex items-center border-b border-slate-200"
+      className="relative bg-slate-900 text-slate-900 overflow-hidden min-h-[600px] sm:min-h-[680px] lg:min-h-[720px] flex items-center border-b border-slate-200"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -56,137 +62,118 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
         <div
           key={slide.id}
           className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-            index === currentIndex ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-105 pointer-events-none z-0'
+            index === currentIndex ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'
           }`}
-          style={{ transitionProperty: 'opacity, transform' }}
         >
-          {/* Background Image */}
+          {/* Enhanced Background Image: High visibility & authentic detail */}
           <img
             src={slide.imageUrl}
             alt={slide.title}
-            className="w-full h-full object-cover object-right opacity-30 filter saturate-125"
+            className={`w-full h-full object-cover object-center lg:object-right filter contrast-[1.08] saturate-[1.15] transition-transform duration-7000 ease-out ${
+              index === currentIndex ? 'scale-100 opacity-90 sm:opacity-95' : 'scale-105 opacity-0'
+            }`}
           />
-          {/* Editorial Light Overlays */}
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-50 via-slate-50/95 to-slate-50/40"></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-50 via-transparent to-white/40"></div>
+
+          {/* 
+            DIRECTIONAL GRADIENT OVERLAYS (Left-to-Right + Bottom Vignette)
+            Guarantees high legibility & WCAG compliance for typography on the left,
+            while keeping security personnel & equipment vividly visible across the center & right.
+          */}
+          {/* Primary Left-to-Right Scrim */}
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-50 via-slate-50/95 sm:via-slate-50/85 md:via-slate-50/70 lg:via-slate-50/50 to-slate-900/30"></div>
+
+          {/* Secondary Soft Left Accent for extra text clarity */}
+          <div className="absolute inset-y-0 left-0 w-full lg:w-3/5 bg-gradient-to-r from-slate-50/95 via-slate-50/70 to-transparent pointer-events-none"></div>
+
+          {/* Bottom Blend to next section */}
+          <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-slate-50 via-slate-50/60 to-transparent pointer-events-none"></div>
+
+          {/* Top Subtle Scrim from Navbar */}
+          <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-slate-50/80 to-transparent pointer-events-none"></div>
         </div>
       ))}
 
-      {/* Subtle gold decorative glow */}
-      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 w-96 h-96 bg-amber-200/30 blur-[130px] rounded-full pointer-events-none z-10"></div>
+      {/* Subtle gold decorative ambient glow */}
+      <div className="absolute top-1/3 left-1/4 -translate-x-1/2 w-96 h-96 bg-amber-300/25 blur-[120px] rounded-full pointer-events-none z-10"></div>
 
       {/* Main Content Container */}
       <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          {/* Left Column Content */}
-          <div className="lg:col-span-8 space-y-6">
-            {/* Tag Pill */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+          
+          {/* Left Column Content (with high-contrast typography) */}
+          <div className="lg:col-span-7 xl:col-span-8 space-y-6">
+            
+            {/* Tag Pill with Badge depth */}
             <div className="flex flex-wrap items-center gap-3">
-              <span className="inline-block bg-amber-50 border border-amber-300 text-amber-900 text-[10px] sm:text-xs font-mono font-bold uppercase tracking-[0.3em] px-3.5 py-1 rounded">
+              <span className="inline-flex items-center gap-2 bg-white/95 backdrop-blur-md border border-amber-400/90 text-amber-950 text-[11px] sm:text-xs font-mono font-black uppercase tracking-[0.25em] px-4 py-1.5 rounded shadow-sm ring-1 ring-amber-400/30">
+                <span className="w-2 h-2 rounded-full bg-[#c5a059] animate-pulse"></span>
                 {currentSlide.tag}
               </span>
+
+              {currentSlide.category && (
+                <span className="hidden sm:inline-flex items-center gap-1.5 bg-slate-900/80 backdrop-blur-md border border-slate-700/80 text-white text-[10px] font-mono font-bold uppercase tracking-wider px-3 py-1 rounded shadow-xs">
+                  <ShieldCheck className="w-3 h-3 text-amber-400" />
+                  {currentSlide.category}
+                </span>
+              )}
             </div>
 
-            {/* Slide Title */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.08] tracking-tight uppercase font-['Plus_Jakarta_Sans']">
+            {/* Slide Title: Bold, crisp and readable */}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[52px] font-black text-slate-950 leading-[1.12] tracking-tight uppercase font-['Plus_Jakarta_Sans'] drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)]">
               {currentSlide.title}
             </h1>
 
-            {/* Slide Description */}
-            <p className="text-sm sm:text-lg text-slate-600 font-normal leading-relaxed max-w-2xl">
+            {/* Slide Description: High legibility */}
+            <p className="text-base sm:text-lg text-slate-800 font-medium leading-relaxed max-w-2xl drop-shadow-[0_1px_1px_rgba(255,255,255,0.7)]">
               {currentSlide.description}
             </p>
 
-            {/* Action CTAs */}
+            {/* Action CTAs with elevated depth & contrast */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2">
               <button
                 id="hero-primary-cta-btn"
                 onClick={onOpenQuote}
-                className="flex items-center justify-center gap-2.5 bg-[#c5a059] hover:bg-[#b8860b] text-slate-950 text-xs font-black uppercase font-mono tracking-widest px-8 py-3.5 shadow-md active:scale-[0.98] transition-all rounded"
+                className="flex items-center justify-center gap-2.5 bg-[#c5a059] hover:bg-[#b8860b] text-slate-950 text-xs sm:text-sm font-black uppercase font-mono tracking-wider px-8 py-4 shadow-lg shadow-amber-900/20 hover:shadow-xl hover:shadow-amber-900/30 hover:-translate-y-0.5 active:translate-y-0 transition-all rounded-md ring-1 ring-amber-500/40"
               >
                 <span>{currentSlide.ctaText}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
-
-              <button
-                id="hero-secondary-cta-btn"
-                onClick={onScrollToRisk}
-                className="flex items-center justify-center bg-white hover:bg-slate-100 text-slate-800 font-bold text-xs uppercase font-mono tracking-widest border border-slate-300 hover:border-amber-600 hover:text-amber-800 px-6 py-3.5 shadow-sm transition-all rounded"
-              >
-                <span>Đánh giá rủi ro an ninh</span>
-              </button>
             </div>
           </div>
 
-          {/* Right Floating Console Card */}
-          <div className="lg:col-span-4 hidden lg:block">
-            <div className="bg-white/95 border border-slate-200 p-6 space-y-4 shadow-xl rounded-sm backdrop-blur-sm">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#22c55e]"></span>
-                  <span className="text-[11px] uppercase font-bold tracking-wider text-slate-800 font-mono">
-                    Trực ban tác chiến 24/7
-                  </span>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-500">Lực lượng thường trực:</span>
-                  <strong className="text-slate-900 font-mono text-sm font-bold">250+ Quân số</strong>
-                </div>
-
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-500">Tỷ lệ an toàn mục tiêu:</span>
-                  <strong className="text-emerald-700 font-mono text-sm font-bold">99.98%</strong>
-                </div>
-
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-500">Địa bàn phủ sóng:</span>
-                  <strong className="text-slate-900 font-mono text-sm font-bold">07 tỉnh thành</strong>
-                </div>
-              </div>
-
-              <div className="pt-3 border-t border-slate-100">
-                <button
-                  onClick={() => onSelectService('srv-factory')}
-                  className="w-full py-2.5 bg-amber-50 border border-amber-300 text-amber-900 hover:bg-[#c5a059] hover:text-black text-xs font-bold font-mono uppercase tracking-wider transition-all rounded"
-                >
-                  Khám phá quy chuẩn tác chiến →
-                </button>
-              </div>
-            </div>
-          </div>
+          {/* Right Floating Console Card ("TRỰC BAN TÁC CHIẾN 24/7") */}
+          
         </div>
 
-        {/* Slide Controls & Numbers */}
-        <div className="flex items-center justify-between mt-12 pt-6 border-t border-slate-200">
-          {/* Number Indicators */}
-          <div className="flex items-center gap-4">
+        {/* Slide Controls & Numbers Bar */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mt-12 pt-6 border-t border-slate-200/80">
+          
+          {/* Number & Topic Indicators with Enhanced Depth */}
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             {activeSlides.map((slide, idx) => (
               <button
                 key={slide.id}
                 id={`hero-dot-${idx}`}
                 onClick={() => setCurrentIndex(idx)}
                 aria-label={`Đi tới slide ${idx + 1}`}
-                className={`text-xs font-mono font-bold tracking-widest transition-all pb-1 ${
+                className={`text-xs font-mono font-bold tracking-wider transition-all px-3 py-1.5 rounded-md flex items-center gap-2 ${
                   idx === currentIndex
-                    ? 'text-amber-800 border-b-2 border-amber-600'
-                    : 'text-slate-400 hover:text-slate-700 border-b-2 border-transparent'
+                    ? 'bg-white/85 text-amber-400 shadow-md ring-1 ring-amber-400/30'
+                    : 'bg-white/85 hover:bg-white text-slate-700 hover:text-slate-950 border border-slate-300/80 shadow-xs'
                 }`}
               >
-                0{idx + 1}
+                <span>0{idx + 1}</span>
               </button>
             ))}
           </div>
 
-          {/* Nav Arrows */}
-          <div className="flex items-center gap-2">
+          {/* Navigation Control Arrows */}
+          <div className="flex items-center justify-end gap-2">
             <button
               id="hero-prev-slide-btn"
               onClick={handlePrev}
               aria-label="Slide trước"
-              className="w-10 h-10 border border-slate-300 bg-white hover:border-amber-600 hover:bg-slate-50 text-slate-700 hover:text-black flex items-center justify-center transition-all rounded shadow-sm"
+              className="w-11 h-11 border border-slate-300/90 bg-white/95 hover:bg-white hover:border-[#c5a059] text-slate-800 hover:text-slate-950 flex items-center justify-center transition-all rounded-md shadow-md hover:shadow-lg hover:scale-105 active:scale-95 backdrop-blur-xs"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -195,7 +182,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
               id="hero-next-slide-btn"
               onClick={handleNext}
               aria-label="Slide tiếp theo"
-              className="w-10 h-10 border border-slate-300 bg-white hover:border-amber-600 hover:bg-slate-50 text-slate-700 hover:text-black flex items-center justify-center transition-all rounded shadow-sm"
+              className="w-11 h-11 border border-slate-300/90 bg-white/95 hover:bg-white hover:border-[#c5a059] text-slate-800 hover:text-slate-950 flex items-center justify-center transition-all rounded-md shadow-md hover:shadow-lg hover:scale-105 active:scale-95 backdrop-blur-xs"
             >
               <ChevronRight className="w-4 h-4" />
             </button>

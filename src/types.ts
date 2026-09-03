@@ -163,3 +163,17 @@ export interface QuoteRequest {
   options?: string[];
   notes?: string;
 }
+
+export type QuoteOptionCategory = 'service_type' | 'target_objective' | 'pricing_tier';
+
+export interface QuoteOption {
+  id: string | number;
+  category: QuoteOptionCategory | string;
+  label: string;
+  value: string;
+  price_estimate: number;
+  description?: string;
+  is_active?: boolean;
+  display_order: number;
+  created_at?: string;
+}

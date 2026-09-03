@@ -19,8 +19,8 @@ export const HERO_SLIDES: HeroSlide[] = [
     description: 'Triển khai lực lượng an ninh tinh nhuệ 500+ quân số tập trung 24/7 cho 12 trọng điểm dịp Quốc khánh 2/9.',
     imageUrl: 'https://i.postimg.cc/RZmRSwWz/115bf4e4-5198-467e-bd43-500b7d169a5b.jpg',
     ctaText: 'Xem phương án an ninh',
-    secondaryCtaText: 'Yêu cầu khảo sát',
-    category: 'Mục tiêu cố định',
+    secondaryCtaText: '',
+    category: '',
   },
   {
     id: 'slide-2',
@@ -29,8 +29,8 @@ export const HERO_SLIDES: HeroSlide[] = [
     description: 'Đội ngũ vệ sĩ tuyển chọn từ lực lượng đặc nhiệm, tinh thông võ thuật thực chiến, chứng chỉ cứu thương quốc tế và kỹ năng lái xe phòng vệ chuyên nghiệp.',
     imageUrl: 'https://i.postimg.cc/DZ4sdzS5/0373a718-53f7-48e1-b2c9-9256c37285bc.jpg',
     ctaText: 'Tìm hiểu dịch vụ',
-    secondaryCtaText: 'Tư vấn bảo mật',
-    category: 'Vệ sĩ cá nhân',
+    secondaryCtaText: '',
+    category: '',
   },
   {
     id: 'slide-3',
@@ -39,8 +39,8 @@ export const HERO_SLIDES: HeroSlide[] = [
     description: 'Kiểm soát lộ trình tuần tra thời gian thực, phát hiện xâm nhập và chập cháy trong 3 giây, tự động gửi tín hiệu điều động đội phản ứng nhanh cơ động.',
     imageUrl: 'https://i.postimg.cc/J0csPHMZ/ba79cc9a-1504-4736-b837-5a813d13a59d.jpg',
     ctaText: 'Khám phá công nghệ',
-    secondaryCtaText: 'Đăng ký Demo SOC',
-    category: 'An ninh công nghệ',
+    secondaryCtaText: '',
+    category: '',
   },
 ];
 

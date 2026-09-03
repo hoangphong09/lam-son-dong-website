@@ -65,6 +65,15 @@ export default function App() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         setAdminUser(session.user);
+      } else {
+        const saved = localStorage.getItem('lsd_admin_session');
+        if (saved) {
+          try {
+            setAdminUser(JSON.parse(saved));
+          } catch {
+            localStorage.removeItem('lsd_admin_session');
+          }
+        }
       }
     });
 
