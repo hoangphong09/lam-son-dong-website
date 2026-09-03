@@ -24,14 +24,21 @@ import {
   toggleQuoteOptionVisibility,
   reorderQuoteOptions,
   resetQuoteOptionsToDefault,
+  getBreakingNews,
+  createBreakingNews,
+  updateBreakingNews,
+  deleteBreakingNews,
+  toggleBreakingNewsActive,
+  resetBreakingNewsToDefault,
   SUPABASE_SETUP_SQL,
 } from '../../lib/supabase';
-import { HeroSlide, CaseStudy, QuoteRequest, StatMetric, QuoteOption, QuoteOptionCategory } from '../../types';
+import { HeroSlide, CaseStudy, QuoteRequest, StatMetric, QuoteOption, QuoteOptionCategory, BreakingNewsItem } from '../../types';
 import { PostModal } from './PostModal';
 import { HeroSlideModal } from './HeroSlideModal';
 import { CaseStudyModal } from './CaseStudyModal';
 import { StatModal } from './StatModal';
 import { QuoteOptionModal } from './QuoteOptionModal';
+import { BreakingNewsModal } from './BreakingNewsModal';
 import {
   Shield,
   FileText,
@@ -70,6 +77,10 @@ import {
   Tag,
   DollarSign,
   RotateCcw,
+  BellRing,
+  Link2,
+  ChevronUp,
+  ChevronDown,
 } from 'lucide-react';
 
 interface AdminDashboardProps {
@@ -78,6 +89,7 @@ interface AdminDashboardProps {
   onBackToHome: () => void;
   onHeroSlidesUpdated?: (slides: HeroSlide[]) => void;
   onStatsUpdated?: (stats: StatMetric[]) => void;
+  onBreakingNewsUpdated?: (items: BreakingNewsItem[]) => void;
 }
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({
@@ -86,9 +98,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   onBackToHome,
   onHeroSlidesUpdated,
   onStatsUpdated,
+  onBreakingNewsUpdated,
 }) => {
-  // Navigation tabs support routing: /admin/stats, /admin/quote-requests, /admin/quote-settings, etc.
-  type AdminTab = 'stats' | 'quotes' | 'quote-settings' | 'posts' | 'hero' | 'casestudies' | 'database';
+  // Navigation tabs support routing: /admin/stats, /admin/quote-requests, /admin/quote-settings, /admin/breaking-news, etc.
+  type AdminTab = 'stats' | 'quotes' | 'quote-settings' | 'breaking-news' | 'posts' | 'hero' | 'casestudies' | 'database';
 
   const getInitialTab = (): AdminTab => {
     const path = window.location.pathname;
@@ -96,6 +109,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     if (path === '/admin/stats' || hash === '#admin/stats' || hash.includes('tab=stats')) return 'stats';
     if (path === '/admin/quote-requests' || path === '/admin/quotes' || hash === '#admin/quote-requests' || hash.includes('tab=quotes')) return 'quotes';
     if (path === '/admin/quote-settings' || path === '/admin/quote-options' || path === '/admin/pricing' || hash === '#admin/quote-settings' || hash.includes('tab=quote-settings') || hash.includes('tab=pricing')) return 'quote-settings';
+    if (path === '/admin/breaking-news' || hash === '#admin/breaking-news' || hash.includes('tab=breaking-news')) return 'breaking-news';
     if (path === '/admin/hero' || hash.includes('tab=hero')) return 'hero';
     if (path === '/admin/casestudies' || hash.includes('tab=casestudies')) return 'casestudies';
     if (path === '/admin/database' || hash.includes('tab=database')) return 'database';
@@ -112,10 +126,22 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       window.history.replaceState(null, '', '#admin/quote-requests');
     } else if (tab === 'quote-settings') {
       window.history.replaceState(null, '', '#admin/quote-settings');
+    } else if (tab === 'breaking-news') {
+      window.history.replaceState(null, '', '#admin/breaking-news');
     } else {
       window.history.replaceState(null, '', `#admin/${tab}`);
     }
   };
+
+  // Breaking News state (TIN NHANH 24/7)
+  const [breakingNews, setBreakingNews] = useState<BreakingNewsItem[]>([]);
+  const [isLoadingBreakingNews, setIsLoadingBreakingNews] = useState(true);
+  const [breakingNewsSearchTerm, setBreakingNewsSearchTerm] = useState('');
+  const [breakingNewsStatusFilter, setBreakingNewsStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const [editingBreakingNews, setEditingBreakingNews] = useState<BreakingNewsItem | null>(null);
+  const [isBreakingNewsModalOpen, setIsBreakingNewsModalOpen] = useState(false);
+  const [deletingBreakingNewsId, setDeletingBreakingNewsId] = useState<string | number | null>(null);
+  const [breakingNewsNotice, setBreakingNewsNotice] = useState<string | null>(null);
 
   // Stats state (HIỆU QUẢ THỰC TẾ)
   const [stats, setStats] = useState<StatMetric[]>([]);
@@ -180,6 +206,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       if (hash === '#admin/stats') setActiveTab('stats');
       else if (hash === '#admin/quote-requests' || hash === '#admin/quotes') setActiveTab('quotes');
       else if (hash === '#admin/quote-settings' || hash === '#admin/quote-options' || hash === '#admin/pricing') setActiveTab('quote-settings');
+      else if (hash === '#admin/breaking-news') setActiveTab('breaking-news');
       else if (hash === '#admin/posts') setActiveTab('posts');
       else if (hash === '#admin/hero') setActiveTab('hero');
       else if (hash === '#admin/casestudies') setActiveTab('casestudies');
@@ -278,14 +305,102 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     }
   };
 
+  // Fetch Breaking News (TIN NHANH 24/7)
+  const loadBreakingNews = async () => {
+    setIsLoadingBreakingNews(true);
+    setBreakingNewsNotice(null);
+    try {
+      const data = await getBreakingNews();
+      setBreakingNews(data || []);
+      if (onBreakingNewsUpdated) onBreakingNewsUpdated(data || []);
+    } catch (err: any) {
+      console.error(err);
+      setBreakingNewsNotice('Lỗi khi tải danh sách tin nhanh từ Supabase.');
+    } finally {
+      setIsLoadingBreakingNews(false);
+    }
+  };
+
   useEffect(() => {
     loadStats();
     loadQuoteRequests();
     loadQuoteOptions();
+    loadBreakingNews();
     loadPosts();
     loadHeroSlides();
     loadCaseStudies();
   }, []);
+
+  // BREAKING NEWS HANDLERS
+  const handleSaveBreakingNews = async (newsData: Partial<BreakingNewsItem>) => {
+    try {
+      if (newsData.id) {
+        const res = await updateBreakingNews(newsData.id, newsData);
+        if (res.error) return { success: false, error: res.error };
+      } else {
+        const res = await createBreakingNews({
+          title: newsData.title || '',
+          link: newsData.link || '',
+          is_active: newsData.is_active !== false,
+          display_order: Number(newsData.display_order) || (breakingNews.length + 1),
+        });
+        if (res.error) return { success: false, error: res.error };
+      }
+      await loadBreakingNews();
+      setIsBreakingNewsModalOpen(false);
+      setEditingBreakingNews(null);
+      return { success: true };
+    } catch (err: any) {
+      return { success: false, error: err.message || 'Lỗi xử lý dữ liệu tin nhanh' };
+    }
+  };
+
+  const handleToggleBreakingNews = async (id: string | number, currentActive: boolean) => {
+    try {
+      await toggleBreakingNewsActive(id, !currentActive);
+      await loadBreakingNews();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleConfirmDeleteBreakingNews = async () => {
+    if (!deletingBreakingNewsId) return;
+    try {
+      await deleteBreakingNews(deletingBreakingNewsId);
+      setDeletingBreakingNewsId(null);
+      await loadBreakingNews();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleReorderBreakingNews = async (id: string | number, direction: 'up' | 'down') => {
+    const sorted = [...breakingNews].sort((a, b) => (Number(a.display_order) || 0) - (Number(b.display_order) || 0));
+    const index = sorted.findIndex((b) => String(b.id) === String(id));
+    if (index === -1) return;
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= sorted.length) return;
+
+    const currentItem = sorted[index];
+    const targetItem = sorted[targetIndex];
+    const tempOrder = currentItem.display_order;
+    currentItem.display_order = targetItem.display_order;
+    targetItem.display_order = tempOrder;
+
+    setBreakingNews([...sorted]);
+    await updateBreakingNews(currentItem.id, { display_order: currentItem.display_order });
+    await updateBreakingNews(targetItem.id, { display_order: targetItem.display_order });
+    await loadBreakingNews();
+  };
+
+  const handleResetBreakingNews = async () => {
+    if (window.confirm('Bạn có chắc chắn muốn khôi phục danh sách Tin Nhanh về dữ liệu mặc định hệ thống?')) {
+      const res = await resetBreakingNewsToDefault();
+      setBreakingNews(res);
+      if (onBreakingNewsUpdated) onBreakingNewsUpdated(res);
+    }
+  };
 
   // QUOTE OPTIONS HANDLERS
   const handleSaveQuoteOption = async (optionData: Partial<QuoteOption>) => {
@@ -630,6 +745,24 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           >
             <SlidersHorizontal className="w-4 h-4 text-amber-700" />
             <span>Cấu Hình Báo Giá ({quoteOptions.length})</span>
+          </button>
+
+          {/* TAB 2.8: TIN NHANH (BREAKING NEWS TICKER) */}
+          <button
+            onClick={() => switchTab('breaking-news')}
+            className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-all shrink-0 ${
+              activeTab === 'breaking-news'
+                ? 'border-[#c5a059] text-amber-900 font-bold bg-amber-50/60'
+                : 'border-transparent text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <BellRing className="w-4 h-4 text-amber-700" />
+            <span>Tin Nhanh ({breakingNews.length})</span>
+            {breakingNews.filter((b) => b.is_active !== false).length > 0 && (
+              <span className="text-[10px] bg-emerald-100 text-emerald-800 font-mono px-1.5 py-0.5 rounded font-bold">
+                {breakingNews.filter((b) => b.is_active !== false).length} bật
+              </span>
+            )}
           </button>
 
           {/* TAB 3: BÀI VIẾT */}
@@ -1485,8 +1618,251 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         )}
 
         {/* ========================================================= */}
-        {/* TAB 3: BÀI VIẾT & TIN TỨC                                  */}
+        {/* TAB 2.8: TIN NHANH (BREAKING NEWS TICKER)                   */}
         {/* ========================================================= */}
+        {activeTab === 'breaking-news' && (
+          <div className="space-y-6">
+            {/* Header & Quick stats */}
+            <div className="bg-white p-5 border border-slate-200 rounded shadow-xs">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="p-1.5 bg-amber-100 text-amber-800 rounded">
+                      <BellRing className="w-5 h-5" />
+                    </span>
+                    <h2 className="text-base font-bold text-slate-900 uppercase tracking-tight font-['Plus_Jakarta_Sans']">
+                      Bản Tin Nhanh 24/7 (Breaking News Ticker)
+                    </h2>
+                  </div>
+                  <p className="text-xs text-slate-600 mt-1 font-sans">
+                    Các dòng thông báo khẩn cấp, tin tức an ninh và sự kiện chạy chữ liên tục dưới banner trang chủ.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2.5">
+                  <button
+                    onClick={handleResetBreakingNews}
+                    className="flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-mono font-bold uppercase rounded border border-slate-300 transition-colors"
+                    title="Khôi phục danh sách bản tin mẫu"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
+                    <span>Khôi phục mẫu</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setEditingBreakingNews(null);
+                      setIsBreakingNewsModalOpen(true);
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 bg-[#c5a059] hover:bg-[#b8860b] text-slate-950 text-xs font-mono font-bold uppercase rounded transition-colors shadow-xs"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Thêm Bản Tin Mới</span>
+                  </button>
+                </div>
+              </div>
+
+              {breakingNewsNotice && (
+                <div className="mt-4 p-3 bg-amber-50 border border-amber-200 text-amber-900 text-xs rounded">
+                  {breakingNewsNotice}
+                </div>
+              )}
+            </div>
+
+            {/* Filter toolbar */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-4 border border-slate-200 rounded shadow-xs">
+              <div className="relative flex-1 max-w-md">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={breakingNewsSearchTerm}
+                  onChange={(e) => setBreakingNewsSearchTerm(e.target.value)}
+                  placeholder="Tìm theo nội dung bản tin hoặc đường dẫn..."
+                  className="w-full pl-9 pr-3.5 py-2 bg-slate-50 border border-slate-300 focus:border-amber-600 focus:bg-white text-slate-900 text-xs rounded focus:outline-hidden font-sans"
+                />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Filter className="w-3.5 h-3.5 text-slate-400" />
+                <span className="text-xs text-slate-500 font-mono">Trạng thái:</span>
+                <select
+                  value={breakingNewsStatusFilter}
+                  onChange={(e) => setBreakingNewsStatusFilter(e.target.value as any)}
+                  className="px-3 py-1.5 bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded focus:outline-hidden font-mono"
+                >
+                  <option value="all">Tất cả ({breakingNews.length})</option>
+                  <option value="active">Đang bật ({breakingNews.filter((b) => b.is_active !== false).length})</option>
+                  <option value="inactive">Tạm dừng ({breakingNews.filter((b) => b.is_active === false).length})</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Breaking News Table */}
+            <div className="bg-white border border-slate-200 rounded shadow-xs overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="bg-slate-900 text-white font-mono uppercase tracking-wider text-[11px] border-b border-slate-800">
+                      <th className="py-3 px-4 w-24 text-center">Thứ tự</th>
+                      <th className="py-3 px-4">Nội dung bản tin nhanh</th>
+                      <th className="py-3 px-4 w-52">Đường dẫn liên kết</th>
+                      <th className="py-3 px-4 w-32 text-center">Trạng thái</th>
+                      <th className="py-3 px-4 w-28 text-right">Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-200">
+                    {isLoadingBreakingNews ? (
+                      <tr>
+                        <td colSpan={5} className="py-12 text-center text-slate-500 font-mono">
+                          <div className="flex items-center justify-center gap-2">
+                            <div className="w-4 h-4 border-2 border-amber-600 border-t-transparent rounded-full animate-spin"></div>
+                            <span>Đang tải danh sách tin nhanh...</span>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : breakingNews.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="py-12 text-center text-slate-500">
+                          <BellRing className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+                          <p className="font-mono text-xs text-slate-600">Chưa có bản tin nhanh nào trong hệ thống</p>
+                          <button
+                            onClick={() => {
+                              setEditingBreakingNews(null);
+                              setIsBreakingNewsModalOpen(true);
+                            }}
+                            className="mt-3 px-3 py-1.5 bg-[#c5a059] text-slate-950 font-mono text-xs uppercase font-bold rounded"
+                          >
+                            + Thêm bản tin đầu tiên
+                          </button>
+                        </td>
+                      </tr>
+                    ) : (
+                      breakingNews
+                        .filter((item) => {
+                          const matchesSearch = item.title.toLowerCase().includes(breakingNewsSearchTerm.toLowerCase()) ||
+                            (item.link || '').toLowerCase().includes(breakingNewsSearchTerm.toLowerCase());
+                          const matchesStatus =
+                            breakingNewsStatusFilter === 'all' ||
+                            (breakingNewsStatusFilter === 'active' && item.is_active !== false) ||
+                            (breakingNewsStatusFilter === 'inactive' && item.is_active === false);
+                          return matchesSearch && matchesStatus;
+                        })
+                        .sort((a, b) => (Number(a.display_order) || 0) - (Number(b.display_order) || 0))
+                        .map((item, idx, arr) => (
+                          <tr key={item.id} className="hover:bg-slate-50/80 transition-colors">
+                            {/* Order & Reorder arrows */}
+                            <td className="py-3 px-4 text-center">
+                              <div className="flex items-center justify-center gap-1">
+                                <span className="font-mono font-bold text-slate-700 w-5">
+                                  {item.display_order || idx + 1}
+                                </span>
+                                <div className="flex flex-col">
+                                  <button
+                                    disabled={idx === 0}
+                                    onClick={() => handleReorderBreakingNews(item.id, 'up')}
+                                    className="p-0.5 text-slate-400 hover:text-slate-800 disabled:opacity-20 hover:bg-slate-100 rounded"
+                                    title="Di chuyển lên"
+                                  >
+                                    <ChevronUp className="w-3 h-3" />
+                                  </button>
+                                  <button
+                                    disabled={idx === arr.length - 1}
+                                    onClick={() => handleReorderBreakingNews(item.id, 'down')}
+                                    className="p-0.5 text-slate-400 hover:text-slate-800 disabled:opacity-20 hover:bg-slate-100 rounded"
+                                    title="Di chuyển xuống"
+                                  >
+                                    <ChevronDown className="w-3 h-3" />
+                                  </button>
+                                </div>
+                              </div>
+                            </td>
+
+                            {/* Content */}
+                            <td className="py-3 px-4">
+                              <div className="flex items-start gap-2.5">
+                                <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0 mt-1.5"></span>
+                                <div>
+                                  <p className="font-medium text-slate-900 leading-snug font-sans">
+                                    {item.title}
+                                  </p>
+                                  <span className="text-[10px] font-mono text-slate-400 mt-0.5 block">
+                                    Mã ID: {item.id}
+                                  </span>
+                                </div>
+                              </div>
+                            </td>
+
+                            {/* Link */}
+                            <td className="py-3 px-4">
+                              {item.link ? (
+                                <a
+                                  href={item.link}
+                                  target={item.link.startsWith('http') ? '_blank' : '_self'}
+                                  rel="noreferrer"
+                                  className="inline-flex items-center gap-1.5 text-amber-800 hover:text-amber-950 font-mono text-[11px] underline max-w-[200px] truncate"
+                                  title={item.link}
+                                >
+                                  <Link2 className="w-3 h-3 shrink-0" />
+                                  <span className="truncate">{item.link}</span>
+                                </a>
+                              ) : (
+                                <span className="text-slate-400 font-mono text-[11px] italic">
+                                  Mở popup chi tiết
+                                </span>
+                              )}
+                            </td>
+
+                            {/* Active Status */}
+                            <td className="py-3 px-4 text-center">
+                              <button
+                                onClick={() => handleToggleBreakingNews(item.id, item.is_active !== false)}
+                                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-mono font-bold uppercase transition-colors ${
+                                  item.is_active !== false
+                                    ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
+                                    : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
+                                }`}
+                                title="Bấm để bật / tắt hiển thị"
+                              >
+                                <span
+                                  className={`w-1.5 h-1.5 rounded-full ${
+                                    item.is_active !== false ? 'bg-emerald-600 animate-pulse' : 'bg-slate-400'
+                                  }`}
+                                ></span>
+                                <span>{item.is_active !== false ? 'Hiển thị' : 'Đang ẩn'}</span>
+                              </button>
+                            </td>
+
+                            {/* Actions */}
+                            <td className="py-3 px-4 text-right">
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  onClick={() => {
+                                    setEditingBreakingNews(item);
+                                    setIsBreakingNewsModalOpen(true);
+                                  }}
+                                  className="p-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 rounded transition-colors"
+                                  title="Chỉnh sửa bản tin"
+                                >
+                                  <Edit2 className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  onClick={() => setDeletingBreakingNewsId(item.id)}
+                                  className="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded transition-colors"
+                                  title="Xóa bản tin"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
         {activeTab === 'posts' && (
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-white p-4 border border-slate-200 rounded shadow-xs">
@@ -1911,6 +2287,49 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         onSave={handleSaveQuoteOption}
         option={editingQuoteOption}
       />
+
+      {/* 4.6. Breaking News Modal (Create/Edit) */}
+      <BreakingNewsModal
+        isOpen={isBreakingNewsModalOpen}
+        onClose={() => {
+          setIsBreakingNewsModalOpen(false);
+          setEditingBreakingNews(null);
+        }}
+        onSave={handleSaveBreakingNews}
+        newsItem={editingBreakingNews}
+        defaultOrder={breakingNews.length + 1}
+      />
+
+      {/* 4.7. Delete Breaking News Modal */}
+      {deletingBreakingNewsId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+          <div className="bg-white border border-red-200 p-6 max-w-md w-full space-y-4 shadow-xl text-slate-900 rounded">
+            <div className="flex items-center gap-3 text-red-600">
+              <AlertTriangle className="w-6 h-6" />
+              <h3 className="font-bold uppercase tracking-tight text-base font-['Plus_Jakarta_Sans']">
+                Xác nhận xóa bản tin nhanh
+              </h3>
+            </div>
+            <p className="text-xs text-slate-600 leading-relaxed font-sans">
+              Hành động này sẽ xóa vĩnh viễn bản tin này khỏi danh sách và ngừng chạy trên thanh thông báo trang chủ. Bạn có chắc chắn muốn tiếp tục?
+            </p>
+            <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-3">
+              <button
+                onClick={() => setDeletingBreakingNewsId(null)}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs font-mono uppercase"
+              >
+                Hủy bỏ
+              </button>
+              <button
+                onClick={handleConfirmDeleteBreakingNews}
+                className="px-5 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs font-mono uppercase tracking-wider rounded"
+              >
+                Xác nhận xóa
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 5. Delete Stat Modal */}
       {deletingStatId && (

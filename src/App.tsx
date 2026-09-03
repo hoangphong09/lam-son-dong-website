@@ -22,8 +22,8 @@ import { AdminLogin } from './components/admin/AdminLogin';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 
 import { FEATURED_SERVICES } from './data/mockData';
-import { ServiceItem, CaseStudy, ResearchArticle, NewsItem, Certification, HeroSlide, StatMetric } from './types';
-import { supabase, getPosts, getHeroSlides, getCaseStudies, getStats, Post } from './lib/supabase';
+import { ServiceItem, CaseStudy, ResearchArticle, NewsItem, Certification, HeroSlide, StatMetric, BreakingNewsItem } from './types';
+import { supabase, getPosts, getHeroSlides, getCaseStudies, getStats, getBreakingNews, Post } from './lib/supabase';
 import { X, Calendar, User } from 'lucide-react';
 
 export default function App() {
@@ -36,11 +36,12 @@ export default function App() {
     return saved ? JSON.parse(saved) : null;
   });
 
-  // Dynamic hero slides & posts & case studies & stats
+  // Dynamic hero slides & posts & case studies & stats & breaking news
   const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
   const [posts, setPosts] = useState<Post[]>([]);
   const [caseStudies, setCaseStudies] = useState<CaseStudy[]>([]);
   const [stats, setStats] = useState<StatMetric[]>([]);
+  const [breakingNews, setBreakingNews] = useState<BreakingNewsItem[]>([]);
 
   // Modal states
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
@@ -93,7 +94,7 @@ export default function App() {
     window.addEventListener('popstate', handleLocationCheck);
     window.addEventListener('hashchange', handleLocationCheck);
 
-    // Initial load of hero slides, posts, case studies, and stats
+    // Initial load of hero slides, posts, case studies, stats, and breaking news
     getHeroSlides().then((slides) => {
       if (slides && slides.length > 0) setHeroSlides(slides);
     });
@@ -105,6 +106,9 @@ export default function App() {
     });
     getStats().then((st) => {
       if (st && st.length > 0) setStats(st);
+    });
+    getBreakingNews().then((bn) => {
+      if (bn && bn.length > 0) setBreakingNews(bn);
     });
 
     return () => {
@@ -250,6 +254,7 @@ export default function App() {
         onBackToHome={closeAdminView}
         onHeroSlidesUpdated={(newSlides) => setHeroSlides(newSlides)}
         onStatsUpdated={(newStats) => setStats(newStats)}
+        onBreakingNewsUpdated={(newBreakingNews) => setBreakingNews(newBreakingNews)}
       />
     );
   }
@@ -273,7 +278,10 @@ export default function App() {
       />
 
       {/* 4. Breaking News Ticker */}
-      <BreakingNewsTicker onOpenNewsModal={handleOpenNewsModalFromTicker} />
+      <BreakingNewsTicker 
+        newsItems={breakingNews}
+        onOpenNewsModal={handleOpenNewsModalFromTicker} 
+      />
 
       {/* 5. Certifications & Achievements Carousel */}
       <CertificationsCarousel onSelectCert={handleSelectCert} />

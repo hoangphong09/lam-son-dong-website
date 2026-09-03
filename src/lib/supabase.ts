@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { HeroSlide, CaseStudy, QuoteRequest, StatMetric, QuoteOption } from '../types';
+import { HeroSlide, CaseStudy, QuoteRequest, StatMetric, QuoteOption, BreakingNewsItem } from '../types';
 import { HERO_SLIDES as DEFAULT_HERO_SLIDES, NEWS_EVENTS, CASE_STUDIES as DEFAULT_CASE_STUDIES } from '../data/mockData';
 
 // Priority: Vite environment variables, with fallback to provided project credentials
@@ -39,6 +39,43 @@ const CASE_STUDIES_STORAGE_KEY = 'lsd_cached_case_studies';
 const QUOTES_STORAGE_KEY = 'lsd_cached_quote_requests';
 const STATS_STORAGE_KEY = 'lsd_cached_stats';
 const QUOTE_OPTIONS_STORAGE_KEY = 'lsd_cached_quote_options';
+const BREAKING_NEWS_STORAGE_KEY = 'lsd_cached_breaking_news';
+
+// Initial Breaking News for fallback
+export const INITIAL_BREAKING_NEWS: BreakingNewsItem[] = [
+  {
+    id: 1,
+    title: 'Lâm Sơn Động Security vinh dự đón nhận Cúp Vàng "Thương hiệu Dịch vụ An ninh Uy tín Hàng đầu Việt Nam 2026"',
+    link: '',
+    is_active: true,
+    display_order: 1,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 2,
+    title: 'Triển khai thành công phương án bảo vệ an ninh trật tự Lễ hội Âm nhạc 20.000 khán giả',
+    link: '',
+    is_active: true,
+    display_order: 2,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 3,
+    title: 'Bộ Công An chứng nhận đạt chuẩn 100% về Điều kiện An ninh Trật tự & Nghiệp vụ PCCC cứu nạn',
+    link: '',
+    is_active: true,
+    display_order: 3,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 4,
+    title: 'Mở rộng hệ thống Trung tâm phản ứng nhanh cơ động tại các vùng kinh tế trọng điểm',
+    link: '',
+    is_active: true,
+    display_order: 4,
+    created_at: new Date().toISOString(),
+  },
+];
 
 // Initial stats for fallback
 export const INITIAL_STATS: StatMetric[] = [
@@ -1217,6 +1254,190 @@ export async function resetQuoteOptionsToDefault(): Promise<QuoteOption[]> {
 }
 
 /**
+ * ==============================================================================
+ * BREAKING NEWS (TIN NHANH 24/7)
+ * ==============================================================================
+ */
+
+/**
+ * Fetch all breaking news items ordered by display_order
+ */
+export async function getBreakingNews(): Promise<BreakingNewsItem[]> {
+  try {
+    const { data, error } = await supabase
+      .from('breaking_news')
+      .select('*')
+      .order('display_order', { ascending: true });
+
+    if (!error && data && data.length > 0) {
+      const normalized: BreakingNewsItem[] = data.map((d: any) => ({
+        id: d.id,
+        title: d.title,
+        link: d.link || '',
+        is_active: d.is_active !== false,
+        display_order: Number(d.display_order) || 0,
+        created_at: d.created_at || new Date().toISOString(),
+      }));
+      localStorage.setItem(BREAKING_NEWS_STORAGE_KEY, JSON.stringify(normalized));
+      return normalized;
+    }
+  } catch (err) {
+    console.warn('Breaking news fetch fallback to local:', err);
+  }
+
+  const saved = localStorage.getItem(BREAKING_NEWS_STORAGE_KEY);
+  if (saved) {
+    try {
+      return JSON.parse(saved);
+    } catch {
+      // ignore
+    }
+  }
+  return INITIAL_BREAKING_NEWS;
+}
+
+/**
+ * Create a new breaking news item
+ */
+export async function createBreakingNews(
+  item: Omit<BreakingNewsItem, 'id' | 'created_at'>
+): Promise<{ data: BreakingNewsItem | null; error: string | null }> {
+  const current = await getBreakingNews();
+  const nextId = current.length > 0 ? Math.max(...current.map((c) => Number(c.id) || 0)) + 1 : 1;
+  const newItem: BreakingNewsItem = {
+    ...item,
+    id: nextId,
+    created_at: new Date().toISOString(),
+  };
+
+  try {
+    const { data, error } = await supabase
+      .from('breaking_news')
+      .insert([
+        {
+          title: item.title,
+          link: item.link || '',
+          is_active: item.is_active,
+          display_order: item.display_order,
+        },
+      ])
+      .select()
+      .single();
+
+    if (!error && data) {
+      const savedItem: BreakingNewsItem = {
+        id: data.id,
+        title: data.title,
+        link: data.link || '',
+        is_active: data.is_active !== false,
+        display_order: Number(data.display_order) || 0,
+        created_at: data.created_at,
+      };
+      const updated = [...current, savedItem];
+      localStorage.setItem(BREAKING_NEWS_STORAGE_KEY, JSON.stringify(updated));
+      return { data: savedItem, error: null };
+    }
+  } catch (err: any) {
+    console.warn('Supabase createBreakingNews fallback:', err);
+  }
+
+  // Fallback to local storage
+  const updated = [...current, newItem];
+  localStorage.setItem(BREAKING_NEWS_STORAGE_KEY, JSON.stringify(updated));
+  return { data: newItem, error: null };
+}
+
+/**
+ * Update an existing breaking news item
+ */
+export async function updateBreakingNews(
+  id: string | number,
+  updates: Partial<BreakingNewsItem>
+): Promise<{ data: BreakingNewsItem | null; error: string | null }> {
+  try {
+    const { data, error } = await supabase
+      .from('breaking_news')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (!error && data) {
+      const updatedItem: BreakingNewsItem = {
+        id: data.id,
+        title: data.title,
+        link: data.link || '',
+        is_active: data.is_active !== false,
+        display_order: Number(data.display_order) || 0,
+        created_at: data.created_at,
+      };
+      const current = await getBreakingNews();
+      const updatedList = current.map((item) => (String(item.id) === String(id) ? updatedItem : item));
+      localStorage.setItem(BREAKING_NEWS_STORAGE_KEY, JSON.stringify(updatedList));
+      return { data: updatedItem, error: null };
+    }
+  } catch (err: any) {
+    console.warn('Supabase updateBreakingNews fallback:', err);
+  }
+
+  const current = await getBreakingNews();
+  let updatedItem: BreakingNewsItem | null = null;
+  const updatedList = current.map((item) => {
+    if (String(item.id) === String(id)) {
+      updatedItem = { ...item, ...updates };
+      return updatedItem;
+    }
+    return item;
+  });
+  localStorage.setItem(BREAKING_NEWS_STORAGE_KEY, JSON.stringify(updatedList));
+  return { data: updatedItem, error: null };
+}
+
+/**
+ * Delete a breaking news item
+ */
+export async function deleteBreakingNews(
+  id: string | number
+): Promise<{ success: boolean; error: string | null }> {
+  try {
+    const { error } = await supabase.from('breaking_news').delete().eq('id', id);
+    const current = await getBreakingNews();
+    const filtered = current.filter((item) => String(item.id) !== String(id));
+    localStorage.setItem(BREAKING_NEWS_STORAGE_KEY, JSON.stringify(filtered));
+    if (error) {
+      return { success: true, error: error.message };
+    }
+    return { success: true, error: null };
+  } catch (err: any) {
+    const current = await getBreakingNews();
+    const filtered = current.filter((item) => String(item.id) !== String(id));
+    localStorage.setItem(BREAKING_NEWS_STORAGE_KEY, JSON.stringify(filtered));
+    return { success: true, error: err.message };
+  }
+}
+
+/**
+ * Toggle active status of a breaking news item
+ */
+export async function toggleBreakingNewsActive(
+  id: string | number,
+  is_active: boolean
+): Promise<{ success: boolean; error: string | null }> {
+  return updateBreakingNews(id, { is_active }).then((res) => ({
+    success: !!res.data,
+    error: res.error,
+  }));
+}
+
+/**
+ * Reset breaking news to initial defaults
+ */
+export async function resetBreakingNewsToDefault(): Promise<BreakingNewsItem[]> {
+  localStorage.setItem(BREAKING_NEWS_STORAGE_KEY, JSON.stringify(INITIAL_BREAKING_NEWS));
+  return INITIAL_BREAKING_NEWS;
+}
+
+/**
  * Recommended SQL snippet for user's Supabase dashboard
  */
 export const SUPABASE_SETUP_SQL = `-- ==============================================================================
@@ -1544,6 +1765,37 @@ VALUES
   ('service_type', 'Bodycam Giám sát Ca Đêm 4K', 'addon_bodycam', 800000, 'Trang bị camera ghi hình sắc nét góc rộng có đèn hồng ngoại ban đêm', true, 3),
   ('service_type', 'Chó nghiệp vụ K9 tuần tra hàng rào', 'addon_k9', 3500000, 'K9 huấn luyện đặc biệt răn đe chống đột nhập khuôn viên rộng', true, 4)
 ON CONFLICT DO NOTHING;
+
+-- 7. BẢNG TIN NHANH CẢNH BÁO & THÔNG BÁO (BREAKING_NEWS)
+CREATE TABLE IF NOT EXISTS public.breaking_news (
+  id BIGSERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  link TEXT DEFAULT '',
+  is_active BOOLEAN DEFAULT true,
+  display_order INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.breaking_news ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Cho phép xem tin nhanh công khai" ON public.breaking_news;
+DROP POLICY IF EXISTS "Admin toàn quyền quản lý tin nhanh" ON public.breaking_news;
+
+CREATE POLICY "Cho phép xem tin nhanh công khai" ON public.breaking_news
+  FOR SELECT USING (true);
+
+CREATE POLICY "Admin toàn quyền quản lý tin nhanh" ON public.breaking_news
+  FOR ALL
+  USING (public.is_admin() OR auth.role() = 'authenticated')
+  WITH CHECK (public.is_admin() OR auth.role() = 'authenticated');
+
+-- Dữ liệu mẫu ban đầu cho breaking_news
+INSERT INTO public.breaking_news (id, title, link, is_active, display_order)
+VALUES
+  (1, 'Lâm Sơn Động Security vinh dự đón nhận Cúp Vàng "Thương hiệu Dịch vụ An ninh Uy tín Hàng đầu Việt Nam 2026"', '', true, 1),
+  (2, 'Triển khai thành công phương án bảo vệ an ninh trật tự Lễ hội Âm nhạc 20.000 khán giả', '', true, 2),
+  (3, 'Bộ Công An chứng nhận đạt chuẩn 100% về Điều kiện An ninh Trật tự & Nghiệp vụ PCCC cứu nạn', '', true, 3),
+  (4, 'Mở rộng hệ thống Trung tâm phản ứng nhanh cơ động tại các vùng kinh tế trọng điểm', '', true, 4)
+ON CONFLICT (id) DO NOTHING;
 
 -- Cấp quyền bảng cho vai trò authenticated và anon
 GRANT USAGE ON SCHEMA public TO anon, authenticated;

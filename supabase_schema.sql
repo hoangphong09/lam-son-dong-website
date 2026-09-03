@@ -330,6 +330,37 @@ VALUES
   ('service_type', 'Chó nghiệp vụ K9 tuần tra hàng rào', 'addon_k9', 3500000, 'K9 huấn luyện đặc biệt răn đe chống đột nhập khuôn viên rộng', true, 4)
 ON CONFLICT DO NOTHING;
 
+-- 7. BẢNG TIN NHANH CẢNH BÁO & THÔNG BÁO (BREAKING_NEWS)
+CREATE TABLE IF NOT EXISTS public.breaking_news (
+  id BIGSERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  link TEXT DEFAULT '',
+  is_active BOOLEAN DEFAULT true,
+  display_order INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.breaking_news ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Cho phép xem tin nhanh công khai" ON public.breaking_news;
+DROP POLICY IF EXISTS "Admin toàn quyền quản lý tin nhanh" ON public.breaking_news;
+
+CREATE POLICY "Cho phép xem tin nhanh công khai" ON public.breaking_news
+  FOR SELECT USING (true);
+
+CREATE POLICY "Admin toàn quyền quản lý tin nhanh" ON public.breaking_news
+  FOR ALL
+  USING (public.is_admin() OR auth.role() = 'authenticated')
+  WITH CHECK (public.is_admin() OR auth.role() = 'authenticated');
+
+-- Dữ liệu mẫu ban đầu cho breaking_news
+INSERT INTO public.breaking_news (id, title, link, is_active, display_order)
+VALUES
+  (1, 'Lâm Sơn Động Security vinh dự đón nhận Cúp Vàng "Thương hiệu Dịch vụ An ninh Uy tín Hàng đầu Việt Nam 2026"', '', true, 1),
+  (2, 'Triển khai thành công phương án bảo vệ an ninh trật tự Lễ hội Âm nhạc 20.000 khán giả', '', true, 2),
+  (3, 'Bộ Công An chứng nhận đạt chuẩn 100% về Điều kiện An ninh Trật tự & Nghiệp vụ PCCC cứu nạn', '', true, 3),
+  (4, 'Mở rộng hệ thống Trung tâm phản ứng nhanh cơ động tại các vùng kinh tế trọng điểm', '', true, 4)
+ON CONFLICT (id) DO NOTHING;
+
 -- Cấp quyền bảng cho vai trò authenticated và anon
 GRANT USAGE ON SCHEMA public TO anon, authenticated;
 GRANT ALL ON ALL TABLES IN SCHEMA public TO authenticated;

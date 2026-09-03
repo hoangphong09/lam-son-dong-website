@@ -177,3 +177,12 @@ export interface QuoteOption {
   display_order: number;
   created_at?: string;
 }
+
+export interface BreakingNewsItem {
+  id: string | number;
+  title: string;
+  link?: string;
+  is_active: boolean;
+  display_order: number;
+  created_at?: string;
+}
