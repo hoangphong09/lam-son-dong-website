@@ -231,6 +231,15 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               Tin Tức
             </button>
+
+            {/* Contact / Consultation */}
+            <button
+              id="nav-link-contact"
+              onClick={() => handleNavClick('consultation-section')}
+              className="hover:text-[#c5a059] transition-colors py-1 border-b-2 border-transparent hover:border-[#c5a059]"
+            >
+              Liên Hệ
+            </button>
           </nav>
 
           {/* RIGHT: Action Tools & Controls */}
@@ -364,6 +373,16 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="w-full flex items-center justify-between px-3 py-2.5 text-xs text-gray-200 hover:text-white hover:bg-white/5 uppercase font-mono tracking-wider border-b border-white/5"
             >
               <span>Bản Tin & Sự Kiện</span>
+              <span className="text-[#c5a059] text-sm">›</span>
+            </button>
+
+            {/* Contact / Consultation */}
+            <button
+              id="mobile-nav-link-contact"
+              onClick={() => handleNavClick('consultation-section')}
+              className="w-full flex items-center justify-between px-3 py-2.5 text-xs text-gray-200 hover:text-white hover:bg-white/5 uppercase font-mono tracking-wider border-b border-white/5"
+            >
+              <span>Liên Hệ</span>
               <span className="text-[#c5a059] text-sm">›</span>
             </button>
           </div>

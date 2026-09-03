@@ -8,16 +8,18 @@ import {
   Send, 
   ChevronRight, 
   ShieldCheck, 
-  Lock
+  Lock,
+  KeyRound
 } from 'lucide-react';
 import { FOOTER_DATA } from '../data/mockData';
 
 interface FooterProps {
   onScrollToSection: (sectionId: string) => void;
   onOpenQuote: () => void;
+  onOpenAdmin?: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onScrollToSection, onOpenQuote }) => {
+export const Footer: React.FC<FooterProps> = ({ onScrollToSection, onOpenQuote, onOpenAdmin }) => {
   const [emailSub, setEmailSub] = useState('');
   const [subSuccess, setSubSuccess] = useState(false);
 
@@ -197,6 +199,20 @@ export const Footer: React.FC<FooterProps> = ({ onScrollToSection, onOpenQuote }
               <Lock className="w-3.5 h-3.5 text-[#c5a059]" />
               C06 BỘ CÔNG AN
             </span>
+            {onOpenAdmin && (
+              <>
+                <span>•</span>
+                <button
+                  id="footer-admin-link"
+                  onClick={onOpenAdmin}
+                  className="flex items-center gap-1 text-[11px] font-mono text-gray-400 hover:text-[#c5a059] transition-colors"
+                  title="Cổng Quản trị viên Lâm Sơn Động"
+                >
+                  <KeyRound className="w-3 h-3 text-[#c5a059]" />
+                  <span>Admin</span>
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

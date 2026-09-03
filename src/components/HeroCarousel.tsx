@@ -8,37 +8,41 @@ import {
   Award
 } from 'lucide-react';
 import { HERO_SLIDES } from '../data/mockData';
+import { HeroSlide } from '../types';
 
 interface HeroCarouselProps {
   onOpenQuote: () => void;
   onSelectService: (serviceId: string) => void;
   onScrollToRisk: () => void;
+  slides?: HeroSlide[];
 }
 
 export const HeroCarousel: React.FC<HeroCarouselProps> = ({
   onOpenQuote,
   onSelectService,
-  onScrollToRisk
+  onScrollToRisk,
+  slides,
 }) => {
+  const activeSlides = slides && slides.length > 0 ? slides : HERO_SLIDES;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     if (isPaused) return;
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % HERO_SLIDES.length);
+      setCurrentIndex((prev) => (prev + 1) % activeSlides.length);
     }, 6500);
     return () => clearInterval(interval);
-  }, [isPaused]);
+  }, [isPaused, activeSlides.length]);
 
-  const currentSlide = HERO_SLIDES[currentIndex];
+  const currentSlide = activeSlides[currentIndex] || activeSlides[0];
 
   const handlePrev = () => {
-    setCurrentIndex((prev) => (prev === 0 ? HERO_SLIDES.length - 1 : prev - 1));
+    setCurrentIndex((prev) => (prev === 0 ? activeSlides.length - 1 : prev - 1));
   };
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % HERO_SLIDES.length);
+    setCurrentIndex((prev) => (prev + 1) % activeSlides.length);
   };
 
   return (
@@ -49,7 +53,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
       onMouseLeave={() => setIsPaused(false)}
     >
       {/* Background Slides with transition */}
-      {HERO_SLIDES.map((slide, index) => (
+      {activeSlides.map((slide, index) => (
         <div
           key={slide.id}
           className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
@@ -161,7 +165,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
         <div className="flex items-center justify-between mt-12 pt-6 border-t border-white/5">
           {/* Number Indicators */}
           <div className="flex items-center gap-4">
-            {HERO_SLIDES.map((slide, idx) => (
+            {activeSlides.map((slide, idx) => (
               <button
                 key={slide.id}
                 id={`hero-dot-${idx}`}

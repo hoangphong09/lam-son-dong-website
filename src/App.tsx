@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { HeroCarousel } from './components/HeroCarousel';
 import { BreakingNewsTicker } from './components/BreakingNewsTicker';
@@ -17,12 +17,28 @@ import { FloatingActions } from './components/FloatingActions';
 import { QuoteCalculatorModal } from './components/QuoteCalculatorModal';
 import { ServiceDetailModal } from './components/ServiceDetailModal';
 import { SearchModal } from './components/SearchModal';
+import { AdminLogin } from './components/admin/AdminLogin';
+import { AdminDashboard } from './components/admin/AdminDashboard';
 
 import { FEATURED_SERVICES } from './data/mockData';
-import { ServiceItem, CaseStudy, ResearchArticle, NewsItem, Certification } from './types';
+import { ServiceItem, CaseStudy, ResearchArticle, NewsItem, Certification, HeroSlide } from './types';
+import { supabase, getPosts, getHeroSlides, Post } from './lib/supabase';
 import { X, ShieldCheck, Calendar, BookOpen, User, CheckCircle2 } from 'lucide-react';
 
 export default function App() {
+  // Admin route & session states
+  const [isAdminView, setIsAdminView] = useState(() => {
+    return window.location.pathname === '/admin' || window.location.hash === '#admin';
+  });
+  const [adminUser, setAdminUser] = useState<any>(() => {
+    const saved = localStorage.getItem('lsd_admin_session');
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  // Dynamic hero slides & posts
+  const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
+
   // Modal states
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
@@ -41,6 +57,65 @@ export default function App() {
 
   // Form prefills
   const [auditDataForForm, setAuditDataForForm] = useState<any>(null);
+
+  useEffect(() => {
+    // Check initial auth session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setAdminUser(session.user);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setAdminUser(session.user);
+      }
+    });
+
+    // Listen to hash and popstate for /admin and #admin
+    const handleLocationCheck = () => {
+      const isAdm = window.location.pathname === '/admin' || window.location.hash === '#admin';
+      setIsAdminView(isAdm);
+    };
+
+    window.addEventListener('popstate', handleLocationCheck);
+    window.addEventListener('hashchange', handleLocationCheck);
+
+    // Initial load of hero slides and posts from Supabase / cache
+    getHeroSlides().then((slides) => {
+      if (slides && slides.length > 0) setHeroSlides(slides);
+    });
+    getPosts().then(({ data }) => {
+      if (data && data.length > 0) setPosts(data);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+      window.removeEventListener('popstate', handleLocationCheck);
+      window.removeEventListener('hashchange', handleLocationCheck);
+    };
+  }, []);
+
+  const openAdminView = () => {
+    window.location.hash = '#admin';
+    setIsAdminView(true);
+  };
+
+  const closeAdminView = () => {
+    if (window.location.hash === '#admin') {
+      window.location.hash = '';
+    }
+    if (window.location.pathname === '/admin') {
+      window.history.pushState(null, '', '/');
+    }
+    setIsAdminView(false);
+  };
+
+  const handleAdminLogout = async () => {
+    await supabase.auth.signOut();
+    localStorage.removeItem('lsd_admin_session');
+    setAdminUser(null);
+  };
 
   const scrollToSection = (sectionId: string) => {
     const el = document.getElementById(sectionId);
@@ -111,7 +186,7 @@ export default function App() {
       title: 'Bản Tin Cảnh Báo An Ninh Khẩn Cấp',
       category: 'Tin Nóng 24/7',
       date: new Date().toLocaleDateString('vi-VN'),
-      content: `${text}\n\nKhuyến cáo từ Bộ Phận Nghiệp Vụ Lâm Sơn Động: Quý doanh nghiệp cần tăng cường kiểm tra hệ thống camera giám sát, kiểm soát chặt chẽ sổ giao ca và phối hợp diễn tập phương án PCCC khẩn cấp. Hotline hỗ trợ 24/7: 0908.113.888.`
+      content: `${text}\n\nKhuyến cáo từ Bộ Phận Nghiệp Vụ Lâm Sơn Động: Quý doanh nghiệp cần tăng cường kiểm tra hệ thống camera giám sát, kiểm soát chặt chẽ sổ giao ca và phối hợp diễn tập phương án PCCC khẩn cấp. Hotline hỗ trợ 24/7: (024) 38777012.`
     });
   };
 
@@ -129,6 +204,25 @@ export default function App() {
     });
   };
 
+  if (isAdminView) {
+    if (!adminUser) {
+      return (
+        <AdminLogin
+          onLoginSuccess={(user) => setAdminUser(user)}
+          onBackToHome={closeAdminView}
+        />
+      );
+    }
+    return (
+      <AdminDashboard
+        user={adminUser}
+        onLogout={handleAdminLogout}
+        onBackToHome={closeAdminView}
+        onHeroSlidesUpdated={(newSlides) => setHeroSlides(newSlides)}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-950 font-['Be_Vietnam_Pro'] text-slate-100 selection:bg-red-600 selection:text-white antialiased">
       {/* 1. Main Navigation Bar */}
@@ -144,6 +238,7 @@ export default function App() {
         onOpenQuote={() => setIsQuoteModalOpen(true)}
         onSelectService={handleSelectServiceById}
         onScrollToRisk={() => scrollToSection('risk-assessment-section')}
+        slides={heroSlides}
       />
 
       {/* 4. Breaking News Ticker */}
@@ -174,7 +269,7 @@ export default function App() {
       <SecurityLibrarySection onSelectArticle={handleSelectArticle} />
 
       {/* 12. Events & News */}
-      <EventsAndNews onSelectNews={handleSelectNews} />
+      <EventsAndNews onSelectNews={handleSelectNews} posts={posts} />
 
       {/* 13. Strategic Partners & Clients */}
       <PartnersAndClients />
@@ -186,6 +281,7 @@ export default function App() {
       <Footer 
         onScrollToSection={scrollToSection}
         onOpenQuote={() => setIsQuoteModalOpen(true)}
+        onOpenAdmin={openAdminView}
       />
 
       {/* Floating Call & Quote Triggers */}

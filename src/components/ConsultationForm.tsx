@@ -38,7 +38,7 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({ initialData 
   };
 
   return (
-    <section id="consultation-section" className="bg-[#0d0d0f] text-white py-16 sm:py-24 border-b border-white/5 relative overflow-hidden">
+    <section id="consultation-section" className="bg-[#0d0d0f] text-white py-16 sm:py-24 border-b border-white/5 relative overflow-hidden scroll-mt-16 sm:scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-[#111114] border border-white/10 p-6 sm:p-10 lg:p-12 relative overflow-hidden">
           {/* Background Watermark Shield Graphic */}

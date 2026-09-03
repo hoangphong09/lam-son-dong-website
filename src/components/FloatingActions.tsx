@@ -27,16 +27,6 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({ onOpenQuote })
   return (
     <div id="floating-actions-container" className="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-3 select-none">
       {/* Quick Quote Calculator button */}
-      <button
-        id="float-calc-btn"
-        onClick={onOpenQuote}
-        title="Tính chi phí bảo vệ"
-        className="flex items-center gap-2 bg-[#c5a059] hover:brightness-110 text-black font-black text-xs uppercase tracking-wider px-4 py-2.5 shadow-2xl border border-[#c5a059]/40 hover:scale-105 active:scale-95 transition-all group"
-      >
-        <Calculator className="w-4 h-4 text-black" />
-        <span className="hidden sm:inline">Tính Chi Phí</span>
-      </button>
-
       {/* Hotline 24/7 Call Pulse Button */}
       <a
         id="float-hotline-btn"

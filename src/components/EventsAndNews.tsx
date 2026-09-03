@@ -2,16 +2,30 @@ import React, { useState } from 'react';
 import { Calendar, ArrowRight } from 'lucide-react';
 import { NEWS_EVENTS } from '../data/mockData';
 import { NewsItem } from '../types';
+import { Post } from '../lib/supabase';
 
 interface EventsAndNewsProps {
   onSelectNews: (item: NewsItem) => void;
+  posts?: Post[];
 }
 
-export const EventsAndNews: React.FC<EventsAndNewsProps> = ({ onSelectNews }) => {
+export const EventsAndNews: React.FC<EventsAndNewsProps> = ({ onSelectNews, posts }) => {
   const [activeTab, setActiveTab] = useState<'events' | 'news'>('events');
 
-  const featuredNews = NEWS_EVENTS[0];
-  const sideNews = NEWS_EVENTS.slice(1);
+  const newsItems: NewsItem[] = posts && posts.length > 0
+    ? posts.filter(p => p.published !== false).map(p => ({
+        id: String(p.id),
+        title: p.title,
+        date: p.created_at ? new Date(p.created_at).toLocaleDateString('vi-VN') : '2026',
+        category: p.category || 'Tin tức',
+        summary: p.excerpt || p.content.slice(0, 150) + '...',
+        imageUrl: p.cover_image || 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=800&q=80',
+        isFeatured: true,
+      }))
+    : NEWS_EVENTS;
+
+  const featuredNews = newsItems[0] || NEWS_EVENTS[0];
+  const sideNews = newsItems.length > 1 ? newsItems.slice(1, 4) : NEWS_EVENTS.slice(1);
 
   return (
     <section id="news-section" className="bg-[#0d0d0f] text-white py-16 sm:py-24 border-b border-white/5">
