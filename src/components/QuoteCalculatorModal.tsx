@@ -271,7 +271,7 @@ export const QuoteCalculatorModal: React.FC<QuoteCalculatorModalProps> = ({ isOp
                     <span className="text-xs sm:text-sm text-slate-600 font-normal">/ Tháng</span>
                   </div>
                   <span className="text-xs text-slate-500 font-normal block mt-1">
-                    (Đã bao gồm công cụ hỗ trợ, đồng phục chuẩn & bảo hiểm trách nhiệm 20 Tỷ)
+                    (Đã bao gồm công cụ hỗ trợ, đồng phục chuẩn & cam kết an ninh toàn diện)
                   </span>
                 </div>
                 <div className="text-left sm:text-right text-xs sm:text-sm text-slate-700 font-mono shrink-0 space-y-1">

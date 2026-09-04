@@ -32,6 +32,7 @@ import {
   resetBreakingNewsToDefault,
   SUPABASE_SETUP_SQL,
 } from '../../lib/supabase';
+import { STORAGE_SETUP_SQL } from '../../lib/storage';
 import { HeroSlide, CaseStudy, QuoteRequest, StatMetric, QuoteOption, QuoteOptionCategory, BreakingNewsItem } from '../../types';
 import { PostModal } from './PostModal';
 import { HeroSlideModal } from './HeroSlideModal';
@@ -198,6 +199,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   // Database Tab state
   const [copiedSql, setCopiedSql] = useState(false);
+  const [copiedStorageSql, setCopiedStorageSql] = useState(false);
 
   // Listen to hash changes
   useEffect(() => {
@@ -562,6 +564,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     navigator.clipboard.writeText(SUPABASE_SETUP_SQL);
     setCopiedSql(true);
     setTimeout(() => setCopiedSql(false), 3000);
+  };
+
+  const handleCopyStorageSql = () => {
+    navigator.clipboard.writeText(STORAGE_SETUP_SQL);
+    setCopiedStorageSql(true);
+    setTimeout(() => setCopiedStorageSql(false), 3000);
   };
 
   // Filter Stats
@@ -2197,11 +2205,49 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         {/* ========================================================= */}
         {activeTab === 'database' && (
           <div className="space-y-6">
-            <div className="bg-white border border-slate-200 rounded shadow-xs p-6 space-y-4">
-              <div className="flex items-center justify-between">
+            {/* Storage Bucket Setup Card */}
+            <div className="bg-white border border-slate-200 rounded-xl shadow-xs p-6 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 border border-amber-200 rounded-md text-amber-900 text-xs font-mono font-bold mb-2">
+                    <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                    Supabase Storage Bucket
+                  </div>
+                  <h2 className="text-base font-bold uppercase tracking-tight text-slate-900 font-['Plus_Jakarta_Sans']">
+                    Cấu Hình Bucket Ảnh Bài Viết (<code className="text-amber-800 font-mono lowercase">post-images</code>)
+                  </h2>
+                  <p className="text-xs text-slate-500 font-light mt-0.5">
+                    Hỗ trợ tải tệp trực tiếp từ máy tính lên Cloud Storage thay vì nhập URL thủ công (Giới hạn 5MB/ảnh, Public Read + Authenticated CRUD RLS).
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleCopyStorageSql}
+                  className="px-4 py-2 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-lg font-mono text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+                >
+                  {copiedStorageSql ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                  <span>{copiedStorageSql ? 'Đã sao chép Storage SQL!' : 'Sao chép SQL Storage'}</span>
+                </button>
+              </div>
+
+              <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-600 space-y-1.5 font-mono">
+                <p><strong>Bước 1:</strong> Mở <a href="https://supabase.com/dashboard" target="_blank" rel="noreferrer" className="text-amber-700 underline font-bold">Supabase Dashboard</a> -&gt; Chọn project <strong>reuogjwrzfavdlidwujk</strong>.</p>
+                <p><strong>Bước 2:</strong> Vào menu <strong>SQL Editor</strong> -&gt; Chọn <strong>New Query</strong>.</p>
+                <p><strong>Bước 3:</strong> Dán đoạn mã dưới đây và bấm <strong>RUN</strong> để tạo bucket <code className="text-amber-700 font-bold">post-images</code> và thiết lập 4 chính sách bảo mật RLS.</p>
+              </div>
+
+              <pre className="p-4 bg-slate-900 text-amber-400 font-mono text-xs rounded-lg overflow-x-auto max-h-64">
+                <code>{STORAGE_SETUP_SQL}</code>
+              </pre>
+            </div>
+
+            {/* Database Tables Setup Card */}
+            <div className="bg-white border border-slate-200 rounded-xl shadow-xs p-6 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <h2 className="text-base font-bold uppercase tracking-tight text-slate-900 font-['Plus_Jakarta_Sans']">
-                    Cơ Sở Dữ Liệu Supabase Cloud
+                    Cơ Sở Dữ Liệu Supabase Cloud Toàn Diện
                   </h2>
                   <p className="text-xs text-slate-500 font-light mt-0.5">
                     Dự án kết nối: <span className="font-mono text-amber-800 font-bold">reuogjwrzfavdlidwujk.supabase.co</span>
@@ -2209,19 +2255,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </div>
 
                 <button
+                  type="button"
                   onClick={handleCopySql}
-                  className="px-4 py-2 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded font-mono text-xs font-bold flex items-center gap-1.5 transition-colors"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 rounded-lg font-mono text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
                 >
                   {copiedSql ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
-                  <span>{copiedSql ? 'Đã sao chép SQL!' : 'Sao chép mã SQL cài đặt'}</span>
+                  <span>{copiedSql ? 'Đã sao chép SQL!' : 'Sao chép toàn bộ SQL'}</span>
                 </button>
               </div>
 
               <p className="text-xs text-slate-600 leading-relaxed">
-                Để kích hoạt đầy đủ lưu trữ bảng <strong>stats</strong>, <strong>quote_requests</strong>, <strong>posts</strong>, <strong>hero_slides</strong> và <strong>case_studies</strong> trực tiếp trên Supabase Dashboard, vui lòng mở SQL Editor và chạy đoạn mã dưới đây:
+                Bao gồm bảng <strong>stats</strong>, <strong>quote_requests</strong>, <strong>posts</strong>, <strong>hero_slides</strong>, <strong>case_studies</strong>, <strong>quote_options</strong>, <strong>breaking_news</strong> và bucket <strong>post-images</strong>:
               </p>
 
-              <pre className="p-4 bg-slate-900 text-amber-400 font-mono text-xs rounded overflow-x-auto max-h-96">
+              <pre className="p-4 bg-slate-900 text-amber-400 font-mono text-xs rounded-lg overflow-x-auto max-h-80">
                 <code>{SUPABASE_SETUP_SQL}</code>
               </pre>
             </div>

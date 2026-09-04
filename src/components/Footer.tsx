@@ -38,10 +38,7 @@ export const Footer: React.FC<FooterProps> = ({ onScrollToSection, onOpenQuote, 
       <div className="border-b border-slate-200 py-10 px-4 sm:px-6 lg:px-8 bg-slate-50">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-6">
-            <span className="text-[10px] font-bold text-amber-900 uppercase tracking-[0.3em] bg-amber-100 border border-amber-300 px-3.5 py-1 rounded">
-              BẢN TIN CẢNH BÁO AN NINH
-            </span>
-            <h3 className="text-xl sm:text-2xl font-black text-slate-900 uppercase tracking-tight mt-3 font-['Plus_Jakarta_Sans']">
+            <h3 className="text-xl sm:text-2xl font-black text-slate-900 uppercase tracking-tight font-['Plus_Jakarta_Sans']">
               Đăng Ký Nhận Bản Tin Cảnh Báo Rủi Ro Doanh Nghiệp
             </h3>
             <p className="text-xs text-slate-600 font-normal mt-1">
@@ -176,8 +173,8 @@ export const Footer: React.FC<FooterProps> = ({ onScrollToSection, onOpenQuote, 
               </div>
 
               <div className="p-2.5 bg-slate-50 border border-slate-200 rounded">
-                <span className="text-[9px] text-amber-800 block uppercase font-mono font-bold">Bảo hiểm trách nhiệm:</span>
-                <span className="text-emerald-700 font-mono font-bold">Bảo Việt 20.000.000.000 VNĐ</span>
+                <span className="text-[9px] text-amber-800 block uppercase font-mono font-bold">Tiêu chuẩn nghiệp vụ:</span>
+                <span className="text-emerald-700 font-mono font-bold">ISO 9001:2015 & C06 BCA</span>
               </div>
             </div>
           </div>

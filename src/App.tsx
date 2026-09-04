@@ -185,7 +185,7 @@ export default function App() {
       category: `Thư Viện Nghiệp Vụ / ${art.category}`,
       date: art.date,
       author: art.author,
-      content: `${art.summary}\n\nTÀI LIỆU HƯỚNG DẪN CHI TIẾT:\n1. Phân loại các nhóm nguy cơ an ninh mục tiêu doanh nghiệp.\n2. Thiết lập quy trình kiểm soát người & phương tiện chuẩn ISO 9001:2015.\n3. Tiêu chuẩn trang thiết bị PCCC và diễn tập sơ tán khẩn cấp định kỳ.\n4. Trách nhiệm bồi thường và chính sách bảo hiểm tài sản 20 Tỷ VNĐ.`,
+      content: `${art.summary}\n\nTÀI LIỆU HƯỚNG DẪN CHI TIẾT:\n1. Phân loại các nhóm nguy cơ an ninh mục tiêu doanh nghiệp.\n2. Thiết lập quy trình kiểm soát người & phương tiện chuẩn ISO 9001:2015.\n3. Tiêu chuẩn trang thiết bị PCCC và diễn tập sơ tán khẩn cấp định kỳ.\n4. Trách nhiệm bồi thường và chính sách cam kết an toàn tài sản.`,
       imageUrl: art.imageUrl
     });
   };
@@ -205,7 +205,7 @@ export default function App() {
       title: `${cert.title} (${cert.code})`,
       category: `Pháp Lý & Chứng Nhận Tiêu Chuẩn`,
       date: `Cấp bởi ${cert.organization}`,
-      content: `${cert.description}\n\nÝ NGHĨA PHÁP LÝ & CAM KẾT:\n- Chứng chỉ chứng nhận năng lực đáp ứng toàn bộ các tiêu chuẩn an ninh trật tự nghiêm ngặt nhất của cơ quan chức năng.\n- Bảo đảm quyền lợi hợp pháp và bảo hiểm bồi thường toàn diện cho khách hàng khi sử dụng dịch vụ của Lâm Sơn Động.`,
+      content: `${cert.description}\n\nÝ NGHĨA PHÁP LÝ & CAM KẾT:\n- Chứng chỉ chứng nhận năng lực đáp ứng toàn bộ các tiêu chuẩn an ninh trật tự nghiêm ngặt nhất của cơ quan chức năng.\n- Bảo đảm quyền lợi hợp pháp và cam kết bồi thường toàn diện cho khách hàng khi sử dụng dịch vụ của Lâm Sơn Động.`,
       bullets: [
         `Tổ chức cấp: ${cert.organization}`,
         `Mã số chứng nhận: ${cert.code}`,
@@ -376,12 +376,6 @@ export default function App() {
             )}
 
             <div className="p-6 sm:p-8 space-y-5 overflow-y-auto flex-1">
-              {infoModalData.category && (
-                <span className="text-[11px] sm:text-xs font-mono font-bold uppercase tracking-[0.25em] text-amber-900 bg-amber-100 border border-amber-300 px-3 py-1 rounded-md inline-block">
-                  {infoModalData.category}
-                </span>
-              )}
-
               <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 leading-snug uppercase tracking-tight font-['Plus_Jakarta_Sans']">
                 {infoModalData.title}
               </h3>

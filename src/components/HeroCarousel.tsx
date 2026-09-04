@@ -3,7 +3,6 @@ import {
   ChevronLeft, 
   ChevronRight, 
   ArrowRight, 
-  ShieldCheck,
   Award,
   Radio,
   Clock,
@@ -92,22 +91,6 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
           
           {/* Left Column Content (with uncrowded typography & clean vertical rhythm) */}
           <div className="lg:col-span-7 xl:col-span-8 flex flex-col justify-center">
-            
-            {/* Tag Pill with Badge depth and breathing room */}
-            <div className="flex flex-wrap items-center gap-3 mb-6">
-              <span className="inline-flex items-center gap-2 bg-white/95 backdrop-blur-md border border-amber-500/80 text-amber-950 text-xs font-mono font-black uppercase tracking-[0.2em] px-4 py-2 rounded-lg shadow-sm ring-1 ring-amber-400/40">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#c5a059] animate-pulse"></span>
-                {currentSlide.tag}
-              </span>
-
-              {currentSlide.category && (
-                <span className="hidden sm:inline-flex items-center gap-1.5 bg-slate-900/90 backdrop-blur-md border border-slate-700 text-white text-xs font-mono font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-lg shadow-xs">
-                  <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-                  {currentSlide.category}
-                </span>
-              )}
-            </div>
-
             {/* Slide Title: Bold, crisp, relaxed line-height without collision */}
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[46px] xl:text-[50px] font-black text-slate-950 leading-[1.22] tracking-tight uppercase font-['Plus_Jakarta_Sans'] drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)] mb-6">
               {currentSlide.title}
@@ -133,7 +116,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
         </div>
 
         {/* Slide Controls & Numbers Bar with generous vertical rhythm */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mt-16 sm:mt-20 pt-6 border-t border-slate-300/60">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mt-16 sm:mt-20 pt-6">
           
           {/* Number & Topic Indicators with Enhanced Contrast */}
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">

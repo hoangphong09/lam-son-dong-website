@@ -110,10 +110,7 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({ initialData 
             {/* Left Info & Guarantees */}
             <div className="lg:col-span-5 space-y-6">
               <div>
-                <span className="text-[10px] font-mono font-bold text-amber-900 uppercase tracking-[0.3em] bg-amber-100 border border-amber-300 px-3.5 py-1 rounded">
-                  TƯ VẤN & KHẢO SÁT THỰC ĐỊA
-                </span>
-                <h2 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight mt-4 font-['Plus_Jakarta_Sans']">
+                <h2 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight font-['Plus_Jakarta_Sans']">
                   Yêu Cầu Khảo Sát & Báo Giá Miễn Phí
                 </h2>
                 <p className="mt-3 text-xs sm:text-sm text-slate-600 font-normal leading-relaxed">
@@ -138,7 +135,7 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({ initialData 
                     <ShieldCheck className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wide">Bảo Hiểm Trách Nhiệm 20 Tỷ VNĐ</h4>
+                    <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wide">Cam Kết Trách Nhiệm Toàn Diện</h4>
                     <p className="text-[11px] text-slate-600 font-normal mt-0.5">Cam kết bồi thường 100% tài sản theo hợp đồng bảo vệ</p>
                   </div>
                 </div>
@@ -178,9 +175,6 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({ initialData 
                     <CheckCircle2 className="w-8 h-8" />
                   </div>
                   <div className="space-y-2">
-                    <span className="text-[10px] font-mono font-bold text-emerald-800 uppercase tracking-widest bg-emerald-100 px-3 py-1 rounded">
-                      GỬI YÊU CẦU THÀNH CÔNG
-                    </span>
                     <h3 className="text-xl font-bold uppercase tracking-tight text-slate-900 font-['Plus_Jakarta_Sans']">
                       Cảm Ơn Quý Khách Đã Tin Tưởng Lâm Sơn Động!
                     </h3>

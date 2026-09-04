@@ -13,10 +13,7 @@ export const SecurityLibrarySection: React.FC<SecurityLibrarySectionProps> = ({ 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <span className="text-[10px] font-mono font-bold text-amber-900 uppercase tracking-[0.3em] bg-amber-100 border border-amber-300 px-3.5 py-1 rounded">
-            TRI THỨC & NGHIỆP VỤ AN NINH
-          </span>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 uppercase tracking-tight mt-4 font-['Plus_Jakarta_Sans']">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 uppercase tracking-tight font-['Plus_Jakarta_Sans']">
             Thư Viện - Nghiên Cứu Chuyên Sâu & Cẩm Nang PCCC
           </h2>
           <p className="mt-3 text-xs sm:text-sm text-slate-600 font-normal leading-relaxed">
@@ -76,17 +73,6 @@ export const SecurityLibrarySection: React.FC<SecurityLibrarySectionProps> = ({ 
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Bottom Explore Button */}
-        <div className="mt-12 text-center">
-          <button
-            onClick={() => onSelectArticle(RESEARCH_ARTICLES[0])}
-            className="inline-flex items-center gap-2 px-6 py-3 border border-slate-300 hover:border-amber-600 text-slate-700 hover:text-amber-800 text-xs font-bold uppercase tracking-widest transition-all bg-slate-50 hover:bg-white rounded shadow-xs"
-          >
-            <BookOpen className="w-4 h-4 text-amber-700" />
-            <span>Khám phá toàn bộ Thư viện Nghiệp vụ & Cẩm nang</span>
-          </button>
         </div>
       </div>
     </section>

@@ -21,10 +21,7 @@ export const CaseStudiesSection: React.FC<CaseStudiesSectionProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-14">
-          <span className="text-[11px] font-bold text-amber-800 uppercase tracking-[0.25em] font-mono">
-            HIỆU QUẢ THỰC TẾ
-          </span>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 uppercase tracking-tight mt-2 font-['Plus_Jakarta_Sans']">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 uppercase tracking-tight font-['Plus_Jakarta_Sans']">
             Giá Trị Từ Sự Đồng Hành
           </h2>
           <p className="mt-3 text-xs sm:text-sm text-slate-600 font-normal leading-relaxed">

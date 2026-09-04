@@ -78,10 +78,10 @@ export const CERTIFICATIONS: Certification[] = [
   },
   {
     id: 'cert-4',
-    title: 'Bảo Hiểm Trách Nhiệm Nghề Nghiệp 20 Tỷ VNĐ',
-    code: 'BẢO HIỂM RỦI RO',
-    description: 'Cam kết bồi thường 100% giá trị tổn thất tài sản của khách hàng nếu xảy ra sai sót theo hợp đồng.',
-    organization: 'Bảo Việt Insurance',
+    title: 'Chứng Nhận Huấn Luyện Võ Thuật & Tự Vệ Chuyên Nghiệp',
+    code: 'VÕ THUẬT THỰC CHIẾN',
+    description: '100% bảo vệ, vệ sĩ được đào tạo tinh hoa võ thuật cổ truyền Lâm Sơn Động và kỹ năng khống chế đối tượng.',
+    organization: 'Hội Võ Thuật Cổ Truyền',
     iconType: 'award',
   },
 ];
@@ -276,7 +276,7 @@ export const FEATURED_SERVICES: ServiceItem[] = [
       'Xe vận chuyển bọc thép, chống cạy phá, có camera 360 độ',
       'Đội ngũ áp tải trang bị dùi cui điện, áo giáp chống đâm, súng bắn hơi cay',
       'Hệ thống nút báo động khẩn cấp kết nối trực tiếp Cảnh sát 113',
-      'Bảo hiểm vận chuyển hàng hóa trọn gói giá trị lên đến hàng trăm tỷ',
+      'Cam kết áp tải an toàn tuyệt đối và bảo đảm nguyên vẹn hàng hóa',
     ],
     workflow: [
       '1. Niêm phong hàng hóa trước sự chứng kiến của 2 bên',

@@ -42,10 +42,7 @@ export const SolutionMatrixTabs: React.FC<SolutionMatrixTabsProps> = ({ onOpenSo
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Title */}
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <span className="text-[10px] font-bold text-amber-900 uppercase tracking-[0.25em] font-mono bg-amber-100 border border-amber-300 px-3 py-1 rounded">
-            MA TRẬN GIẢI PHÁP AN NINH
-          </span>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 uppercase tracking-tight mt-3 font-['Plus_Jakarta_Sans']">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 uppercase tracking-tight font-['Plus_Jakarta_Sans']">
             Giải Pháp Chuyên Sâu Theo Từng Ngành Nghề
           </h2>
           <p className="mt-3 text-xs sm:text-sm text-slate-600 font-normal leading-relaxed">
@@ -92,11 +89,6 @@ export const SolutionMatrixTabs: React.FC<SolutionMatrixTabsProps> = ({ onOpenSo
                 className="bg-white border border-slate-200 hover:border-amber-500 rounded p-6 flex flex-col justify-between transition-all duration-300 group shadow-sm hover:shadow-md"
               >
                 <div>
-                  {/* Tag */}
-                  <span className="inline-block text-[9px] font-mono font-bold uppercase tracking-[0.25em] text-amber-900 bg-amber-100 border border-amber-300 px-2 py-0.5 mb-3 rounded">
-                    {sol.tag}
-                  </span>
-
                   {/* Title */}
                   <h3 className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-amber-800 transition-colors leading-snug uppercase tracking-tight font-['Plus_Jakarta_Sans']">
                     {sol.title}

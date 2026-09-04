@@ -102,9 +102,6 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between px-6 sm:px-8 py-5 border-b border-slate-200 bg-slate-50/90 shrink-0">
           <div>
-            <span className="text-xs font-mono uppercase tracking-[0.2em] text-amber-700 font-bold block mb-1">
-              DỰ ÁN & CASE STUDY THỰC TẾ
-            </span>
             <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-900 uppercase tracking-tight font-['Plus_Jakarta_Sans']">
               {caseStudy ? 'Chỉnh Sửa Dự Án Thực Tế' : 'Thêm Mới Dự Án Tiêu Biểu'}
             </h3>

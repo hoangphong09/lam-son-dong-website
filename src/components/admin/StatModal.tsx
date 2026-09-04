@@ -85,9 +85,6 @@ export const StatModal: React.FC<StatModalProps> = ({
         {/* Modal Header */}
         <div className="px-6 sm:px-8 py-5 bg-slate-50/90 flex items-center justify-between border-b border-slate-200 shrink-0">
           <div>
-            <span className="text-xs font-mono uppercase tracking-[0.2em] text-amber-700 font-bold block mb-1">
-              HIỆU QUẢ THỰC TẾ
-            </span>
             <h3 className="text-lg sm:text-xl font-bold text-slate-900 uppercase tracking-tight font-['Plus_Jakarta_Sans']">
               {stat ? 'Chỉnh Sửa Chỉ Số Thống Kê' : 'Thêm Mới Chỉ Số Thống Kê'}
             </h3>

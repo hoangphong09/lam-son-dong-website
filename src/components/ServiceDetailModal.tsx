@@ -47,9 +47,6 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent"></div>
           
           <div className="absolute bottom-5 sm:bottom-7 left-5 sm:left-8 right-5 sm:right-8">
-            <span className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.25em] font-bold text-slate-950 bg-[#c5a059] px-3 py-1 inline-block mb-2.5 rounded-md shadow-xs">
-              {service.category}
-            </span>
             <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-white uppercase tracking-tight font-['Plus_Jakarta_Sans'] leading-tight">
               {service.title}
             </h3>
@@ -122,7 +119,7 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
         <div className="p-5 sm:p-6 border-t border-slate-200 bg-slate-50/95 flex flex-col sm:flex-row items-center justify-between gap-4 shrink-0">
           <div className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-700 font-medium">
             <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0" />
-            <span>Bảo hiểm trách nhiệm pháp lý 20 Tỷ VNĐ cho mọi sự cố</span>
+            <span>Cam kết chịu trách nhiệm & bồi thường 100% rủi ro</span>
           </div>
 
           <div className="flex items-center gap-3 w-full sm:w-auto">

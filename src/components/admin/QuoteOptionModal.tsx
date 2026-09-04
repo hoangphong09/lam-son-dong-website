@@ -130,9 +130,6 @@ export const QuoteOptionModal: React.FC<QuoteOptionModalProps> = ({
               <Layers className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-xs font-mono uppercase tracking-[0.2em] text-amber-700 font-bold block mb-1">
-                BẢNG TÍNH GIÁ DỊCH VỤ
-              </span>
               <h3 className="text-lg sm:text-xl font-bold text-slate-900 uppercase tracking-tight font-['Plus_Jakarta_Sans']">
                 {option ? 'Chỉnh Sửa Tùy Chọn Báo Giá' : 'Thêm Tùy Chọn Báo Giá Mới'}
               </h3>

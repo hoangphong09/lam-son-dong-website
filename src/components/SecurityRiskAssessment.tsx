@@ -92,9 +92,6 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <div className="inline-block px-3 py-1 bg-amber-100 border border-amber-300 text-amber-900 text-[10px] font-bold uppercase tracking-[0.25em] font-mono mb-3 rounded">
-            CÔNG CỤ QUÉT AN NINH TRỰC TUYẾN
-          </div>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 uppercase tracking-tight font-['Plus_Jakarta_Sans']">
             Kiểm Tra Mức Độ Rủi Ro An Ninh Cho Doanh Nghiệp
           </h2>
@@ -295,7 +292,7 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
                   { id: 'pccc', title: 'Rủi ro chập cháy điện, vi phạm quy định PCCC', icon: Flame },
                   { id: 'guard_attitude', title: 'Bảo vệ ngủ gật, lơ là, tác phong thiếu lịch sự', icon: AlertTriangle },
                   { id: 'traffic_jam', title: 'Ùn tắc cổng chính vào giờ cao điểm xuất nhập', icon: Activity },
-                  { id: 'asset_damage', title: 'Không có bảo hiểm bồi thường rủi ro tài sản', icon: ShieldAlert },
+                  { id: 'asset_damage', title: 'Không có cam kết bồi thường rủi ro tài sản', icon: ShieldAlert },
                 ].map((item) => {
                   const Icon = item.icon;
                   const isChecked = selectedRisks.includes(item.id);
@@ -416,7 +413,7 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-amber-700 font-mono font-bold text-xs shrink-0">—</span>
-                      <span>Bảo hiểm trách nhiệm 20 Tỷ cam kết bồi thường 100% tài sản</span>
+                      <span>Cam kết bồi thường 100% tài sản nếu xảy ra sai sót theo hợp đồng</span>
                     </li>
                   </ul>
                 </div>

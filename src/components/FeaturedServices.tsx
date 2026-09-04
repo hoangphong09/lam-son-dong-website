@@ -34,10 +34,7 @@ export const FeaturedServices: React.FC<FeaturedServicesProps> = ({ onSelectServ
         {/* Header with Navigation Controls */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div className="max-w-2xl">
-            <span className="text-[10px] font-bold text-amber-900 uppercase tracking-[0.25em] font-mono bg-amber-100 border border-amber-300 px-3 py-1 rounded">
-              GIẢI PHÁP AN NINH TOÀN DIỆN
-            </span>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 uppercase tracking-tight mt-3 font-['Plus_Jakarta_Sans']">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 uppercase tracking-tight font-['Plus_Jakarta_Sans']">
               Dịch Vụ Tiêu Biểu
             </h2>
             <p className="mt-3 text-xs sm:text-sm text-slate-600 font-normal leading-relaxed">

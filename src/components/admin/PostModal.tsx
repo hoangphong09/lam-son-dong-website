@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Post, generateSlug } from '../../lib/supabase';
-import { X, Save, RefreshCw, Image as ImageIcon, Sparkles } from 'lucide-react';
+import { X, Save, RefreshCw } from 'lucide-react';
+import { PostImageUploader } from './PostImageUploader';
 
 interface PostModalProps {
   isOpen: boolean;
@@ -18,14 +19,6 @@ const CATEGORY_PRESETS = [
   'An ninh công nghệ 4.0',
 ];
 
-const SAMPLE_IMAGES = [
-  { label: 'Hợp tác chiến lược', url: 'https://i.postimg.cc/RZmRSwWz/115bf4e4-5198-467e-bd43-500b7d169a5b.jpg' },
-  { label: 'Đội ngũ vệ sĩ VIP', url: 'https://i.postimg.cc/DZ4sdzS5/0373a718-53f7-48e1-b2c9-9256c37285bc.jpg' },
-  { label: 'Diễn tập PCCC & SOC', url: 'https://i.postimg.cc/J0csPHMZ/ba79cc9a-1504-4736-b837-5a813d13a59d.jpg' },
-  { label: 'Đào tạo nghiệp vụ', url: 'https://i.postimg.cc/k5dkdVmG/7c332534-4aaa-48bc-9d3b-46c81b752efc.jpg' },
-  { label: 'Hoạt động thiện nguyện', url: 'https://i.postimg.cc/ht7BnW74/de994ef0-6599-43b2-bee3-7dfd31b99313.jpg' },
-];
-
 export const PostModal: React.FC<PostModalProps> = ({
   isOpen,
   onClose,
@@ -41,6 +34,7 @@ export const PostModal: React.FC<PostModalProps> = ({
   const [published, setPublished] = useState(true);
   const [author, setAuthor] = useState('Ban Biên Tập Lâm Sơn Động');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [autoSlug, setAutoSlug] = useState(true);
 
   useEffect(() => {
@@ -59,7 +53,7 @@ export const PostModal: React.FC<PostModalProps> = ({
       setSlug('');
       setCategory(CATEGORY_PRESETS[0]);
       setExcerpt('');
-      setCoverImage(SAMPLE_IMAGES[0].url);
+      setCoverImage('');
       setContent('');
       setPublished(true);
       setAuthor('Ban Biên Tập Lâm Sơn Động');
@@ -81,7 +75,7 @@ export const PostModal: React.FC<PostModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim()) return;
+    if (!title.trim() || isUploadingImage) return;
 
     setIsSubmitting(true);
     try {
@@ -90,7 +84,7 @@ export const PostModal: React.FC<PostModalProps> = ({
         slug: slug.trim() || generateSlug(title),
         category,
         excerpt: excerpt.trim(),
-        cover_image: coverImage.trim() || SAMPLE_IMAGES[0].url,
+        cover_image: coverImage.trim(),
         content: content.trim(),
         published,
         author: author.trim() || 'Ban Biên Tập Lâm Sơn Động',
@@ -114,9 +108,6 @@ export const PostModal: React.FC<PostModalProps> = ({
         {/* Header */}
         <div className="px-6 sm:px-8 py-5 border-b border-slate-200 bg-slate-50/90 flex items-center justify-between shrink-0">
           <div>
-            <span className="text-xs font-mono uppercase tracking-[0.2em] text-amber-700 font-bold block mb-1">
-              {postToEdit ? 'CẬP NHẬT BÀI ĐĂNG' : 'TẠO MỚI BÀI ĐĂNG'}
-            </span>
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold uppercase tracking-tight text-slate-900 font-['Plus_Jakarta_Sans']">
               {postToEdit ? 'Chỉnh sửa thông tin bài viết' : 'Soạn thảo bài viết mới lên Supabase'}
             </h2>
@@ -194,59 +185,12 @@ export const PostModal: React.FC<PostModalProps> = ({
             </div>
           </div>
 
-          {/* Cover Image URL & Quick Select */}
-          <div>
-            <label className="block text-xs sm:text-sm font-mono uppercase tracking-wider text-slate-800 font-bold mb-2">
-              Ảnh bìa (Cover Image URL)
-            </label>
-            <div className="flex gap-2">
-              <input
-                type="url"
-                value={coverImage}
-                onChange={(e) => setCoverImage(e.target.value)}
-                placeholder="https://images.unsplash.com/... hoặc https://i.postimg.cc/..."
-                className="flex-1 px-4 py-3 bg-slate-50 border border-slate-300 focus:border-amber-600 focus:bg-white text-slate-800 text-xs sm:text-sm font-mono focus:outline-hidden transition-all rounded-lg"
-              />
-            </div>
-
-            {/* Quick Presets */}
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <span className="text-xs text-slate-600 font-mono font-bold flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-amber-600" /> Ảnh mẫu:
-              </span>
-              {SAMPLE_IMAGES.map((img, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => setCoverImage(img.url)}
-                  className={`text-xs font-mono px-2.5 py-1 border rounded-md transition-all cursor-pointer ${
-                    coverImage === img.url
-                      ? 'bg-[#c5a059] text-slate-950 border-[#c5a059] font-bold shadow-2xs'
-                      : 'bg-slate-100 border-slate-200 text-slate-700 hover:text-slate-950 hover:border-slate-400'
-                  }`}
-                >
-                  {img.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Image Preview Thumbnail */}
-            {coverImage && (
-              <div className="mt-4 relative h-36 sm:h-44 w-full bg-slate-900 border border-slate-200 overflow-hidden flex items-center justify-center rounded-xl shadow-xs">
-                <img
-                  src={coverImage}
-                  alt="Xem trước ảnh bìa"
-                  className="w-full h-full object-cover brightness-95"
-                  onError={(e) => {
-                    (e.target as HTMLElement).style.display = 'none';
-                  }}
-                />
-                <div className="absolute bottom-3 left-3 bg-slate-950/85 px-3 py-1.5 text-xs font-mono text-white border border-slate-700 flex items-center gap-1.5 rounded-md shadow-xs backdrop-blur-xs">
-                  <ImageIcon className="w-3.5 h-3.5 text-amber-400" /> Xem trước ảnh bìa
-                </div>
-              </div>
-            )}
-          </div>
+          {/* Cover Image Upload via Supabase Storage (Drag & Drop + File Picker) */}
+          <PostImageUploader
+            currentImageUrl={coverImage}
+            onImageChange={setCoverImage}
+            onUploadStateChange={setIsUploadingImage}
+          />
 
           {/* Excerpt / Tóm tắt */}
           <div>
@@ -322,15 +266,25 @@ export const PostModal: React.FC<PostModalProps> = ({
             </button>
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || isUploadingImage}
               className="px-6 sm:px-7 py-2.5 sm:py-3 bg-[#c5a059] hover:bg-[#b8860b] text-slate-950 font-black text-xs sm:text-sm uppercase tracking-widest transition-all disabled:opacity-50 flex items-center gap-2 rounded-lg shadow-sm hover:shadow-md cursor-pointer"
             >
               {isSubmitting ? (
                 <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+              ) : isUploadingImage ? (
+                <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
               ) : (
                 <Save className="w-4 h-4 text-slate-950" />
               )}
-              <span>{postToEdit ? 'Lưu thay đổi' : 'Đăng bài lên Supabase'}</span>
+              <span>
+                {isSubmitting
+                  ? 'Đang xử lý...'
+                  : isUploadingImage
+                  ? 'Đang tải ảnh...'
+                  : postToEdit
+                  ? 'Lưu thay đổi'
+                  : 'Đăng bài lên Supabase'}
+              </span>
             </button>
           </div>
         </form>

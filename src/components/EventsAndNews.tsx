@@ -32,10 +32,7 @@ export const EventsAndNews: React.FC<EventsAndNewsProps> = ({ onSelectNews, post
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-8">
-          <span className="text-[10px] font-mono font-bold text-amber-900 uppercase tracking-[0.3em] bg-amber-100 border border-amber-300 px-3.5 py-1 rounded">
-            BẢN TIN HOẠT ĐỘNG
-          </span>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 uppercase tracking-tight mt-4 font-['Plus_Jakarta_Sans']">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 uppercase tracking-tight font-['Plus_Jakarta_Sans']">
             Sự Kiện & Tin Tức
           </h2>
           <p className="mt-3 text-xs sm:text-sm text-slate-600 font-normal leading-relaxed">

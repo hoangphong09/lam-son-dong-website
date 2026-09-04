@@ -65,7 +65,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                   'Vệ Sĩ VIP',
                   'PCCC Nhà Xưởng',
                   'Áp tải tiền ngân hàng',
-                  'Bảo hiểm 20 tỷ',
+                  'Huấn luyện võ thuật',
                   'Smart Patrol GPS'
                 ].map((tag, idx) => (
                   <button

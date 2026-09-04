@@ -14,10 +14,7 @@ export const PartnersAndClients: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-8">
-          <span className="text-[10px] font-mono font-bold text-amber-900 uppercase tracking-[0.3em] bg-amber-100 border border-amber-300 px-3.5 py-1 rounded">
-            KHÁCH HÀNG & ĐỐI TÁC CHIẾN LƯỢC
-          </span>
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 uppercase tracking-tight mt-4 font-['Plus_Jakarta_Sans']">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 uppercase tracking-tight font-['Plus_Jakarta_Sans']">
             LÂM SƠN ĐỘNG Tự Hào Đồng Hành Cùng Các Doanh Nghiệp Hàng Đầu
           </h2>
           <p className="mt-2 text-xs sm:text-sm text-slate-600 font-normal">

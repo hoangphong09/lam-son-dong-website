@@ -77,9 +77,6 @@ export const HeroSlideModal: React.FC<HeroSlideModalProps> = ({
         {/* Header */}
         <div className="px-6 sm:px-8 py-5 border-b border-slate-200 bg-slate-50/90 flex items-center justify-between shrink-0">
           <div>
-            <span className="text-xs font-mono uppercase tracking-[0.2em] text-amber-700 font-bold block mb-1">
-              QUẢN LÝ HERO SECTION
-            </span>
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold uppercase tracking-tight text-slate-900 font-['Plus_Jakarta_Sans']">
               Chỉnh sửa Banner Slide: {slide.id}
             </h2>
