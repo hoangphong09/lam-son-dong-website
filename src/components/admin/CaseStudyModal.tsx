@@ -94,31 +94,38 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-150">
-      <div className="bg-white border border-slate-200 w-full max-w-3xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden rounded-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/65 backdrop-blur-xs animate-in fade-in duration-150">
+      <div 
+        className="bg-white border border-slate-200 w-full max-w-3xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden rounded-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-slate-50">
+        <div className="flex items-center justify-between px-6 sm:px-8 py-5 border-b border-slate-200 bg-slate-50/90 shrink-0">
           <div>
-            <h3 className="text-base font-bold text-slate-900 uppercase tracking-wide">
+            <span className="text-xs font-mono uppercase tracking-[0.2em] text-amber-700 font-bold block mb-1">
+              DỰ ÁN & CASE STUDY THỰC TẾ
+            </span>
+            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-900 uppercase tracking-tight font-['Plus_Jakarta_Sans']">
               {caseStudy ? 'Chỉnh Sửa Dự Án Thực Tế' : 'Thêm Mới Dự Án Tiêu Biểu'}
             </h3>
-            <p className="text-xs text-slate-500 font-light mt-0.5">
-              Quản trị minh chứng hiệu quả thực tế và case study năng lực
+            <p className="text-xs sm:text-sm text-slate-500 font-normal mt-0.5">
+              Quản trị minh chứng hiệu quả thực tế và case study năng lực an ninh
             </p>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded border border-slate-200 bg-white hover:bg-slate-100 text-slate-500 hover:text-slate-900 flex items-center justify-center transition-all"
+            aria-label="Đóng"
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-slate-500 hover:text-slate-900 flex items-center justify-center transition-all shadow-2xs cursor-pointer shrink-0"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-5 flex-1">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="p-6 sm:p-8 overflow-y-auto space-y-6 flex-1">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
+              <label className="block text-xs sm:text-sm font-mono uppercase tracking-wider text-slate-800 font-bold mb-2">
                 Tên Dự Án / Tiêu Đề <span className="text-red-500">*</span>
               </label>
               <input
@@ -127,12 +134,12 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="VD: Kiểm soát an ninh KCN Điện Tử VSIP Bắc Ninh"
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded text-slate-900 text-xs focus:bg-white focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-600"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 text-sm sm:text-base focus:bg-white focus:outline-hidden focus:border-amber-600 focus:ring-2 focus:ring-amber-500/30 transition-all font-medium"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
+              <label className="block text-xs sm:text-sm font-mono uppercase tracking-wider text-slate-800 font-bold mb-2">
                 Tên Khách Hàng / Đối Tác <span className="text-red-500">*</span>
               </label>
               <input
@@ -141,14 +148,14 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
                 value={client}
                 onChange={(e) => setClient(e.target.value)}
                 placeholder="VD: Tập đoàn Công nghệ Foxconn / Pegatron"
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded text-slate-900 text-xs focus:bg-white focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-600"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 text-sm sm:text-base focus:bg-white focus:outline-hidden focus:border-amber-600 focus:ring-2 focus:ring-amber-500/30 transition-all font-medium"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
+              <label className="block text-xs sm:text-sm font-mono uppercase tracking-wider text-slate-800 font-bold mb-2">
                 Lĩnh Vực / Sector
               </label>
               <input
@@ -156,12 +163,12 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
                 value={sector}
                 onChange={(e) => setSector(e.target.value)}
                 placeholder="KCN, Tòa Nhà, Ngân Hàng..."
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded text-slate-900 text-xs focus:bg-white focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-600"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 text-xs sm:text-sm font-mono focus:bg-white focus:outline-hidden focus:border-amber-600 focus:ring-2 focus:ring-amber-500/30 transition-all"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
+              <label className="block text-xs sm:text-sm font-mono uppercase tracking-wider text-slate-800 font-bold mb-2">
                 Giai Đoạn Hợp Tác
               </label>
               <input
@@ -169,12 +176,12 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
                 value={period}
                 onChange={(e) => setPeriod(e.target.value)}
                 placeholder="2022 - Nay"
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded text-slate-900 text-xs focus:bg-white focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-600"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 text-xs sm:text-sm font-mono focus:bg-white focus:outline-hidden focus:border-amber-600 focus:ring-2 focus:ring-amber-500/30 transition-all"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
+              <label className="block text-xs sm:text-sm font-mono uppercase tracking-wider text-slate-800 font-bold mb-2">
                 Quy Mô Quân Số
               </label>
               <input
@@ -182,14 +189,14 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
                 value={guardCount}
                 onChange={(e) => setGuardCount(e.target.value)}
                 placeholder="VD: 55 Vệ sĩ thường trực"
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded text-slate-900 text-xs focus:bg-white focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-600"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 text-xs sm:text-sm font-mono focus:bg-white focus:outline-hidden focus:border-amber-600 focus:ring-2 focus:ring-amber-500/30 transition-all"
               />
             </div>
           </div>
 
           {/* Image URL */}
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
+            <label className="block text-xs sm:text-sm font-mono uppercase tracking-wider text-slate-800 font-bold mb-2">
               URL Hình Ảnh Dự Án
             </label>
             <div className="flex gap-2">
@@ -198,82 +205,100 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
                 placeholder="https://..."
-                className="flex-1 px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded text-slate-900 text-xs focus:bg-white focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-600"
+                className="flex-1 px-4 py-3 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 text-xs sm:text-sm font-mono focus:bg-white focus:outline-hidden focus:border-amber-600 focus:ring-2 focus:ring-amber-500/30 transition-all"
               />
             </div>
             {/* Quick sample pickers */}
-            <div className="flex flex-wrap gap-2 mt-2">
-              <span className="text-[11px] text-slate-500 flex items-center gap-1">
-                <ImageIcon className="w-3 h-3" /> Chọn nhanh:
+            <div className="flex flex-wrap items-center gap-2 mt-3">
+              <span className="text-xs text-slate-600 font-mono font-bold flex items-center gap-1.5">
+                <ImageIcon className="w-3.5 h-3.5 text-amber-600" /> Ảnh mẫu:
               </span>
               {SAMPLE_CASE_IMAGES.map((img, i) => (
                 <button
                   key={i}
                   type="button"
                   onClick={() => setImageUrl(img.url)}
-                  className="text-[10px] px-2 py-0.5 bg-slate-100 hover:bg-amber-100 text-slate-700 hover:text-amber-900 border border-slate-200 rounded transition-colors"
+                  className={`text-xs font-mono px-2.5 py-1 border rounded-md transition-all cursor-pointer ${
+                    imageUrl === img.url
+                      ? 'bg-[#c5a059] text-slate-950 border-[#c5a059] font-bold shadow-2xs'
+                      : 'bg-slate-100 border-slate-200 text-slate-700 hover:text-slate-950 hover:border-slate-400'
+                  }`}
                 >
                   {img.label}
                 </button>
               ))}
             </div>
+
+            {/* Image Preview */}
+            {imageUrl && (
+              <div className="mt-4 relative h-36 sm:h-44 w-full bg-slate-900 border border-slate-200 overflow-hidden flex items-center justify-center rounded-xl shadow-xs">
+                <img
+                  src={imageUrl}
+                  alt="Xem trước hình ảnh"
+                  className="w-full h-full object-cover brightness-95"
+                  onError={(e) => {
+                    (e.target as HTMLElement).style.display = 'none';
+                  }}
+                />
+              </div>
+            )}
           </div>
 
           {/* Challenge */}
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
+            <label className="block text-xs sm:text-sm font-mono uppercase tracking-wider text-slate-800 font-bold mb-2">
               Thách Thức Ban Đầu Của Khách Hàng
             </label>
             <textarea
-              rows={2}
+              rows={3}
               value={challenge}
               onChange={(e) => setChallenge(e.target.value)}
               placeholder="VD: Khuôn viên rộng 25ha với hơn 8.000 công nhân ra vào mỗi ca, tỷ lệ thất thoát linh kiện cao..."
-              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded text-slate-900 text-xs focus:bg-white focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-600"
+              className="w-full p-4 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 text-xs sm:text-sm leading-relaxed focus:bg-white focus:outline-hidden focus:border-amber-600 focus:ring-2 focus:ring-amber-500/30 transition-all resize-none"
             />
           </div>
 
           {/* Solution */}
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
+            <label className="block text-xs sm:text-sm font-mono uppercase tracking-wider text-slate-800 font-bold mb-2">
               Giải Pháp Triển Khai Bởi Lâm Sơn Động
             </label>
             <textarea
-              rows={2}
+              rows={3}
               value={solution}
               onChange={(e) => setSolution(e.target.value)}
               placeholder="VD: Thiết lập 3 vành đai bảo vệ nghiêm ngặt, tích hợp camera AI nhận diện khuôn mặt và cổng kiểm soát phân làn..."
-              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded text-slate-900 text-xs focus:bg-white focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-600"
+              className="w-full p-4 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 text-xs sm:text-sm leading-relaxed focus:bg-white focus:outline-hidden focus:border-amber-600 focus:ring-2 focus:ring-amber-500/30 transition-all resize-none"
             />
           </div>
 
           {/* Result */}
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
+            <label className="block text-xs sm:text-sm font-mono uppercase tracking-wider text-slate-800 font-bold mb-2">
               Kết Quả Đạt Được & Giá Trị Mang Lại
             </label>
             <textarea
-              rows={2}
+              rows={3}
               value={result}
               onChange={(e) => setResult(e.target.value)}
               placeholder="VD: Giảm 100% tình trạng thất thoát tài sản sau 3 tháng, đạt chuẩn an ninh C-TPAT xuất khẩu thị trường Mỹ..."
-              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded text-slate-900 text-xs focus:bg-white focus:outline-none focus:border-amber-600 focus:ring-1 focus:ring-amber-600"
+              className="w-full p-4 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 text-xs sm:text-sm leading-relaxed focus:bg-white focus:outline-hidden focus:border-amber-600 focus:ring-2 focus:ring-amber-500/30 transition-all resize-none"
             />
           </div>
 
           {/* Footer Actions */}
-          <div className="pt-4 border-t border-slate-200 flex items-center justify-end gap-3">
+          <div className="pt-4 border-t border-slate-200 flex items-center justify-end gap-3.5">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100 rounded border border-slate-200 transition-colors"
+              className="px-5 py-2.5 sm:py-3 text-xs sm:text-sm font-mono font-bold uppercase tracking-wider text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer"
             >
               Hủy bỏ
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-6 py-2 bg-[#c5a059] hover:bg-[#b8860b] text-slate-950 font-bold text-xs uppercase tracking-wider rounded shadow flex items-center gap-1.5 transition-all disabled:opacity-50"
+              className="px-6 sm:px-7 py-2.5 sm:py-3 bg-[#c5a059] hover:bg-[#b8860b] text-slate-950 font-black text-xs sm:text-sm uppercase tracking-widest rounded-lg shadow-sm hover:shadow-md flex items-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
             >
               <Save className="w-4 h-4" />
               <span>{isSubmitting ? 'Đang lưu...' : 'Lưu Dự Án'}</span>

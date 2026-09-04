@@ -77,33 +77,37 @@ export const StatModal: React.FC<StatModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/65 backdrop-blur-xs animate-in fade-in duration-150">
       <div 
-        className="bg-white border border-slate-300 rounded shadow-2xl max-w-xl w-full max-h-[92vh] flex flex-col overflow-hidden"
+        className="bg-white border border-slate-200 rounded-xl shadow-2xl max-w-xl w-full max-h-[92vh] flex flex-col overflow-hidden text-slate-900"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="px-6 py-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+        <div className="px-6 sm:px-8 py-5 bg-slate-50/90 flex items-center justify-between border-b border-slate-200 shrink-0">
           <div>
-            <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-amber-400 font-bold">
+            <span className="text-xs font-mono uppercase tracking-[0.2em] text-amber-700 font-bold block mb-1">
               HIỆU QUẢ THỰC TẾ
             </span>
-            <h3 className="text-base font-bold text-white uppercase tracking-wide mt-0.5">
+            <h3 className="text-lg sm:text-xl font-bold text-slate-900 uppercase tracking-tight font-['Plus_Jakarta_Sans']">
               {stat ? 'Chỉnh Sửa Chỉ Số Thống Kê' : 'Thêm Mới Chỉ Số Thống Kê'}
             </h3>
+            <p className="text-xs sm:text-sm text-slate-500 font-normal mt-0.5">
+              Cập nhật số liệu minh chứng năng lực và kinh nghiệm triển khai
+            </p>
           </div>
           <button
             onClick={onClose}
-            className="p-1 text-slate-400 hover:text-white rounded hover:bg-slate-800 transition-colors"
+            aria-label="Đóng"
+            className="w-9 h-9 sm:w-10 sm:h-10 border border-slate-200 bg-white hover:bg-slate-100 text-slate-500 hover:text-slate-950 flex items-center justify-center transition-all rounded-lg shadow-2xs cursor-pointer shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Modal Body */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-5 text-xs">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-6">
           {errorMessage && (
-            <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded flex items-start gap-2">
+            <div className="p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg flex items-start gap-2.5 text-xs sm:text-sm">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
               <span>{errorMessage}</span>
             </div>
@@ -111,8 +115,8 @@ export const StatModal: React.FC<StatModalProps> = ({
 
           {/* Title */}
           <div>
-            <label className="block font-mono font-bold text-slate-800 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-              <Type className="w-3.5 h-3.5 text-amber-700" />
+            <label className="block font-mono font-bold text-slate-800 text-xs sm:text-sm uppercase tracking-wider mb-2 flex items-center gap-2">
+              <Type className="w-4 h-4 text-amber-700" />
               Tiêu Đề Chỉ Số <span className="text-red-500">*</span>
             </label>
             <input
@@ -120,16 +124,16 @@ export const StatModal: React.FC<StatModalProps> = ({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="VD: Nhân sự bảo vệ & Vệ sĩ, Mục tiêu trọng điểm..."
-              className="w-full px-3 py-2 border border-slate-300 rounded text-slate-900 focus:outline-hidden focus:border-amber-600 focus:ring-1 focus:ring-amber-600 font-medium"
+              className="w-full px-4 py-3 border border-slate-300 rounded-lg text-slate-900 text-sm sm:text-base focus:outline-hidden focus:border-amber-600 focus:ring-2 focus:ring-amber-500/30 font-medium transition-all"
               required
             />
           </div>
 
           {/* Numeric Value & Unit Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
             <div>
-              <label className="block font-mono font-bold text-slate-800 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-                <Hash className="w-3.5 h-3.5 text-amber-700" />
+              <label className="block font-mono font-bold text-slate-800 text-xs sm:text-sm uppercase tracking-wider mb-2 flex items-center gap-2">
+                <Hash className="w-4 h-4 text-amber-700" />
                 Giá Trị Số (Numeric Value) <span className="text-red-500">*</span>
               </label>
               <input
@@ -137,32 +141,32 @@ export const StatModal: React.FC<StatModalProps> = ({
                 value={numericValue}
                 onChange={(e) => setNumericValue(e.target.value)}
                 placeholder="VD: 300, 100, 20, 99.8"
-                className="w-full px-3 py-2 border border-slate-300 rounded text-slate-900 font-mono font-bold text-base focus:outline-hidden focus:border-amber-600 focus:ring-1 focus:ring-amber-600"
+                className="w-full px-4 py-3 border border-slate-300 rounded-lg text-slate-900 font-mono font-bold text-base sm:text-lg focus:outline-hidden focus:border-amber-600 focus:ring-2 focus:ring-amber-500/30 transition-all"
                 required
               />
             </div>
 
             <div>
-              <label className="block font-mono font-bold text-slate-800 uppercase tracking-wider mb-1.5">
+              <label className="block font-mono font-bold text-slate-800 text-xs sm:text-sm uppercase tracking-wider mb-2">
                 Đơn Vị / Hậu Tố (Unit/Suffix)
               </label>
-              <div className="flex gap-2">
+              <div className="space-y-2">
                 <input
                   type="text"
                   value={unit}
                   onChange={(e) => setUnit(e.target.value)}
                   placeholder="VD: +, %, Tỉnh, Tỷ..."
-                  className="w-full px-3 py-2 border border-slate-300 rounded text-slate-900 font-mono font-bold text-base focus:outline-hidden focus:border-amber-600 focus:ring-1 focus:ring-amber-600"
+                  className="w-full px-4 py-3 border border-slate-300 rounded-lg text-slate-900 font-mono font-bold text-base sm:text-lg focus:outline-hidden focus:border-amber-600 focus:ring-2 focus:ring-amber-500/30 transition-all"
                 />
-                <div className="flex gap-1 shrink-0">
-                  {['+', '%', 'Tỉnh', 'Năm'].map((preset) => (
+                <div className="flex flex-wrap gap-1.5">
+                  {['+', '%', 'Tỉnh', 'Năm', 'Mục tiêu'].map((preset) => (
                     <button
                       key={preset}
                       type="button"
                       onClick={() => setUnit(preset)}
-                      className={`px-2 py-1 text-[10px] font-mono border rounded ${
+                      className={`px-2.5 py-1 text-xs font-mono border rounded-md transition-all cursor-pointer ${
                         unit === preset 
-                          ? 'bg-amber-100 border-amber-400 text-amber-900 font-bold' 
+                          ? 'bg-amber-100 border-amber-400 text-amber-900 font-bold shadow-2xs' 
                           : 'bg-slate-100 border-slate-200 text-slate-600 hover:bg-slate-200'
                       }`}
                     >
@@ -176,8 +180,8 @@ export const StatModal: React.FC<StatModalProps> = ({
 
           {/* Description */}
           <div>
-            <label className="block font-mono font-bold text-slate-800 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-              <FileText className="w-3.5 h-3.5 text-amber-700" />
+            <label className="block font-mono font-bold text-slate-800 text-xs sm:text-sm uppercase tracking-wider mb-2 flex items-center gap-2">
+              <FileText className="w-4 h-4 text-amber-700" />
               Mô Tả Năng Lực Thực Tế
             </label>
             <textarea
@@ -185,14 +189,14 @@ export const StatModal: React.FC<StatModalProps> = ({
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
               placeholder="VD: Huấn luyện võ thuật, nghiệp vụ, pháp luật định kỳ..."
-              className="w-full px-3 py-2 border border-slate-300 rounded text-slate-900 focus:outline-hidden focus:border-amber-600 focus:ring-1 focus:ring-amber-600"
+              className="w-full p-4 border border-slate-300 rounded-lg text-slate-900 text-xs sm:text-sm leading-relaxed focus:outline-hidden focus:border-amber-600 focus:ring-2 focus:ring-amber-500/30 transition-all resize-none"
             />
           </div>
 
           {/* Display Order & Visibility */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-3 bg-slate-50 border border-slate-200 rounded">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 p-4 bg-slate-50 border border-slate-200 rounded-xl">
             <div>
-              <label className="block font-mono font-bold text-slate-700 uppercase tracking-wider mb-1">
+              <label className="block font-mono font-bold text-slate-700 text-xs sm:text-sm uppercase tracking-wider mb-1.5">
                 Thứ Tự Hiển Thị (Display Order)
               </label>
               <input
@@ -201,22 +205,22 @@ export const StatModal: React.FC<StatModalProps> = ({
                 max="99"
                 value={displayOrder}
                 onChange={(e) => setDisplayOrder(parseInt(e.target.value) || 1)}
-                className="w-full px-3 py-1.5 border border-slate-300 rounded font-mono font-bold bg-white text-slate-900"
+                className="w-full px-4 py-2.5 border border-slate-300 rounded-lg font-mono font-bold bg-white text-slate-900 text-sm focus:outline-hidden focus:border-amber-600"
               />
             </div>
 
             <div>
-              <label className="block font-mono font-bold text-slate-700 uppercase tracking-wider mb-1">
+              <label className="block font-mono font-bold text-slate-700 text-xs sm:text-sm uppercase tracking-wider mb-1.5">
                 Trạng Thái Hiển Thị
               </label>
-              <label className="flex items-center gap-2 mt-2 cursor-pointer">
+              <label className="flex items-center gap-2.5 mt-2 cursor-pointer select-none">
                 <input
                   type="checkbox"
                   checked={isActive}
                   onChange={(e) => setIsActive(e.target.checked)}
-                  className="w-4 h-4 text-amber-600 rounded border-slate-300 focus:ring-amber-500"
+                  className="w-5 h-5 accent-[#c5a059] rounded cursor-pointer"
                 />
-                <span className={`font-mono font-bold ${isActive ? 'text-emerald-700' : 'text-slate-500'}`}>
+                <span className={`font-mono text-xs sm:text-sm font-bold ${isActive ? 'text-emerald-700' : 'text-slate-500'}`}>
                   {isActive ? 'Đang kích hoạt (Hiển thị)' : 'Tạm ẩn khỏi website'}
                 </span>
               </label>
@@ -225,29 +229,29 @@ export const StatModal: React.FC<StatModalProps> = ({
 
           {/* Live Preview Card */}
           <div>
-            <label className="block font-mono font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-              <Eye className="w-3.5 h-3.5 text-slate-500" />
+            <label className="block font-mono font-bold text-slate-600 text-xs uppercase tracking-wider mb-2.5 flex items-center gap-2">
+              <Eye className="w-4 h-4 text-amber-700" />
               Xem Trước Thẻ (Live Preview)
             </label>
-            <div className="p-4 bg-slate-900 rounded border border-slate-800 text-white flex flex-col justify-between">
+            <div className="p-5 bg-slate-950 rounded-xl border border-slate-800 text-white flex flex-col justify-between shadow-sm">
               <div>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-black text-white font-mono tracking-tight">
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-3xl sm:text-4xl font-black text-white font-mono tracking-tight">
                     {numericValue || '0'}
                   </span>
-                  <span className="text-xl font-bold text-amber-500 font-mono">
+                  <span className="text-2xl sm:text-3xl font-bold text-amber-400 font-mono">
                     {unit || '+'}
                   </span>
                 </div>
-                <div className="text-sm font-bold text-slate-200 uppercase tracking-wide mt-1">
+                <div className="text-sm sm:text-base font-bold text-slate-100 uppercase tracking-wide mt-1.5 font-['Plus_Jakarta_Sans']">
                   {title || 'Tiêu đề chỉ số'}
                 </div>
               </div>
-              <div className="text-[11px] text-slate-400 mt-2 border-t border-slate-800/80 pt-2 font-light">
+              <div className="text-xs sm:text-sm text-slate-400 mt-3 border-t border-slate-800/80 pt-2.5 font-normal leading-relaxed">
                 {description || 'Mô tả ngắn gọn về chỉ số năng lực thực tế...'}
               </div>
               {!isActive && (
-                <div className="mt-2 text-[10px] font-mono font-bold text-amber-400 bg-amber-950/60 border border-amber-800 px-2 py-0.5 rounded w-fit">
+                <div className="mt-3 text-xs font-mono font-bold text-amber-400 bg-amber-950/60 border border-amber-800/80 px-2.5 py-1 rounded-md w-fit">
                   (Thẻ này đang được cài đặt ẩn)
                 </div>
               )}
@@ -256,12 +260,12 @@ export const StatModal: React.FC<StatModalProps> = ({
         </form>
 
         {/* Modal Footer */}
-        <div className="px-6 py-3 bg-slate-100 border-t border-slate-200 flex items-center justify-end gap-2">
+        <div className="px-6 sm:px-8 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-3.5 shrink-0">
           <button
             type="button"
             onClick={onClose}
             disabled={isSubmitting}
-            className="px-4 py-2 text-xs font-mono font-bold text-slate-700 hover:text-slate-900 border border-slate-300 rounded hover:bg-slate-200 transition-colors"
+            className="px-5 py-2.5 sm:py-3 text-xs sm:text-sm font-mono font-bold text-slate-700 hover:text-slate-900 border border-slate-300 rounded-lg hover:bg-slate-200 transition-colors cursor-pointer"
           >
             HỦY BỎ
           </button>
@@ -269,10 +273,10 @@ export const StatModal: React.FC<StatModalProps> = ({
             type="button"
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="px-5 py-2 text-xs font-mono font-bold text-white bg-amber-700 hover:bg-amber-800 rounded shadow-xs flex items-center gap-1.5 transition-colors disabled:opacity-50"
+            className="px-6 sm:px-7 py-2.5 sm:py-3 text-xs sm:text-sm font-mono font-bold text-slate-950 bg-[#c5a059] hover:bg-[#b8860b] rounded-lg shadow-sm hover:shadow-md flex items-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
           >
             <Save className="w-4 h-4" />
-            {isSubmitting ? 'ĐANG LƯU...' : 'LƯU CHỈ SỐ'}
+            <span>{isSubmitting ? 'ĐANG LƯU...' : 'LƯU CHỈ SỐ'}</span>
           </button>
         </div>
       </div>

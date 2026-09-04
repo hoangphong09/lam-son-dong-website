@@ -65,25 +65,24 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
             index === currentIndex ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'
           }`}
         >
-          {/* Enhanced Vibrant Background Image: Prominent, sharp & authentic */}
+          {/* Enhanced Background Image: High opacity, prominent security details */}
           <img
             src={slide.imageUrl}
             alt={slide.title}
-            className={`w-full h-full object-cover object-center lg:object-right filter contrast-[1.06] saturate-[1.12] brightness-[1.0] transition-transform duration-7000 ease-out ${
+            className={`w-full h-full object-cover object-center lg:object-right filter contrast-[1.08] saturate-[1.15] brightness-[1.0] transition-transform duration-7000 ease-out ${
               index === currentIndex ? 'scale-100 opacity-100' : 'scale-105 opacity-0'
             }`}
           />
 
           {/* 
-            FOCUSED DIRECTIONAL GRADIENT MASK (Left-to-Right only)
-            Covers only the left typography column (~58% width on desktop) to ensure 
-            superior contrast and legibility, leaving the center & right completely clear,
-            vibrant and sharp without milky fog.
+            DIRECTIONAL SOFT GRADIENT OVERLAY (Left-to-Right)
+            Covers only the typography area on the left to ensure strict WCAG contrast for dark text,
+            leaving the center and right operations details clear and vibrant.
           */}
-          <div className="absolute inset-y-0 left-0 w-full md:w-4/5 lg:w-7/12 bg-gradient-to-r from-slate-50/95 via-slate-50/80 sm:via-slate-50/65 to-transparent pointer-events-none"></div>
+          <div className="absolute inset-y-0 left-0 w-full md:w-4/5 lg:w-7/12 bg-gradient-to-r from-white/95 via-white/80 to-transparent pointer-events-none"></div>
 
-          {/* Subtle bottom grounding to connect to next section */}
-          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-100/70 to-transparent pointer-events-none"></div>
+          {/* Bottom subtle anchoring gradient */}
+          <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-slate-900/30 to-transparent pointer-events-none"></div>
         </div>
       ))}
 
@@ -96,13 +95,13 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
             
             {/* Tag Pill with Badge depth and breathing room */}
             <div className="flex flex-wrap items-center gap-3 mb-6">
-              <span className="inline-flex items-center gap-2 bg-white/95 backdrop-blur-md border border-amber-400/90 text-amber-950 text-[11px] sm:text-xs font-mono font-black uppercase tracking-[0.25em] px-4 py-2 rounded shadow-sm ring-1 ring-amber-400/30">
-                <span className="w-2 h-2 rounded-full bg-[#c5a059] animate-pulse"></span>
+              <span className="inline-flex items-center gap-2 bg-white/95 backdrop-blur-md border border-amber-500/80 text-amber-950 text-xs font-mono font-black uppercase tracking-[0.2em] px-4 py-2 rounded-lg shadow-sm ring-1 ring-amber-400/40">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#c5a059] animate-pulse"></span>
                 {currentSlide.tag}
               </span>
 
               {currentSlide.category && (
-                <span className="hidden sm:inline-flex items-center gap-1.5 bg-slate-900/85 backdrop-blur-md border border-slate-700 text-white text-[11px] font-mono font-bold uppercase tracking-wider px-3.5 py-1.5 rounded shadow-xs">
+                <span className="hidden sm:inline-flex items-center gap-1.5 bg-slate-900/90 backdrop-blur-md border border-slate-700 text-white text-xs font-mono font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-lg shadow-xs">
                   <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
                   {currentSlide.category}
                 </span>
@@ -110,7 +109,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
             </div>
 
             {/* Slide Title: Bold, crisp, relaxed line-height without collision */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[50px] font-black text-slate-950 leading-[1.25] tracking-tight uppercase font-['Plus_Jakarta_Sans'] drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)] mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[46px] xl:text-[50px] font-black text-slate-950 leading-[1.22] tracking-tight uppercase font-['Plus_Jakarta_Sans'] drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)] mb-6">
               {currentSlide.title}
             </h1>
 
@@ -120,20 +119,17 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
             </p>
 
             {/* Action CTAs with elevated depth & contrast */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-1">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-1">
               <button
                 id="hero-primary-cta-btn"
                 onClick={onOpenQuote}
-                className="flex items-center justify-center gap-2.5 bg-[#c5a059] hover:bg-[#b8860b] text-slate-950 text-xs sm:text-sm font-black uppercase font-mono tracking-wider px-8 py-4 shadow-lg shadow-amber-900/20 hover:shadow-xl hover:shadow-amber-900/30 hover:-translate-y-0.5 active:translate-y-0 transition-all rounded-md ring-1 ring-amber-500/40"
+                className="flex items-center justify-center gap-2.5 bg-[#c5a059] hover:bg-[#b8860b] text-slate-950 text-xs sm:text-sm font-black uppercase font-mono tracking-wider px-8 py-4 shadow-lg shadow-amber-900/25 hover:shadow-xl hover:shadow-amber-900/35 hover:-translate-y-0.5 active:translate-y-0 transition-all rounded-lg ring-1 ring-amber-400/50 cursor-pointer"
               >
                 <span>{currentSlide.ctaText}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
-          </div>
-
-          {/* Right Column Spacer / Future Floating Console Card */}
-          
+          </div>          
         </div>
 
         {/* Slide Controls & Numbers Bar with generous vertical rhythm */}
@@ -147,10 +143,10 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
                 id={`hero-dot-${idx}`}
                 onClick={() => setCurrentIndex(idx)}
                 aria-label={`Đi tới slide ${idx + 1}`}
-                className={`text-xs font-mono tracking-wider transition-all px-3.5 py-1.5 rounded-md flex items-center gap-2 ${
+                className={`text-xs font-mono tracking-wider transition-all px-4 py-2 rounded-lg flex items-center gap-2 cursor-pointer ${
                   idx === currentIndex
-                    ? 'bg-[#c5a059] text-slate-950 font-black shadow-md ring-1 ring-amber-400/50'
-                    : 'bg-white/90 hover:bg-white text-slate-700 hover:text-slate-950 border border-slate-300 shadow-xs font-bold'
+                    ? 'bg-[#c5a059] text-slate-950 font-black shadow-md ring-2 ring-amber-400/60'
+                    : 'bg-white/90 hover:bg-white text-slate-800 hover:text-slate-950 border border-slate-300/90 shadow-xs font-bold'
                 }`}
               >
                 <span>0{idx + 1}</span>
@@ -159,23 +155,23 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
           </div>
 
           {/* Navigation Control Arrows */}
-          <div className="flex items-center justify-end gap-2">
+          <div className="flex items-center justify-end gap-2.5">
             <button
               id="hero-prev-slide-btn"
               onClick={handlePrev}
               aria-label="Slide trước"
-              className="w-11 h-11 border border-slate-300/90 bg-white/95 hover:bg-white hover:border-[#c5a059] text-slate-800 hover:text-slate-950 flex items-center justify-center transition-all rounded-md shadow-md hover:shadow-lg hover:scale-105 active:scale-95 backdrop-blur-xs"
+              className="w-12 h-12 border border-slate-300/90 bg-white/95 hover:bg-white hover:border-[#c5a059] text-slate-800 hover:text-slate-950 flex items-center justify-center transition-all rounded-lg shadow-md hover:shadow-lg hover:scale-105 active:scale-95 backdrop-blur-xs cursor-pointer"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-5 h-5" />
             </button>
 
             <button
               id="hero-next-slide-btn"
               onClick={handleNext}
               aria-label="Slide tiếp theo"
-              className="w-11 h-11 border border-slate-300/90 bg-white/95 hover:bg-white hover:border-[#c5a059] text-slate-800 hover:text-slate-950 flex items-center justify-center transition-all rounded-md shadow-md hover:shadow-lg hover:scale-105 active:scale-95 backdrop-blur-xs"
+              className="w-12 h-12 border border-slate-300/90 bg-white/95 hover:bg-white hover:border-[#c5a059] text-slate-800 hover:text-slate-950 flex items-center justify-center transition-all rounded-lg shadow-md hover:shadow-lg hover:scale-105 active:scale-95 backdrop-blur-xs cursor-pointer"
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-5 h-5" />
             </button>
           </div>
         </div>

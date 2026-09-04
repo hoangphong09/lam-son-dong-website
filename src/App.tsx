@@ -349,17 +349,24 @@ export default function App() {
 
       {/* Generic Info Detail Dialog */}
       {infoModalData && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white border border-slate-200 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl text-slate-900 rounded relative">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/65 backdrop-blur-xs animate-in fade-in duration-200"
+          onClick={() => setInfoModalData(null)}
+        >
+          <div 
+            className="bg-white border border-slate-200 w-full max-w-2xl max-h-[92vh] flex flex-col shadow-2xl text-slate-900 rounded-xl overflow-hidden relative"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               onClick={() => setInfoModalData(null)}
-              className="absolute top-5 right-5 w-8 h-8 border border-slate-300 bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-950 flex items-center justify-center transition-all z-10 rounded"
+              aria-label="Đóng cửa sổ"
+              className="absolute top-4 right-4 sm:top-5 sm:right-5 w-9 h-9 sm:w-10 sm:h-10 bg-slate-950/70 hover:bg-slate-950/90 text-white border border-white/20 flex items-center justify-center transition-all z-20 rounded-lg shadow-md backdrop-blur-xs"
             >
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </button>
 
             {infoModalData.imageUrl && (
-              <div className="h-56 overflow-hidden bg-slate-100 border-b border-slate-200">
+              <div className="h-56 sm:h-72 overflow-hidden bg-slate-900 border-b border-slate-200 shrink-0">
                 <img
                   src={infoModalData.imageUrl}
                   alt={infoModalData.title}
@@ -368,55 +375,55 @@ export default function App() {
               </div>
             )}
 
-            <div className="p-6 sm:p-8 space-y-4">
+            <div className="p-6 sm:p-8 space-y-5 overflow-y-auto flex-1">
               {infoModalData.category && (
-                <span className="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-amber-900 bg-amber-100 border border-amber-300 px-2.5 py-1 rounded">
+                <span className="text-[11px] sm:text-xs font-mono font-bold uppercase tracking-[0.25em] text-amber-900 bg-amber-100 border border-amber-300 px-3 py-1 rounded-md inline-block">
                   {infoModalData.category}
                 </span>
               )}
 
-              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 leading-snug uppercase tracking-tight font-['Plus_Jakarta_Sans']">
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 leading-snug uppercase tracking-tight font-['Plus_Jakarta_Sans']">
                 {infoModalData.title}
               </h3>
 
-              <div className="flex items-center gap-4 text-xs font-mono text-slate-500 pb-2 border-b border-slate-200">
+              <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-xs sm:text-sm font-mono text-slate-500 pb-3 border-b border-slate-200">
                 {infoModalData.date && (
-                  <span className="flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5 text-amber-700" />
+                  <span className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-amber-700 shrink-0" />
                     {infoModalData.date}
                   </span>
                 )}
                 {infoModalData.author && (
-                  <span className="flex items-center gap-1.5">
-                    <User className="w-3.5 h-3.5 text-amber-700" />
+                  <span className="flex items-center gap-2">
+                    <User className="w-4 h-4 text-amber-700 shrink-0" />
                     {infoModalData.author}
                   </span>
                 )}
               </div>
 
-              <div className="text-xs sm:text-sm text-slate-600 font-normal leading-relaxed whitespace-pre-line">
+              <div className="text-sm sm:text-base text-slate-700 font-normal leading-relaxed whitespace-pre-line">
                 {infoModalData.content}
               </div>
 
-              {infoModalData.bullets && (
-                <div className="p-4 bg-slate-50 border border-slate-200 rounded space-y-2 text-xs font-normal">
+              {infoModalData.bullets && infoModalData.bullets.length > 0 && (
+                <div className="p-4 sm:p-5 bg-slate-50 border border-slate-200 rounded-xl space-y-2.5 text-xs sm:text-sm font-normal">
                   {infoModalData.bullets.map((b, i) => (
-                    <div key={i} className="flex items-start gap-2 text-slate-700">
-                      <span className="text-amber-700 font-mono font-bold text-xs shrink-0">—</span>
+                    <div key={i} className="flex items-start gap-2.5 text-slate-700 leading-relaxed">
+                      <span className="text-amber-700 font-mono font-bold text-sm shrink-0">—</span>
                       <span>{b}</span>
                     </div>
                   ))}
                 </div>
               )}
+            </div>
 
-              <div className="pt-4 border-t border-slate-200 flex justify-end">
-                <button
-                  onClick={() => setInfoModalData(null)}
-                  className="px-6 py-2.5 bg-slate-100 hover:bg-[#c5a059] text-slate-700 hover:text-slate-950 border border-slate-300 hover:border-amber-600 font-bold text-xs uppercase tracking-widest transition-all rounded shadow-xs"
-                >
-                  Đóng
-                </button>
-              </div>
+            <div className="p-4 sm:p-5 border-t border-slate-200 bg-slate-50/90 flex justify-end shrink-0">
+              <button
+                onClick={() => setInfoModalData(null)}
+                className="px-7 py-3 bg-[#c5a059] hover:bg-[#b8860b] text-slate-950 font-bold text-xs sm:text-sm uppercase tracking-widest transition-all rounded-lg shadow-sm cursor-pointer"
+              >
+                Đóng
+              </button>
             </div>
           </div>
         </div>

@@ -69,32 +69,36 @@ export const HeroSlideModal: React.FC<HeroSlideModalProps> = ({
   if (!isOpen || !slide) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/60 backdrop-blur-sm overflow-y-auto">
-      <div className="bg-white border border-slate-200 w-full max-w-2xl shadow-2xl text-slate-900 relative my-auto max-h-[92vh] flex flex-col rounded-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/65 backdrop-blur-xs overflow-y-auto">
+      <div 
+        className="bg-white border border-slate-200 w-full max-w-2xl shadow-2xl text-slate-900 relative my-auto max-h-[92vh] flex flex-col rounded-xl overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
-        <div className="p-5 sm:p-6 border-b border-slate-200 bg-slate-50 flex items-center justify-between shrink-0">
+        <div className="px-6 sm:px-8 py-5 border-b border-slate-200 bg-slate-50/90 flex items-center justify-between shrink-0">
           <div>
-            <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-[#b8860b] font-bold">
+            <span className="text-xs font-mono uppercase tracking-[0.2em] text-amber-700 font-bold block mb-1">
               QUẢN LÝ HERO SECTION
             </span>
-            <h2 className="text-lg sm:text-xl font-bold uppercase tracking-tight text-slate-900 font-['Plus_Jakarta_Sans']">
+            <h2 className="text-lg sm:text-xl md:text-2xl font-bold uppercase tracking-tight text-slate-900 font-['Plus_Jakarta_Sans']">
               Chỉnh sửa Banner Slide: {slide.id}
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 border border-slate-200 bg-white hover:bg-slate-100 text-slate-500 hover:text-slate-900 flex items-center justify-center transition-all rounded"
+            aria-label="Đóng"
+            className="w-9 h-9 sm:w-10 sm:h-10 border border-slate-200 bg-white hover:bg-slate-100 text-slate-500 hover:text-slate-900 flex items-center justify-center transition-all rounded-lg shadow-2xs cursor-pointer"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Scrollable Body */}
-        <form onSubmit={handleSubmit} className="p-5 sm:p-6 overflow-y-auto space-y-5 flex-1">
+        <form onSubmit={handleSubmit} className="p-6 sm:p-8 overflow-y-auto space-y-6 flex-1">
           {/* Tag & Category */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
             <div>
-              <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-700 font-bold mb-1.5">
+              <label className="block text-xs sm:text-sm font-mono uppercase tracking-wider text-slate-800 font-bold mb-2">
                 Nhãn huy hiệu (Badge Tag)
               </label>
               <input
@@ -103,12 +107,12 @@ export const HeroSlideModal: React.FC<HeroSlideModalProps> = ({
                 value={tag}
                 onChange={(e) => setTag(e.target.value)}
                 placeholder="VD: SỰ KIỆN MỚI NHẤT, AN NINH CHIẾN LƯỢC..."
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 focus:border-[#b8860b] focus:bg-white text-slate-900 text-xs font-mono font-bold focus:outline-none transition-all rounded"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-300 focus:border-amber-600 focus:bg-white text-slate-900 text-xs sm:text-sm font-mono font-bold focus:outline-hidden transition-all rounded-lg"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-700 font-bold mb-1.5">
+              <label className="block text-xs sm:text-sm font-mono uppercase tracking-wider text-slate-800 font-bold mb-2">
                 Phân loại dịch vụ (Category)
               </label>
               <input
@@ -116,15 +120,15 @@ export const HeroSlideModal: React.FC<HeroSlideModalProps> = ({
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 placeholder="VD: Mục tiêu cố định, Vệ sĩ cá nhân..."
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 focus:border-[#b8860b] focus:bg-white text-slate-900 text-xs font-mono focus:outline-none transition-all rounded"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-300 focus:border-amber-600 focus:bg-white text-slate-900 text-xs sm:text-sm font-mono focus:outline-hidden transition-all rounded-lg"
               />
             </div>
           </div>
 
           {/* Title */}
           <div>
-            <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-700 font-bold mb-1.5">
-              Tiêu đề chính trên Banner (Hero Title) <span className="text-[#b8860b]">*</span>
+            <label className="block text-xs sm:text-sm font-mono uppercase tracking-wider text-slate-800 font-bold mb-2">
+              Tiêu đề chính trên Banner (Hero Title) <span className="text-amber-700">*</span>
             </label>
             <input
               type="text"
@@ -132,13 +136,13 @@ export const HeroSlideModal: React.FC<HeroSlideModalProps> = ({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Nhập tiêu đề hiển thị cỡ lớn trên banner chính..."
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 focus:border-[#b8860b] focus:bg-white text-slate-900 text-sm font-bold uppercase focus:outline-none transition-all rounded"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-300 focus:border-amber-600 focus:bg-white text-slate-900 text-sm sm:text-base font-bold uppercase focus:outline-hidden transition-all rounded-lg"
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-700 font-bold mb-1.5">
+            <label className="block text-xs sm:text-sm font-mono uppercase tracking-wider text-slate-800 font-bold mb-2">
               Mô tả ngắn banner (Description)
             </label>
             <textarea
@@ -147,13 +151,13 @@ export const HeroSlideModal: React.FC<HeroSlideModalProps> = ({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Mô tả tóm tắt giải pháp an ninh, số lượng quân số hoặc công nghệ áp dụng..."
-              className="w-full p-3 bg-slate-50 border border-slate-300 focus:border-[#b8860b] focus:bg-white text-slate-900 text-xs font-light leading-relaxed focus:outline-none transition-all placeholder:text-slate-400 resize-none rounded"
+              className="w-full p-4 bg-slate-50 border border-slate-300 focus:border-amber-600 focus:bg-white text-slate-900 text-xs sm:text-sm font-normal leading-relaxed focus:outline-hidden transition-all placeholder:text-slate-400 resize-none rounded-lg"
             />
           </div>
 
           {/* Image URL */}
           <div>
-            <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-700 font-bold mb-1.5">
+            <label className="block text-xs sm:text-sm font-mono uppercase tracking-wider text-slate-800 font-bold mb-2">
               URL Hình nền Banner (Background Image)
             </label>
             <input
@@ -162,23 +166,23 @@ export const HeroSlideModal: React.FC<HeroSlideModalProps> = ({
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
               placeholder="https://..."
-              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 focus:border-[#b8860b] focus:bg-white text-slate-900 text-xs font-mono focus:outline-none transition-all rounded"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-300 focus:border-amber-600 focus:bg-white text-slate-900 text-xs sm:text-sm font-mono focus:outline-hidden transition-all rounded-lg"
             />
 
             {/* Quick Presets */}
-            <div className="mt-2 flex flex-wrap items-center gap-1.5">
-              <span className="text-[10px] text-slate-500 font-mono flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-[#b8860b]" /> Ảnh sẵn:
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <span className="text-xs text-slate-600 font-mono font-bold flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-amber-600" /> Ảnh mẫu:
               </span>
               {SAMPLE_HERO_BG.map((bg, i) => (
                 <button
                   key={i}
                   type="button"
                   onClick={() => setImageUrl(bg.url)}
-                  className={`text-[10px] font-mono px-2 py-0.5 border rounded transition-all ${
+                  className={`text-xs font-mono px-2.5 py-1 border rounded-md transition-all cursor-pointer ${
                     imageUrl === bg.url
-                      ? 'bg-[#c5a059] text-black border-[#c5a059] font-bold'
-                      : 'bg-slate-100 border-slate-200 text-slate-700 hover:text-black hover:border-slate-400'
+                      ? 'bg-[#c5a059] text-slate-950 border-[#c5a059] font-bold shadow-2xs'
+                      : 'bg-slate-100 border-slate-200 text-slate-700 hover:text-slate-950 hover:border-slate-400'
                   }`}
                 >
                   {bg.label}
@@ -188,24 +192,24 @@ export const HeroSlideModal: React.FC<HeroSlideModalProps> = ({
 
             {/* Preview Banner */}
             {imageUrl && (
-              <div className="mt-3 relative h-36 w-full bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center rounded">
+              <div className="mt-4 relative h-40 sm:h-48 w-full bg-slate-900 border border-slate-200 overflow-hidden flex items-center justify-center rounded-xl shadow-xs">
                 <img
                   src={imageUrl}
                   alt="Xem trước banner"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover brightness-90"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent p-4 flex flex-col justify-end">
-                  <span className="text-[9px] font-mono text-[#c5a059] font-bold uppercase">{tag || 'TAG'}</span>
-                  <p className="text-xs font-bold text-white uppercase truncate">{title || 'Tiêu đề'}</p>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-5 flex flex-col justify-end">
+                  <span className="text-[10px] font-mono text-amber-300 font-bold uppercase tracking-wider">{tag || 'TAG'}</span>
+                  <p className="text-sm sm:text-base font-bold text-white uppercase truncate">{title || 'Tiêu đề'}</p>
                 </div>
               </div>
             )}
           </div>
 
           {/* CTA Buttons */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
             <div>
-              <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-700 font-bold mb-1.5">
+              <label className="block text-xs sm:text-sm font-mono uppercase tracking-wider text-slate-800 font-bold mb-2">
                 Nút kêu gọi chính (Primary CTA)
               </label>
               <input
@@ -213,12 +217,12 @@ export const HeroSlideModal: React.FC<HeroSlideModalProps> = ({
                 value={ctaText}
                 onChange={(e) => setCtaText(e.target.value)}
                 placeholder="VD: Xem phương án an ninh"
-                className="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 focus:border-[#b8860b] focus:bg-white text-slate-900 text-xs font-mono focus:outline-none rounded"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-300 focus:border-amber-600 focus:bg-white text-slate-900 text-xs sm:text-sm font-mono focus:outline-hidden rounded-lg"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-mono uppercase tracking-wider text-slate-700 font-bold mb-1.5">
+              <label className="block text-xs sm:text-sm font-mono uppercase tracking-wider text-slate-800 font-bold mb-2">
                 Nút phụ (Secondary CTA)
               </label>
               <input
@@ -226,29 +230,29 @@ export const HeroSlideModal: React.FC<HeroSlideModalProps> = ({
                 value={secondaryCtaText}
                 onChange={(e) => setSecondaryCtaText(e.target.value)}
                 placeholder="VD: Yêu cầu khảo sát"
-                className="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 focus:border-[#b8860b] focus:bg-white text-slate-900 text-xs font-mono focus:outline-none rounded"
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-300 focus:border-amber-600 focus:bg-white text-slate-900 text-xs sm:text-sm font-mono focus:outline-hidden rounded-lg"
               />
             </div>
           </div>
 
           {/* Actions */}
-          <div className="pt-4 border-t border-slate-200 flex items-center justify-end gap-3">
+          <div className="pt-4 border-t border-slate-200 flex items-center justify-end gap-3.5">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-mono uppercase tracking-wider transition-all rounded"
+              className="px-5 py-2.5 sm:py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs sm:text-sm font-mono font-bold uppercase tracking-wider transition-all rounded-lg cursor-pointer"
             >
               Hủy
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-6 py-2.5 bg-[#c5a059] hover:bg-[#b8860b] text-slate-950 font-black text-xs uppercase tracking-widest transition-all disabled:opacity-50 flex items-center gap-2 rounded shadow"
+              className="px-6 sm:px-7 py-2.5 sm:py-3 bg-[#c5a059] hover:bg-[#b8860b] text-slate-950 font-black text-xs sm:text-sm uppercase tracking-widest transition-all disabled:opacity-50 flex items-center gap-2 rounded-lg shadow-sm hover:shadow-md cursor-pointer"
             >
               {isSubmitting ? (
-                <span className="w-3.5 h-3.5 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
               ) : (
-                <Save className="w-3.5 h-3.5 text-slate-950" />
+                <Save className="w-4 h-4 text-slate-950" />
               )}
               <span>Lưu thông tin Slide</span>
             </button>
