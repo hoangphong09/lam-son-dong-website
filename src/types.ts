@@ -146,7 +146,7 @@ export interface QuoteRequest {
   status: 'new' | 'contacted' | 'closed' | 'processing' | 'completed' | 'cancelled';
   created_at: string;
   // Additional / alias fields for backwards compatibility with calculator modal
-  source?: 'quote_calculator' | 'consultation_form' | 'direct';
+  source?: 'quote_calculator' | 'consultation_form' | 'direct' | 'risk_assessment_demo';
   contactName?: string;
   contactPhone?: string;
   contactEmail?: string;

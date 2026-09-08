@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   ShieldCheck, 
   Send, 
@@ -30,6 +30,42 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({ initialData 
   const [submittedId, setSubmittedId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (initialData) {
+      if (initialData.facilityType) {
+        const facilityMap: Record<string, string> = {
+          factory: 'Bảo vệ Khu Công Nghiệp & Nhà Máy',
+          building: 'Bảo vệ Tòa Nhà Văn Phòng & Cao Ốc',
+          warehouse: 'Bảo vệ Khu Công Nghiệp & Nhà Máy',
+          bank: 'Áp Tải Tiền Mặt & Kim Loại Quý',
+          retail: 'Bảo vệ Mục tiêu Cố định',
+          event: 'Bảo Vệ Sự Kiện & Lễ Hội',
+        };
+        if (facilityMap[initialData.facilityType]) {
+          setServiceType(facilityMap[initialData.facilityType]);
+        }
+      }
+
+      const infoLines: string[] = [];
+      if (initialData.metrics?.score) {
+        infoLines.push(`Điểm đánh giá rủi ro: ${initialData.metrics.score}/100 (${initialData.metrics.level || ''})`);
+      }
+      if (initialData.facilityType) {
+        infoLines.push(`Mô hình cơ sở: ${initialData.facilityType}`);
+      }
+      if (initialData.areaSize) {
+        infoLines.push(`Quy mô diện tích: ${initialData.areaSize}`);
+      }
+      if (initialData.selectedRisks && initialData.selectedRisks.length > 0) {
+        infoLines.push(`Mối lo ngại rủi ro: ${initialData.selectedRisks.join(', ')}`);
+      }
+
+      if (infoLines.length > 0) {
+        setMessage(`[Thông tin khảo sát rủi ro ban đầu]:\n${infoLines.join('\n')}\n\nQuý công ty vui lòng liên hệ tư vấn phương án bố trí quân số và khảo sát thực địa miễn phí.`);
+      }
+    }
+  }, [initialData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

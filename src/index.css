@@ -67,5 +67,47 @@
   animation: pulse-subtle 3s infinite ease-in-out;
 }
 
+/* Seamless Infinite Marquee Animations */
+@keyframes marquee-scroll-left {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes marquee-scroll-right {
+  0% {
+    transform: translate3d(-50%, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.marquee-track-left {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll-left 36s linear infinite;
+  will-change: transform;
+}
+
+.marquee-track-right {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll-right 38s linear infinite;
+  will-change: transform;
+}
+
+/* Pause smoothly when hovering either the track or any element inside */
+.marquee-container:hover .marquee-track-left,
+.marquee-container:hover .marquee-track-right,
+.marquee-track-left:hover,
+.marquee-track-right:hover {
+  animation-play-state: paused !important;
+}
+
+
 
 

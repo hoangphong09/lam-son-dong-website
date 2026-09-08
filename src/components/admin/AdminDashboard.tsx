@@ -1026,6 +1026,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         {/* ========================================================= */}
         {activeTab === 'quotes' && (
           <div className="space-y-6 animate-fadeIn">
+            {/* Email Forwarding Notification Banner */}
+            <div className="bg-amber-50/80 border border-amber-200 text-amber-950 px-4 py-3 rounded-lg text-xs flex items-center justify-between gap-3 shadow-2xs">
+              <div className="flex items-center gap-2.5">
+                <Mail className="w-4 h-4 text-amber-700 shrink-0" />
+                <span>
+                  <strong>Thông báo chuyển tiếp Email:</strong> Tất cả yêu cầu báo giá, khảo sát an ninh, đơn ứng tuyển tuyển dụng và đăng ký nhận bản tin mới đều được tự động gửi thông tin chi tiết về hòm thư: <code className="bg-white px-1.5 py-0.5 rounded border border-amber-300 font-bold text-amber-900 font-mono">congtybaovelamsondong@gmail.com</code>
+                </span>
+              </div>
+              <span className="text-[11px] font-mono font-semibold text-amber-800 shrink-0 hidden sm:inline-block">
+                ● Tự động 24/7
+              </span>
+            </div>
+
             {/* Filter & Search Bar */}
             <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 bg-white p-4 border border-slate-200 rounded shadow-xs">
               <div className="flex flex-wrap items-center gap-3 flex-1">

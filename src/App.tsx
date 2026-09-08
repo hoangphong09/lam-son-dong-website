@@ -17,7 +17,10 @@ import { Footer } from './components/Footer';
 import { FloatingActions } from './components/FloatingActions';
 import { QuoteCalculatorModal } from './components/QuoteCalculatorModal';
 import { ServiceDetailModal } from './components/ServiceDetailModal';
+import { SolutionDetailModal } from './components/SolutionDetailModal';
 import { SearchModal } from './components/SearchModal';
+import { RecruitmentModal } from './components/RecruitmentModal';
+import { RecruitmentSection } from './components/RecruitmentSection';
 import { AdminLogin } from './components/admin/AdminLogin';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 
@@ -46,7 +49,12 @@ export default function App() {
   // Modal states
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const [isRecruitmentModalOpen, setIsRecruitmentModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<ServiceItem | null>(null);
+  const [selectedSolution, setSelectedSolution] = useState<{
+    solution: any;
+    categoryName: string;
+  } | null>(null);
   
   // Generic Info Dialog Modal (for Case Study, News, Research, Cert)
   const [infoModalData, setInfoModalData] = useState<{
@@ -229,12 +237,10 @@ export default function App() {
     scrollToSection('consultation-section');
   };
 
-  const handleOpenSolutionDetail = (sol: any) => {
-    setInfoModalData({
-      title: sol.title,
-      category: `Giải Pháp Ngành / ${sol.tag}`,
-      content: `${sol.description}\n\nQUY CHUẨN TRIỂN KHAI:\n- Lực lượng bảo vệ được đào tạo chuyên sâu theo đặc thù ngành.\n- Trang bị đầy đủ công cụ hỗ trợ và hệ thống tuần tra giám sát GPS.\n- Phối hợp chặt chẽ với lực lượng công an địa phương và PCCC khu vực.`,
-      bullets: sol.keySpecs
+  const handleOpenSolutionDetail = (sol: any, categoryName?: string) => {
+    setSelectedSolution({
+      solution: sol,
+      categoryName: categoryName || 'Giải Pháp An Ninh Theo Ngành Nghề'
     });
   };
 
@@ -267,6 +273,7 @@ export default function App() {
         onSelectService={handleSelectServiceById}
         onScrollToSection={scrollToSection}
         onOpenSearch={() => setIsSearchModalOpen(true)}
+        onOpenRecruitment={() => setIsRecruitmentModalOpen(true)}
       />
 
       {/* 3. Hero Carousel */}
@@ -311,6 +318,11 @@ export default function App() {
       {/* 12. Events & News */}
       <EventsAndNews onSelectNews={handleSelectNews} posts={posts} />
 
+      {/* 12.5. Recruitment Announcement (Liên Tục Tuyển Dụng) */}
+      <RecruitmentSection 
+        onOpenRecruitmentModal={() => setIsRecruitmentModalOpen(true)} 
+      />
+
       {/* 13. Strategic Partners & Clients */}
       <PartnersAndClients />
 
@@ -321,7 +333,7 @@ export default function App() {
       <Footer 
         onScrollToSection={scrollToSection}
         onOpenQuote={() => setIsQuoteModalOpen(true)}
-        onOpenAdmin={openAdminView}
+        onOpenRecruitment={() => setIsRecruitmentModalOpen(true)}
       />
 
       {/* Floating Call & Quote Triggers */}
@@ -340,11 +352,42 @@ export default function App() {
         onOpenQuote={() => setIsQuoteModalOpen(true)}
       />
 
+      {/* Specialized Solution Detail Deep Dive Modal */}
+      <SolutionDetailModal
+        solution={selectedSolution?.solution || null}
+        categoryName={selectedSolution?.categoryName}
+        onClose={() => setSelectedSolution(null)}
+        onOpenQuote={() => {
+          setSelectedSolution(null);
+          setIsQuoteModalOpen(true);
+        }}
+        onOpenConsultation={() => {
+          const sol = selectedSolution?.solution;
+          const cat = selectedSolution?.categoryName;
+          setSelectedSolution(null);
+          if (sol) {
+            setAuditDataForForm({
+              facilityType: cat || 'Cơ sở doanh nghiệp',
+              serviceType: sol.title,
+              targetNotes: `Khảo sát thực địa cho giải pháp: ${sol.title} (Phân loại: ${sol.tag})`,
+              riskLevel: 'RỦI RO TIÊU CHUẨN'
+            });
+          }
+          scrollToSection('consultation-section');
+        }}
+      />
+
       {/* Search Modal */}
       <SearchModal
         isOpen={isSearchModalOpen}
         onClose={() => setIsSearchModalOpen(false)}
         onSelectService={handleSelectServiceById}
+      />
+
+      {/* Recruitment Modal */}
+      <RecruitmentModal
+        isOpen={isRecruitmentModalOpen}
+        onClose={() => setIsRecruitmentModalOpen(false)}
       />
 
       {/* Generic Info Detail Dialog */}

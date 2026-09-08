@@ -182,7 +182,7 @@ export const FEATURED_SERVICES: ServiceItem[] = [
     targetAudience: ['Nhà máy FDI, liên doanh', 'Kho logistics & cảng cạn', 'Khu chế xuất, KCN công nghệ cao'],
     features: [
       'Kiểm soát 100% người & phương tiện ra vào bằng thẻ từ/nhận diện',
-      'Tuần tra khép kín các điểm mù hàng rào bằng hệ thống chốt gác và RFID',
+      'Tuần tra khép kín các điểm mù hàng rào bằng hệ thống chốt gác và thẻ tuần tra điện tử',
       'Đội PCCC cơ sở phản ứng tức thì khi có sự cố khói nhiệt',
       'Kiểm tra cốp xe, túi xách chống thất thoát linh kiện giá trị cao',
     ],
@@ -206,7 +206,7 @@ export const FEATURED_SERVICES: ServiceItem[] = [
     features: [
       'Tiếp đón khách, hướng dẫn đăng ký ra vào lịch thiệp',
       'Quản lý hệ thống đỗ xe tầng hầm, điều tiết giao thông giờ cao điểm',
-      'Giám sát phòng điều khiển trung tâm BMS / CCTV 24/24',
+      'Giám sát phòng điều khiển trung tâm và hệ thống camera 24/24',
       'Xử lý tình huống kẹt thang máy, báo cháy giả và gây rối trật tự',
     ],
     workflow: [
@@ -225,7 +225,7 @@ export const FEATURED_SERVICES: ServiceItem[] = [
     imageUrl: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80',
     summary: 'Đội ngũ vệ sĩ ưu tú, võ thuật cao cấp, am hiểu tâm lý và kỹ năng đối kháng, luôn sẵn sàng làm lá chắn bảo vệ khách hàng trong mọi hoàn cảnh.',
     description: 'Dành riêng cho các Chủ tịch HĐQT, Tổng giám đốc, Chính khách, Ca sĩ, Diễn viên và Đoàn khách quốc tế. Kế hoạch di chuyển được bảo mật nghiêm ngặt với đội xe hộ tống chuyên dụng và lộ trình thoát hiểm dự phòng.',
-    targetAudience: ['Doanh nhân thành đạt, Lãnh đạo cấp cao', 'Người nổi tiếng, Nghệ sĩ, KOLs', 'Nhân chứng quan trọng cần bảo vệ'],
+    targetAudience: ['Doanh nhân thành đạt, Lãnh đạo cấp cao', 'Người nổi tiếng, Nghệ sĩ, Người có tầm ảnh hưởng', 'Nhân chứng quan trọng cần bảo vệ'],
     features: [
       'Vệ sĩ cao trên 1m78, võ thuật cận chiến, phản xạ tình huống cực nhạy',
       'Kỹ năng lái xe phòng thủ, kỹ năng sơ cấp cứu y tế khẩn cấp',
@@ -238,7 +238,7 @@ export const FEATURED_SERVICES: ServiceItem[] = [
       '3. Bố trí đội hình tiền trạm kiểm tra an ninh địa điểm đến trước 2h',
       '4. Hộ tống thực tế kèm hỗ trợ liên lạc vệ tinh liên tục',
     ],
-    guarantee: 'Ký cam kết bảo mật thông tin (NDA) trọn đời và trách nhiệm an toàn tuyệt đối 100%.',
+    guarantee: 'Ký cam kết bảo mật thông tin trọn đời và chịu trách nhiệm an toàn tuyệt đối 100%.',
   },
   {
     id: 'srv-event',
@@ -248,16 +248,16 @@ export const FEATURED_SERVICES: ServiceItem[] = [
     imageUrl: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=800&q=80',
     summary: 'Chuyên trách các đại nhạc hội, trận đấu thể thao, triển lãm quốc tế và hội nghị thượng đỉnh với hàng rào an ninh nhiều lớp.',
     description: 'Phân luồng vé, soi chiếu kim loại, ngăn chặn chất cấm, pháo sáng, vũ khí và kiểm soát trật tự khu vực khán đài lẫn hậu trường sân khấu nghệ sĩ.',
-    targetAudience: ['Công ty tổ chức sự kiện (Event Agency)', 'Ban tổ chức Lễ hội âm nhạc, Thể thao', 'Trung tâm hội chợ & triển lãm'],
+    targetAudience: ['Công ty tổ chức sự kiện', 'Ban tổ chức Lễ hội âm nhạc, Thể thao', 'Trung tâm hội chợ & triển lãm'],
     features: [
       'Cổng dò kim loại & máy quét an ninh cầm tay chuẩn quốc tế',
-      'Hàng rào an ninh chống xô đẩy Mojo Barrier chịu lực cao',
+      'Hàng rào an ninh chống xô đẩy chuyên dụng chịu lực cao',
       'Đội cơ động phản ứng nhanh xử lý gây rối, trộm cắp móc túi',
       'Phối hợp nhịp nhàng với Công an địa phương và Cứu thương 115',
     ],
     workflow: [
       '1. Khảo sát sơ đồ mặt bằng sân khấu, cửa thoát hiểm và sức chứa',
-      '2. Phân tầng kiểm soát an ninh (Vòng 1 - Vé, Vòng 2 - Sân khấu, Vòng 3 - VIP)',
+      '2. Phân tầng kiểm soát an ninh (Vòng 1 - Soát vé, Vòng 2 - Sân khấu, Vòng 3 - Khu vực ưu tiên)',
       '3. Triển khai diễn tập tình huống giả định giẫm đạp, mất điện',
       '4. Thực thi an ninh từ lúc đón khách đến khi kết thúc dọn dẹp mặt bằng',
     ],
@@ -266,7 +266,7 @@ export const FEATURED_SERVICES: ServiceItem[] = [
   {
     id: 'srv-transit',
     title: 'Áp Tải Tiền Mặt & Kim Loại Quý, Hàng Giá Trị Cao',
-    subtitle: 'Phương tiện bọc thép chuyên dụng, GPS giám sát hành trình và vũ trang hỗ trợ',
+    subtitle: 'Phương tiện bọc thép chuyên dụng, định vị vệ tinh giám sát hành trình và vũ trang hỗ trợ',
     category: 'Vận chuyển đặc biệt',
     imageUrl: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=800&q=80',
     summary: 'Dịch vụ vận chuyển an toàn cho tiền tệ ngân hàng, vàng bạc đá quý, cổ vật và tài liệu mật quốc gia.',
@@ -288,17 +288,17 @@ export const FEATURED_SERVICES: ServiceItem[] = [
   },
   {
     id: 'srv-smart-patrol',
-    title: 'Hệ Thống Giám Sát An Ninh Thông Minh (Smart Patrol & AI)',
-    subtitle: 'Kết hợp tuần tra thể chất và công nghệ nhận diện khuôn mặt, cảnh báo tự động',
+    title: 'Hệ Thống Giám Sát An Ninh Thông Minh & Công Nghệ Số',
+    subtitle: 'Kết hợp tuần tra thực địa và công nghệ nhận diện khuôn mặt, cảnh báo tự động',
     category: 'An ninh 4.0',
     imageUrl: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&w=800&q=80',
     summary: 'Giải pháp chuyển đổi số an ninh giúp doanh nghiệp tiết kiệm 30% chi phí quân số mà nâng cao hiệu quả giám sát 300%.',
-    description: 'Ứng dụng thẻ tuần tra RFID/GPS chống gian lận ca trực, camera AI phát hiện xâm nhập hàng rào ảo, cảnh báo khói lửa sớm và báo cáo tuần tra tự động qua ứng dụng di động cho khách hàng.',
+    description: 'Ứng dụng thẻ tuần tra điện tử định vị chống gian lận ca trực, camera thông minh phát hiện xâm nhập hàng rào ảo, cảnh báo khói lửa sớm và báo cáo tuần tra tự động qua ứng dụng di động cho khách hàng.',
     targetAudience: ['Tập đoàn có chuỗi chi nhánh lớn', 'Khu đô thị sinh thái thông minh', 'Trang trại, Nông trường quy mô rộng'],
     features: [
-      'Điểm danh tuần tra theo tọa độ GPS và quét mã QR tại các vị trí chốt',
-      'Phần mềm Smart Patrol cập nhật tình trạng mục tiêu theo thời gian thực',
-      'Trung tâm điều hành an ninh SOC giám sát màn hình camera 24/7',
+      'Điểm danh tuần tra theo tọa độ định vị và quét mã QR tại các vị trí chốt',
+      'Phần mềm tuần tra số hóa cập nhật tình trạng mục tiêu theo thời gian thực',
+      'Trung tâm điều hành an ninh tập trung giám sát màn hình camera 24/7',
       'Báo cáo tự động hàng ngày gửi về điện thoại của Chủ đầu tư',
     ],
     workflow: [
@@ -318,14 +318,14 @@ export const SOLUTION_CATEGORIES: SolutionCategory[] = [
     solutions: [
       {
         id: 'kcn-1',
-        title: 'Quy Trình Kiểm Soát Cổng Chính Xuất Nhập (Gate Control)',
+        title: 'Quy Trình Kiểm Soát Cổng Chính Xuất Nhập Vật Tư',
         description: 'Tách biệt luồng công nhân, xe chuyên chở và khách thăm. Kiểm tra mã QR xe hàng, cân tải trọng và soi chiếu vật phẩm chống gian lận vật tư.',
         keySpecs: ['100% Soi quét hành lý ca tan tầm', 'Giảm 95% thời gian ùn tắc cổng', 'Hệ thống Barie tự động'],
         tag: 'Cổng chính',
       },
       {
         id: 'kcn-2',
-        title: 'Tuần Tra Vành Đai Hàng Rào & Điểm Mù (Perimeter Patrol)',
+        title: 'Tuần Tra Vành Đai Hàng Rào & Điểm Mù Cơ Sở',
         description: 'Bảo vệ đường bao 5km-20km bằng xe máy điện chuyên dụng, tuần tra ngẫu nhiên 30 phút/lượt kết hợp cảm biến hồng ngoại leo trèo.',
         keySpecs: ['Tuần tra định vị GPS', 'Chiếu sáng công suất cao', 'Đội phản ứng nhanh 3 phút'],
         tag: 'Hàng rào',
@@ -339,8 +339,8 @@ export const SOLUTION_CATEGORIES: SolutionCategory[] = [
       },
       {
         id: 'kcn-4',
-        title: 'Kiểm Soát Nhà Kho & Thất Thoát Nội Bộ (Loss Prevention)',
-        description: 'Giám sát khu vực đóng gói, niêm phong container bằng seal an ninh điện tử, phối hợp kiểm toán kho đột xuất ngăn chặn móc nối trộm cắp.',
+        title: 'Kiểm Soát Nhà Kho & Chống Thất Thoát Nội Bộ',
+        description: 'Giám sát khu vực đóng gói, niêm phong container bằng kẹp chì điện tử, phối hợp kiểm toán kho đột xuất ngăn chặn móc nối trộm cắp.',
         keySpecs: ['Giảm 99.9% rủi ro thất thoát hàng', 'Niêm phong chì số', 'Camera góc siêu rộng'],
         tag: 'Chống thất thoát',
       },
@@ -359,14 +359,14 @@ export const SOLUTION_CATEGORIES: SolutionCategory[] = [
       },
       {
         id: 'bld-2',
-        title: 'Điều Phối & Quản Lý Bãi Xe Thông Minh (Parking Control)',
+        title: 'Điều Phối & Quản Lý Bãi Xe Thông Minh',
         description: 'Hướng dẫn sắp xếp ô tô, xe máy ngăn nắp, chống trầy xước va quẹt, xử lý sự cố cháy nổ xe điện và chống trộm cắp phụ tùng.',
         keySpecs: ['Phân luồng giờ cao điểm', 'Khu sạc xe điện an toàn', 'Kiểm soát biển số tự động'],
         tag: 'Tầng hầm',
       },
       {
         id: 'bld-3',
-        title: 'Giám Sát Phòng Điều Khiển Trung Tâm (BMS / CCTV Command)',
+        title: 'Giám Sát Phòng Điều Khiển Trung Tâm & Hệ Thống Camera',
         description: 'Kíp trực 24/7 theo dõi hàng trăm mắt camera, kiểm soát hệ thống báo cháy, áp suất thang thoát hiểm và cảnh báo sự cố kỹ thuật.',
         keySpecs: ['Kíp trực 2 người/ca liên tục', 'Ghi nhật ký hệ thống', 'Kết nối khẩn cấp cứu hộ'],
         tag: 'Phòng điều khiển',
@@ -401,8 +401,8 @@ export const SOLUTION_CATEGORIES: SolutionCategory[] = [
       {
         id: 'bnk-3',
         title: 'Bảo Vệ Trụ ATM Ngoài Trời & Cảnh Báo Thiết Bị Lạ',
-        description: 'Tuần tra kiểm tra khe cắm thẻ cây ATM chống gắn thiết bị Skimming đánh cắp dữ liệu, đảm bảo an toàn cho khách hàng rút tiền ban đêm.',
-        keySpecs: ['Phát hiện Skimming trong 1h', 'Hỗ trợ khách hàng kẹt thẻ', 'Đèn chiếu sáng an ninh'],
+        description: 'Tuần tra kiểm tra khe cắm thẻ cây ATM chống gắn thiết bị lạ đánh cắp dữ liệu thẻ, đảm bảo an toàn cho khách hàng rút tiền ban đêm.',
+        keySpecs: ['Phát hiện thiết bị lạ trong 1 giờ', 'Hỗ trợ khách hàng kẹt thẻ', 'Đèn chiếu sáng an ninh'],
         tag: 'An ninh ATM',
       },
       {
@@ -416,12 +416,12 @@ export const SOLUTION_CATEGORIES: SolutionCategory[] = [
   },
   {
     id: 'cat-event',
-    name: 'Sự Kiện & VIP Yếu Nhân',
+    name: 'Sự Kiện & Khách Mời Cấp Cao',
     solutions: [
       {
         id: 'evt-1',
         title: 'Phương Án Kiểm Soát Cửa Soi Chiếu & Quản Trị Đám Đông',
-        description: 'Hệ thống barie chia luồng zíc-zắc, cửa từ dò kim loại, phân loại vé VIP/General và kiểm soát đồ uống có cồn, chất cấm mang vào sân vận động.',
+        description: 'Hệ thống barie chia luồng zíc-zắc, cửa từ dò kim loại, phân loại vé ưu tiên và vé phổ thông, kiểm soát đồ uống có cồn, chất cấm mang vào sân vận động.',
         keySpecs: ['Xử lý 500 khách/cửa/giờ', 'Máy quét kim loại cầm tay', 'Hàng rào chịu lực cao'],
         tag: 'Cửa soát vé',
       },
@@ -430,7 +430,7 @@ export const SOLUTION_CATEGORIES: SolutionCategory[] = [
         title: 'Vệ Sĩ Cận Vệ Bảo Vệ Sân Khấu & Khu Vực Hậu Trường Nghệ Sĩ',
         description: 'Thiết lập vành đai bảo vệ bán kính 5m quanh nghệ sĩ, chống khán giả quá khích lao lên sân khấu, đảm bảo lối đi an toàn vào phòng chờ.',
         keySpecs: ['Bảo vệ cự ly gần 1:1', 'Chắn đạn & ô bảo hộ', 'Lối thoát hiểm riêng biệt'],
-        tag: 'Sân khấu VIP',
+        tag: 'Sân khấu',
       },
       {
         id: 'evt-3',
@@ -441,23 +441,23 @@ export const SOLUTION_CATEGORIES: SolutionCategory[] = [
       },
       {
         id: 'evt-4',
-        title: 'Đoàn Xe Hộ Tống Doanh Nhân & Chính Khách (Motorcade Security)',
-        description: 'Đội xe Mercedes/Fortuner đen bóng dẫn đường và bọc hậu, lái xe chuyên nghiệp xử lý tình huống truy đuổi hoặc tạt đầu trên cao tốc.',
-        keySpecs: ['Kỹ năng lái xe phòng ngự', 'Lộ trình thoát hiểm cấp 1', 'Bảo mật thông tin khách sạn'],
+        title: 'Đoàn Xe Hộ Tống Doanh Nhân & Lãnh Đạo Cấp Cao',
+        description: 'Đội xe chuyên dụng bọc hậu và dẫn đường, lái xe chuyên nghiệp xử lý tình huống truy đuổi hoặc tạt đầu trên cao tốc.',
+        keySpecs: ['Kỹ năng lái xe phòng thủ', 'Lộ trình thoát hiểm cấp 1', 'Bảo mật thông tin khách sạn'],
         tag: 'Hộ tống xe hơi',
       },
     ],
   },
   {
     id: 'cat-retail',
-    name: 'Chuỗi Bán Lẻ & Showroom Cao Cấp',
+    name: 'Chuỗi Bán Lẻ & Phòng Trưng Bày',
     solutions: [
       {
         id: 'ret-1',
-        title: 'Bảo Vệ Đón Khách & Trông Giữ Xe Showroom Xe Sang, Vàng Bạc',
+        title: 'Bảo Vệ Đón Khách & Trông Giữ Xe Cửa Hàng Xe Sang, Vàng Bạc',
         description: 'Chào đón mở cửa xe cho khách hàng, dắt xe, giữ tài sản tư trang và tạo ấn tượng chu đáo, sang trọng ngay từ điểm chạm đầu tiên.',
         keySpecs: ['Dắt xe và che ô khi trời mưa', 'Thẻ xe điện tử', 'Tác phong thân thiện chuẩn mực'],
-        tag: 'Showroom',
+        tag: 'Phòng trưng bày',
       },
       {
         id: 'ret-2',
@@ -476,7 +476,7 @@ export const SOLUTION_CATEGORIES: SolutionCategory[] = [
       {
         id: 'ret-4',
         title: 'Đóng Cửa & Niêm Phong Két Sắt Doanh Thu Cuối Ngày',
-        description: 'Đồng hành cùng Quản lý cửa hàng kiểm đếm doanh thu cuối ngày, hộ tống bàn giao két an toàn hoặc đưa đến cây gửi tiền tự động CDM.',
+        description: 'Đồng hành cùng Quản lý cửa hàng kiểm đếm doanh thu cuối ngày, hộ tống bàn giao két an toàn hoặc đưa đến cây nạp tiền tự động ngân hàng.',
         keySpecs: ['Áp tải doanh thu an toàn', 'Niêm phong cửa kính 2 lớp', 'Bật hệ thống báo động hồng ngoại'],
         tag: 'Khóa sổ cuối ngày',
       },

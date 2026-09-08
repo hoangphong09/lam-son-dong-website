@@ -42,7 +42,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
   const currentSlide = activeSlides[currentIndex] || activeSlides[0];
 
   const handlePrev = () => {
-    setCurrentIndex((prev) => (prev === 0 ? activeSlides.length - 1 : prev - 1));
+    setCurrentIndex((prev) => (prev - 1 + activeSlides.length) % activeSlides.length);
   };
 
   const handleNext = () => {
@@ -56,7 +56,6 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      {/* Background Slides with transition */}
       {activeSlides.map((slide, index) => (
         <div
           key={slide.id}
@@ -138,7 +137,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
           </div>
 
           {/* Navigation Control Arrows */}
-          <div className="flex items-center justify-end gap-2.5">
+          <div className="flex items-center gap-2 self-end sm:self-auto">
             <button
               id="hero-prev-slide-btn"
               onClick={handlePrev}
@@ -147,7 +146,6 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
-
             <button
               id="hero-next-slide-btn"
               onClick={handleNext}

@@ -7,28 +7,40 @@ import {
   CheckCircle2, 
   Send, 
   ChevronRight, 
-  ShieldCheck, 
-  Lock,
-  KeyRound
+  Loader2
 } from 'lucide-react';
 import { FOOTER_DATA } from '../data/mockData';
+import { sendNewsletterNotification } from '../lib/emailService';
 
 interface FooterProps {
   onScrollToSection: (sectionId: string) => void;
   onOpenQuote: () => void;
   onOpenAdmin?: () => void;
+  onOpenRecruitment?: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onScrollToSection, onOpenQuote, onOpenAdmin }) => {
+export const Footer: React.FC<FooterProps> = ({ onScrollToSection, onOpenQuote, onOpenAdmin, onOpenRecruitment }) => {
   const [emailSub, setEmailSub] = useState('');
   const [subSuccess, setSubSuccess] = useState(false);
+  const [subLoading, setSubLoading] = useState(false);
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (emailSub) {
-      setSubSuccess(true);
-      setEmailSub('');
-      setTimeout(() => setSubSuccess(false), 4000);
+    if (emailSub.trim()) {
+      setSubLoading(true);
+      try {
+        await sendNewsletterNotification({
+          email: emailSub.trim(),
+          sourcePage: 'Chân trang Website (Footer)',
+        });
+      } catch (err) {
+        console.warn('Lỗi khi đăng ký nhận bản tin:', err);
+      } finally {
+        setSubLoading(false);
+        setSubSuccess(true);
+        setEmailSub('');
+        setTimeout(() => setSubSuccess(false), 5000);
+      }
     }
   };
 
@@ -66,10 +78,20 @@ export const Footer: React.FC<FooterProps> = ({ onScrollToSection, onOpenQuote, 
                 <button
                   id="newsletter-subscribe-btn"
                   type="submit"
-                  className="px-6 py-3 bg-[#c5a059] hover:bg-[#b8860b] text-slate-950 font-black text-xs uppercase tracking-widest flex items-center gap-1.5 shrink-0 transition-all rounded shadow"
+                  disabled={subLoading}
+                  className="px-6 py-3 bg-[#c5a059] hover:bg-[#b8860b] disabled:opacity-70 text-slate-950 font-black text-xs uppercase tracking-widest flex items-center gap-1.5 shrink-0 transition-all rounded shadow cursor-pointer"
                 >
-                  <span>Đăng ký</span>
-                  <Send className="w-3.5 h-3.5" />
+                  {subLoading ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Đang gửi...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Đăng ký</span>
+                      <Send className="w-3.5 h-3.5" />
+                    </>
+                  )}
                 </button>
               </form>
             )}
@@ -156,61 +178,30 @@ export const Footer: React.FC<FooterProps> = ({ onScrollToSection, onOpenQuote, 
             </ul>
           </div>
 
-          {/* Col 4: Legal & Standards */}
+          {/* Col 4: Recruitment (Tuyển dụng) */}
           <div>
             <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2 font-mono">
-              Pháp Lý & Tiêu Chuẩn
+              Tuyển Dụng
             </h4>
-            <div className="space-y-3 text-xs text-slate-600">
-              <div className="p-2.5 bg-slate-50 border border-slate-200 rounded">
-                <span className="text-[9px] text-amber-800 block uppercase font-mono font-bold">Giấy phép hoạt động:</span>
-                <span className="text-slate-800 font-semibold">{FOOTER_DATA.companyInfo.license}</span>
-              </div>
-
-              <div className="p-2.5 bg-slate-50 border border-slate-200 rounded">
-                <span className="text-[9px] text-amber-800 block uppercase font-mono font-bold">Đăng ký kinh doanh:</span>
-                <span className="text-slate-800 font-semibold">{FOOTER_DATA.companyInfo.taxId}</span>
-              </div>
-
-              <div className="p-2.5 bg-slate-50 border border-slate-200 rounded">
-                <span className="text-[9px] text-amber-800 block uppercase font-mono font-bold">Tiêu chuẩn nghiệp vụ:</span>
-                <span className="text-emerald-700 font-mono font-bold">ISO 9001:2015 & C06 BCA</span>
-              </div>
-            </div>
+            <ul className="space-y-2.5 text-xs text-slate-600">
+              <li>
+                <button
+                  onClick={() => onScrollToSection('recruitment-section')}
+                  className="hover:text-amber-800 transition-colors text-left flex items-center gap-2 font-normal cursor-pointer"
+                >
+                  <span className="text-amber-700 font-mono text-xs">—</span>
+                  <span>Tuyển dụng nhân sự</span>
+                </button>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
 
-      {/* Bottom Copyright & Security Certificate */}
+      {/* Bottom Copyright */}
       <div className="border-t border-slate-200 py-6 px-4 sm:px-6 lg:px-8 bg-slate-50">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 font-mono">
+        <div className="max-w-7xl mx-auto flex items-center justify-center text-center text-xs text-slate-500 font-mono">
           <p>© 2026 Công Ty Cổ Phần Dịch Vụ Bảo Vệ Lâm Sơn Động. All Rights Reserved.</p>
-          
-          <div className="flex items-center gap-4 text-slate-600">
-            <span className="flex items-center gap-1 text-[11px] font-mono">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-              ISO 9001:2015
-            </span>
-            <span>•</span>
-            <span className="flex items-center gap-1 text-[11px] font-mono">
-              <Lock className="w-3.5 h-3.5 text-amber-700" />
-              C06 BỘ CÔNG AN
-            </span>
-            {onOpenAdmin && (
-              <>
-                <span>•</span>
-                <button
-                  id="footer-admin-link"
-                  onClick={onOpenAdmin}
-                  className="flex items-center gap-1 text-[11px] font-mono text-slate-600 hover:text-amber-800 transition-colors font-bold"
-                  title="Cổng Quản trị viên Lâm Sơn Động"
-                >
-                  <KeyRound className="w-3 h-3 text-amber-700" />
-                  <span>Admin</span>
-                </button>
-              </>
-            )}
-          </div>
         </div>
       </div>
     </footer>
