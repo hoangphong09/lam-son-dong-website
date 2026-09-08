@@ -43,10 +43,6 @@ export const SolutionMatrixTabs: React.FC<SolutionMatrixTabsProps> = ({ onOpenSo
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Title */}
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-amber-50 border border-amber-200 text-amber-800 uppercase tracking-wider mb-3">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#c5a059]" />
-            <span>Phương Án An Ninh Theo Đặc Thù</span>
-          </div>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 uppercase tracking-normal">
             Giải Pháp Chuyên Sâu Theo Từng Ngành Nghề
           </h2>

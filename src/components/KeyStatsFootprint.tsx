@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { CheckCircle2 } from 'lucide-react';
 import { StatMetric } from '../types';
 import { getStats, INITIAL_STATS } from '../lib/supabase';
 
@@ -185,26 +184,6 @@ export const KeyStatsFootprint: React.FC<KeyStatsFootprintProps> = ({ stats: pro
               </div>
             ))
           )}
-        </div>
-
-        {/* Footprint commitment badge */}
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-xs font-mono text-slate-600 pt-6 border-t border-slate-200/80">
-          <div className="flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-            <span>100% Cán bộ có lý lịch tư pháp sạch</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-            <span>Tuần tra định vị GPS Smart Patrol</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-            <span>Đội cơ động phản ứng nhanh 15 phút</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-            <span>Cam kết an toàn & bồi thường 100% tài sản</span>
-          </div>
         </div>
       </div>
     </section>
