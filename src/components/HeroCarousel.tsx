@@ -21,25 +21,23 @@ interface HeroCarouselProps {
   slides?: HeroSlide[];
 }
 
-export const HeroCarousel: React.FC<HeroCarouselProps> = ({
-  onOpenQuote,
+export const HeroCarousel: React.FC<HeroCarouselProps> = ({ 
+  onOpenQuote, 
   onSelectService,
   onScrollToRisk,
-  slides,
+  slides
 }) => {
   const activeSlides = slides && slides.length > 0 ? slides : HERO_SLIDES;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused || activeSlides.length <= 1) return;
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % activeSlides.length);
-    }, 6500);
+    }, 6000);
     return () => clearInterval(interval);
   }, [isPaused, activeSlides.length]);
-
-  const currentSlide = activeSlides[currentIndex] || activeSlides[0];
 
   const handlePrev = () => {
     setCurrentIndex((prev) => (prev - 1 + activeSlides.length) % activeSlides.length);
@@ -48,6 +46,9 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
   const handleNext = () => {
     setCurrentIndex((prev) => (prev + 1) % activeSlides.length);
   };
+
+  if (activeSlides.length === 0) return null;
+  const currentSlide = activeSlides[currentIndex];
 
   return (
     <section 
@@ -137,7 +138,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
           </div>
 
           {/* Navigation Control Arrows */}
-          <div className="flex items-center gap-2 self-end sm:self-auto">
+          <div className="flex items-center gap-3 self-end sm:self-auto">
             <button
               id="hero-prev-slide-btn"
               onClick={handlePrev}
