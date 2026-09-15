@@ -10,9 +10,9 @@ interface HeroSlideModalProps {
 }
 
 const SAMPLE_HERO_BG = [
-  { label: 'Ký kết & Hợp tác', url: 'https://i.postimg.cc/RZmRSwWz/115bf4e4-5198-467e-bd43-500b7d169a5b.jpg' },
-  { label: 'Vệ sĩ VIP Chuyên nghiệp', url: 'https://i.postimg.cc/DZ4sdzS5/0373a718-53f7-48e1-b2c9-9256c37285bc.jpg' },
-  { label: 'Trung tâm SOC & Diễn tập', url: 'https://i.postimg.cc/J0csPHMZ/ba79cc9a-1504-4736-b837-5a813d13a59d.jpg' },
+  { label: 'Vệ sĩ VIP Chuyên nghiệp', url: '/images/hero-1.jpg' },
+  { label: 'Ký kết & Hợp tác', url: '/images/hero-2.jpg' },
+  { label: 'Trung tâm SOC & Tuyển dụng', url: '/images/hero-3.jpg' },
 ];
 
 export const HeroSlideModal: React.FC<HeroSlideModalProps> = ({

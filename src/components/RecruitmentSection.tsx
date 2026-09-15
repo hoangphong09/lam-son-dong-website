@@ -23,16 +23,20 @@ export const RecruitmentSection: React.FC<RecruitmentSectionProps> = ({
             <div className="relative w-full max-w-md rounded-2xl overflow-hidden shadow-lg border border-slate-200/90 group bg-slate-900">
               {/* Photo of Lâm Sơn Động Security Personnel */}
               <img 
-                src="https://i.postimg.cc/k5dkdVmG/7c332534-4aaa-48bc-9d3b-46c81b752efc.jpg" 
+                src="/images/training.jpg" 
                 alt="Đội ngũ nhân viên bảo vệ Lâm Sơn Động"
+                loading="lazy"
+                decoding="async"
                 className="w-full h-[380px] sm:h-[450px] object-cover object-center group-hover:scale-102 transition-transform duration-500"
               />
 
               {/* Watermark / Logo Chìm (No White Box, Clean Transparent Watermark) */}
               <div className="absolute top-4 right-4 pointer-events-none select-none">
                 <img 
-                  src="https://i.postimg.cc/4dWvw0PJ/logo.png" 
+                  src="/logo.png" 
                   alt="Logo Lâm Sơn Động" 
+                  loading="lazy"
+                  decoding="async"
                   className="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)] opacity-75 group-hover:opacity-90 transition-opacity"
                 />
               </div>

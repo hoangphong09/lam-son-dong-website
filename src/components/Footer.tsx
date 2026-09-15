@@ -108,7 +108,7 @@ export const Footer: React.FC<FooterProps> = ({ onScrollToSection, onOpenQuote, 
             <div className="flex items-center gap-3">
               <div className="flex items-center justify-center w-10 h-10 text-amber-700">
                 <img 
-                  src="https://i.postimg.cc/4dWvw0PJ/logo.png" 
+                  src="/logo.png" 
                   alt="Công ty Cổ phần Dịch vụ Bảo vệ Lâm Sơn Động - Biểu trưng chính thức" 
                   width="40"
                   height="40"

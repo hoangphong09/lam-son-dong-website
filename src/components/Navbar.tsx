@@ -119,7 +119,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <div className="relative flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 text-[#b8860b] group-hover:scale-105 transition-transform duration-200 shrink-0">
               <img 
-                src="https://i.postimg.cc/4dWvw0PJ/logo.png" 
+                src="/logo.png" 
                 alt="Logo Công ty Cổ phần Dịch vụ Bảo vệ Lâm Sơn Động" 
                 width="48"
                 height="48"

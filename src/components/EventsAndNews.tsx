@@ -80,6 +80,9 @@ export const EventsAndNews: React.FC<EventsAndNewsProps> = ({ onSelectNews, post
                   alt={`Tin tức an ninh: ${featuredNews.title} - Lâm Sơn Động`}
                   loading="lazy"
                   decoding="async"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = '/images/training.jpg';
+                  }}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
@@ -128,6 +131,9 @@ export const EventsAndNews: React.FC<EventsAndNewsProps> = ({ onSelectNews, post
                       alt={`Tin sự kiện: ${item.title} - Lâm Sơn Động`}
                       loading="lazy"
                       decoding="async"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = '/images/training.jpg';
+                      }}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>

@@ -121,6 +121,10 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
             alt={`Lâm Sơn Động Security - ${slide.title}`}
             loading={index === 0 ? 'eager' : 'lazy'}
             decoding="async"
+            fetchPriority={index === 0 ? 'high' : 'auto'}
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).src = '/images/hero-1.jpg';
+            }}
             className={`w-full h-full object-cover object-[70%_center] sm:object-center lg:object-[78%_center] filter contrast-[1.08] saturate-[1.12] brightness-[0.96] transition-transform duration-7000 ease-out ${
               index === currentIndex ? 'scale-100 opacity-100' : 'scale-105 opacity-0'
             }`}

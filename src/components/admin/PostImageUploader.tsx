@@ -20,11 +20,14 @@ interface PostImageUploaderProps {
 }
 
 const SAMPLE_IMAGES = [
-  { label: 'Hợp tác chiến lược', url: 'https://i.postimg.cc/RZmRSwWz/115bf4e4-5198-467e-bd43-500b7d169a5b.jpg' },
-  { label: 'Đội ngũ vệ sĩ VIP', url: 'https://i.postimg.cc/DZ4sdzS5/0373a718-53f7-48e1-b2c9-9256c37285bc.jpg' },
-  { label: 'Diễn tập PCCC & SOC', url: 'https://i.postimg.cc/J0csPHMZ/ba79cc9a-1504-4736-b837-5a813d13a59d.jpg' },
-  { label: 'Đào tạo nghiệp vụ', url: 'https://i.postimg.cc/k5dkdVmG/7c332534-4aaa-48bc-9d3b-46c81b752efc.jpg' },
-  { label: 'Hoạt động thiện nguyện', url: 'https://i.postimg.cc/ht7BnW74/de994ef0-6599-43b2-bee3-7dfd31b99313.jpg' },
+  { label: 'Đội ngũ vệ sĩ VIP', url: '/images/hero-1.jpg' },
+  { label: 'Hợp tác chiến lược', url: '/images/hero-2.jpg' },
+  { label: 'Diễn tập PCCC & Huấn luyện', url: '/images/hero-3.jpg' },
+  { label: 'Đào tạo nghiệp vụ', url: '/images/training.jpg' },
+  { label: 'Hoạt động thiện nguyện', url: '/images/charity.jpg' },
+  { label: 'Bảo vệ nhà máy', url: '/images/service-factory.jpg' },
+  { label: 'Bảo vệ văn phòng', url: '/images/service-office.jpg' },
+  { label: 'Bảo vệ yếu nhân', url: '/images/service-vip.jpg' },
 ];
 
 export const PostImageUploader: React.FC<PostImageUploaderProps> = ({
