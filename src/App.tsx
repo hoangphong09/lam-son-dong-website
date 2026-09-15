@@ -346,6 +346,7 @@ export default function App() {
         onScrollToSection={scrollToSection}
         onOpenQuote={() => setIsQuoteModalOpen(true)}
         onOpenRecruitment={() => setIsRecruitmentModalOpen(true)}
+        onOpenAdmin={openAdminView}
       />
 
       {/* Floating Call & Quote Triggers */}

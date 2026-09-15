@@ -7,7 +7,8 @@ import {
   CheckCircle2, 
   Send, 
   ChevronRight, 
-  Loader2
+  Loader2,
+  Lock
 } from 'lucide-react';
 import { FOOTER_DATA } from '../data/mockData';
 import { sendNewsletterNotification } from '../lib/emailService';
@@ -186,10 +187,10 @@ export const Footer: React.FC<FooterProps> = ({ onScrollToSection, onOpenQuote, 
             </ul>
           </div>
 
-          {/* Col 4: Recruitment (Tuyển dụng) */}
+          {/* Col 4: Recruitment & System */}
           <div>
             <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2 font-mono">
-              Tuyển Dụng
+              Tuyển Dụng & Hệ Thống
             </h4>
             <ul className="space-y-2.5 text-xs text-slate-600">
               <li>
@@ -201,6 +202,21 @@ export const Footer: React.FC<FooterProps> = ({ onScrollToSection, onOpenQuote, 
                   <span>Tuyển dụng nhân sự</span>
                 </button>
               </li>
+              <li>
+                <a
+                  href="/admin"
+                  id="footer-admin-link"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (onOpenAdmin) onOpenAdmin();
+                    else window.location.hash = '#admin';
+                  }}
+                  className="hover:text-amber-800 transition-colors text-left flex items-center gap-2 font-normal cursor-pointer text-slate-600"
+                >
+                  <span className="text-amber-700 font-mono text-xs">—</span>
+                  <span>Cổng quản trị (Admin)</span>
+                </a>
+              </li>
             </ul>
           </div>
         </div>
@@ -208,8 +224,23 @@ export const Footer: React.FC<FooterProps> = ({ onScrollToSection, onOpenQuote, 
 
       {/* Bottom Copyright */}
       <div className="border-t border-slate-200 py-6 px-4 sm:px-6 lg:px-8 bg-slate-50">
-        <div className="max-w-7xl mx-auto flex items-center justify-center text-center text-xs text-slate-500 font-mono">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left text-xs text-slate-500 font-mono">
           <p>© 2026 Công Ty Cổ Phần Dịch Vụ Bảo Vệ Lâm Sơn Động. All Rights Reserved.</p>
+          <div className="flex items-center gap-4">
+            <a
+              id="footer-bottom-admin-url"
+              href="/admin"
+              onClick={(e) => {
+                e.preventDefault();
+                if (onOpenAdmin) onOpenAdmin();
+                else window.location.hash = '#admin';
+              }}
+              className="text-slate-400 hover:text-amber-700 transition-colors flex items-center gap-1.5 text-xs"
+            >
+              <Lock className="w-3.5 h-3.5 text-amber-700" />
+              <span>Cổng Quản Trị /admin</span>
+            </a>
+          </div>
         </div>
       </div>
     </footer>
