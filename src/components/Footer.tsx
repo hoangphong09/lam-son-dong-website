@@ -202,21 +202,6 @@ export const Footer: React.FC<FooterProps> = ({ onScrollToSection, onOpenQuote, 
                   <span>Tuyển dụng nhân sự</span>
                 </button>
               </li>
-              <li>
-                <a
-                  href="/admin"
-                  id="footer-admin-link"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (onOpenAdmin) onOpenAdmin();
-                    else window.location.hash = '#admin';
-                  }}
-                  className="hover:text-amber-800 transition-colors text-left flex items-center gap-2 font-normal cursor-pointer text-slate-600"
-                >
-                  <span className="text-amber-700 font-mono text-xs">—</span>
-                  <span>Cổng quản trị (Admin)</span>
-                </a>
-              </li>
             </ul>
           </div>
         </div>
@@ -226,21 +211,6 @@ export const Footer: React.FC<FooterProps> = ({ onScrollToSection, onOpenQuote, 
       <div className="border-t border-slate-200 py-6 px-4 sm:px-6 lg:px-8 bg-slate-50">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left text-xs text-slate-500 font-mono">
           <p>© 2026 Công Ty Cổ Phần Dịch Vụ Bảo Vệ Lâm Sơn Động. All Rights Reserved.</p>
-          <div className="flex items-center gap-4">
-            <a
-              id="footer-bottom-admin-url"
-              href="/admin"
-              onClick={(e) => {
-                e.preventDefault();
-                if (onOpenAdmin) onOpenAdmin();
-                else window.location.hash = '#admin';
-              }}
-              className="text-slate-400 hover:text-amber-700 transition-colors flex items-center gap-1.5 text-xs"
-            >
-              <Lock className="w-3.5 h-3.5 text-amber-700" />
-              <span>Cổng Quản Trị /admin</span>
-            </a>
-          </div>
         </div>
       </div>
     </footer>

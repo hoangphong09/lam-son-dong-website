@@ -317,11 +317,6 @@ export default function App() {
         <SolutionMatrixTabs onOpenSolutionDetail={handleOpenSolutionDetail} />
 
         {/* 10. Case Studies & Success Stories */}
-        <CaseStudiesSection 
-          caseStudies={caseStudies.length > 0 ? caseStudies : undefined}
-          onSelectCaseStudy={handleSelectCaseStudy}
-          onOpenAllCaseStudies={() => scrollToSection('featured-services-section')}
-        />
 
         {/* 11. Security Library & PCCC Handbooks */}
         <SecurityLibrarySection onSelectArticle={handleSelectArticle} />
