@@ -256,12 +256,12 @@ const BRAND_ROW_2: PartnerBrand[] = [
 export const PartnersAndClients: React.FC = () => {
   return (
     <section id="partners-section" className="bg-white text-slate-900 py-14 sm:py-18 border-b border-slate-200 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 text-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 sm:mb-10 text-center">
         {/* Section Header */}
-        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-950 uppercase tracking-tight font-['Plus_Jakarta_Sans'] leading-tight">
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-950 uppercase tracking-wide sm:tracking-wider leading-[1.35] sm:leading-[1.3] font-['Plus_Jakarta_Sans',sans-serif]">
           LÂM SƠN ĐỘNG TỰ HÀO ĐỒNG HÀNH CÙNG CÁC DOANH NGHIỆP HÀNG ĐẦU
         </h2>
-        <p className="mt-2.5 text-sm sm:text-base text-slate-600 max-w-3xl mx-auto font-normal leading-relaxed">
+        <p className="mt-3.5 sm:mt-4 text-sm sm:text-base text-slate-600 max-w-3xl mx-auto font-normal leading-relaxed">
           Hơn 50+ tập đoàn đa quốc gia FDI và thương hiệu đầu ngành tin tưởng trao gửi sứ mệnh bảo vệ an ninh.
         </p>
       </div>

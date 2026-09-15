@@ -50,7 +50,7 @@ export const Footer: React.FC<FooterProps> = ({ onScrollToSection, onOpenQuote, 
       <div className="border-b border-slate-200 py-10 px-4 sm:px-6 lg:px-8 bg-slate-50">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-6">
-            <h3 className="text-xl sm:text-2xl font-black text-slate-900 uppercase tracking-tight font-['Plus_Jakarta_Sans']">
+            <h3 className="text-xl sm:text-2xl font-extrabold text-slate-950 uppercase tracking-wide sm:tracking-wider leading-[1.35] font-['Plus_Jakarta_Sans',sans-serif]">
               Đăng Ký Nhận Bản Tin Cảnh Báo Rủi Ro Doanh Nghiệp
             </h3>
             <p className="text-xs text-slate-600 font-normal mt-1">
@@ -106,7 +106,15 @@ export const Footer: React.FC<FooterProps> = ({ onScrollToSection, onOpenQuote, 
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
               <div className="flex items-center justify-center w-10 h-10 text-amber-700">
-                <img src="https://i.postimg.cc/4dWvw0PJ/logo.png" alt="Logo" className="w-full h-full object-contain" />
+                <img 
+                  src="https://i.postimg.cc/4dWvw0PJ/logo.png" 
+                  alt="Công ty Cổ phần Dịch vụ Bảo vệ Lâm Sơn Động - Biểu trưng chính thức" 
+                  width="40"
+                  height="40"
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-contain" 
+                />
               </div>
               <div>
                 <span className="text-xl font-black tracking-tight text-slate-900 font-['Plus_Jakarta_Sans']">

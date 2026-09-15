@@ -55,7 +55,7 @@ export const RecruitmentSection: React.FC<RecruitmentSectionProps> = ({
           <div className="lg:col-span-7 flex flex-col justify-center order-1 lg:order-2">
             
             {/* Main Headline */}
-            <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-black tracking-tight text-slate-950 uppercase font-['Plus_Jakarta_Sans'] leading-tight mb-4">
+            <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-extrabold tracking-wide sm:tracking-wider text-slate-950 uppercase font-['Plus_Jakarta_Sans',sans-serif] leading-[1.3] mb-4">
               LIÊN TỤC TUYỂN DỤNG
             </h2>
 

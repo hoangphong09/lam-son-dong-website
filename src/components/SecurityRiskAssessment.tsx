@@ -221,11 +221,11 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 uppercase tracking-tight font-['Plus_Jakarta_Sans']">
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-950 uppercase tracking-wide sm:tracking-wider leading-[1.35] sm:leading-[1.3] font-['Plus_Jakarta_Sans',sans-serif]">
             Kiểm Tra Mức Độ Rủi Ro An Ninh Cho Doanh Nghiệp
           </h2>
-          <p className="mt-3 text-xs sm:text-sm text-slate-600 font-normal leading-relaxed">
+          <p className="mt-3.5 sm:mt-4 text-sm sm:text-base text-slate-600 font-normal leading-relaxed">
             Doanh nghiệp của bạn có đang đối mặt với nguy cơ thất thoát tài sản, xâm nhập trái phép hay sự cố PCCC? Kiểm tra ngay chỉ trong 1 phút để nhận phương án bố trí lực lượng tối ưu.
           </p>
         </div>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <!-- Trang chủ & Landing Page Chính -->
+  <url>
+    <loc>https://lamsondongsecurity.vn/</loc>
+    <lastmod>2026-09-14</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://i.postimg.cc/DZ4sdzS5/0373a718-53f7-48e1-b2c9-9256c37285bc.jpg</image:loc>
+      <image:title>Đội ngũ bảo vệ và vệ sĩ chuyên nghiệp Lâm Sơn Động</image:title>
+      <image:caption>Công ty Cổ phần Dịch vụ Bảo vệ Lâm Sơn Động triển khai quân số an ninh chuyên nghiệp</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://i.postimg.cc/4dWvw0PJ/logo.png</image:loc>
+      <image:title>Logo Công ty Cổ phần Dịch vụ Bảo vệ Lâm Sơn Động</image:title>
+    </image:image>
+  </url>
+
+  <!-- Các phân đoạn dịch vụ cốt lõi (Anchors/Landmarks) -->
+  <url>
+    <loc>https://lamsondongsecurity.vn/#featured-services-section</loc>
+    <lastmod>2026-09-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://lamsondongsecurity.vn/#solutions-matrix-section</loc>
+    <lastmod>2026-09-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://lamsondongsecurity.vn/#certifications-section</loc>
+    <lastmod>2026-09-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lamsondongsecurity.vn/#risk-assessment-section</loc>
+    <lastmod>2026-09-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lamsondongsecurity.vn/#casestudies-section</loc>
+    <lastmod>2026-09-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lamsondongsecurity.vn/#library-section</loc>
+    <lastmod>2026-09-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lamsondongsecurity.vn/#news-section</loc>
+    <lastmod>2026-09-14</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lamsondongsecurity.vn/#recruitment-section</loc>
+    <lastmod>2026-09-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lamsondongsecurity.vn/#consultation-section</loc>
+    <lastmod>2026-09-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+</urlset>

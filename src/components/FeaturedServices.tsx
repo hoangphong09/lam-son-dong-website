@@ -32,12 +32,12 @@ export const FeaturedServices: React.FC<FeaturedServicesProps> = ({ onSelectServ
     <section id="featured-services-section" className="bg-white text-slate-900 py-20 border-b border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header with Navigation Controls */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 sm:mb-14">
           <div className="max-w-2xl">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 uppercase tracking-tight font-['Plus_Jakarta_Sans']">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-950 uppercase tracking-wide sm:tracking-wider leading-[1.35] sm:leading-[1.3] font-['Plus_Jakarta_Sans',sans-serif]">
               Dịch Vụ Tiêu Biểu
             </h2>
-            <p className="mt-3 text-xs sm:text-sm text-slate-600 font-normal leading-relaxed">
+            <p className="mt-3.5 sm:mt-4 text-sm sm:text-base text-slate-600 font-normal leading-relaxed">
               Những dịch vụ an ninh tiêu biểu được triển khai bởi đội ngũ chuyên gia và vệ sĩ tinh nhuệ Lâm Sơn Động, giúp khách hàng không chỉ được bảo vệ tối đa mà còn chủ động ứng phó trước mọi nguy cơ rủi ro.
             </p>
           </div>
@@ -76,7 +76,9 @@ export const FeaturedServices: React.FC<FeaturedServicesProps> = ({ onSelectServ
                 <div className="relative h-56 overflow-hidden bg-slate-100">
                   <img
                     src={service.imageUrl}
-                    alt={service.title}
+                    alt={`Dịch vụ an ninh: ${service.title} - Lâm Sơn Động`}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>

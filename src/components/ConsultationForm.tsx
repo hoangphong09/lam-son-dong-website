@@ -146,10 +146,10 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({ initialData 
             {/* Left Info & Guarantees */}
             <div className="lg:col-span-5 space-y-6">
               <div>
-                <h2 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight font-['Plus_Jakarta_Sans']">
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-950 uppercase tracking-wide sm:tracking-wider leading-[1.35] sm:leading-[1.3] font-['Plus_Jakarta_Sans',sans-serif]">
                   Yêu Cầu Khảo Sát & Báo Giá Miễn Phí
                 </h2>
-                <p className="mt-3 text-xs sm:text-sm text-slate-600 font-normal leading-relaxed">
+                <p className="mt-3.5 sm:mt-4 text-sm sm:text-base text-slate-600 font-normal leading-relaxed">
                   Hãy chia sẻ yêu cầu an ninh mục tiêu của bạn. Chuyên gia nghiệp vụ Lâm Sơn Động sẽ trực tiếp đến khảo sát thực địa và lập phương án bố trí quân số hoàn toàn miễn phí trong vòng 24 giờ.
                 </p>
               </div>

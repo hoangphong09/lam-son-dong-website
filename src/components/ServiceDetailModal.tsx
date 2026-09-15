@@ -47,7 +47,7 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent"></div>
           
           <div className="absolute bottom-5 sm:bottom-7 left-5 sm:left-8 right-5 sm:right-8">
-            <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-white uppercase tracking-tight font-['Plus_Jakarta_Sans'] leading-tight">
+            <h3 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white uppercase tracking-wide sm:tracking-wider font-['Plus_Jakarta_Sans',sans-serif] leading-[1.3]">
               {service.title}
             </h3>
             <p className="text-xs sm:text-base text-amber-200 font-medium mt-1.5 line-clamp-2">

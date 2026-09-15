@@ -34,7 +34,7 @@ export interface Post {
 }
 
 // Local cache keys for offline/fallback stability
-const POSTS_STORAGE_KEY = 'lsd_cached_posts';
+const POSTS_STORAGE_KEY = 'lsd_cached_posts_v4';
 const HERO_STORAGE_KEY = 'lsd_cached_hero_slides';
 const CASE_STUDIES_STORAGE_KEY = 'lsd_cached_case_studies';
 const QUOTES_STORAGE_KEY = 'lsd_cached_quote_requests';

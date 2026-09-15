@@ -1,0 +1,13 @@
+# Robots.txt for Cong ty Co phan Dich vu Bao ve Lam Son Dong
+# Website: https://lamsondongsecurity.vn
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /*?*preview=true
+Disallow: /*?*token=*
+
+# Host & Sitemap definition
+Host: https://lamsondongsecurity.vn
+Sitemap: https://lamsondongsecurity.vn/sitemap.xml

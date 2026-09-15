@@ -12,11 +12,11 @@ export const SecurityLibrarySection: React.FC<SecurityLibrarySectionProps> = ({ 
     <section id="library-section" className="bg-white text-slate-900 py-16 sm:py-24 border-b border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 uppercase tracking-tight font-['Plus_Jakarta_Sans']">
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-950 uppercase tracking-wide sm:tracking-wider leading-[1.35] sm:leading-[1.3] font-['Plus_Jakarta_Sans',sans-serif]">
             Thư Viện - Nghiên Cứu Chuyên Sâu & Cẩm Nang PCCC
           </h2>
-          <p className="mt-3 text-xs sm:text-sm text-slate-600 font-normal leading-relaxed">
+          <p className="mt-3.5 sm:mt-4 text-sm sm:text-base text-slate-600 font-normal leading-relaxed">
             Nơi tập hợp tri thức nghiệp vụ đúc kết từ thực tiễn hoạt động của đội ngũ chuyên gia an ninh Lâm Sơn Động, cung cấp góc nhìn chuyên sâu và cẩm nang phòng ngừa rủi ro cho doanh nghiệp.
           </p>
         </div>

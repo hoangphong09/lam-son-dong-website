@@ -106,7 +106,7 @@ export const QuoteCalculatorModal: React.FC<QuoteCalculatorModalProps> = ({ isOp
               <Calculator className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div>
-              <h3 className="text-lg sm:text-2xl font-bold text-slate-900 uppercase tracking-tight font-['Plus_Jakarta_Sans'] leading-snug">
+              <h3 className="text-lg sm:text-2xl font-extrabold text-slate-950 uppercase tracking-wide sm:tracking-wider font-['Plus_Jakarta_Sans',sans-serif] leading-[1.3]">
                 Dự Toán Ngân Sách Dịch Vụ Bảo Vệ
               </h3>
               <p className="text-xs sm:text-sm text-slate-600 font-normal mt-1 leading-relaxed">

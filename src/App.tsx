@@ -267,7 +267,15 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 font-['Be_Vietnam_Pro'] text-slate-900 selection:bg-amber-500 selection:text-white antialiased">
-      {/* 1. Main Navigation Bar */}
+      {/* Accessibility / SEO Skip to Content Link */}
+      <a 
+        href="#main-content" 
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-amber-500 focus:text-slate-950 focus:font-bold focus:shadow-lg focus:rounded-md"
+      >
+        Chuyển đến nội dung chính
+      </a>
+
+      {/* 1. Main Header & Navigation Bar */}
       <Navbar 
         onOpenQuote={() => setIsQuoteModalOpen(true)}
         onSelectService={handleSelectServiceById}
@@ -276,60 +284,64 @@ export default function App() {
         onOpenRecruitment={() => setIsRecruitmentModalOpen(true)}
       />
 
-      {/* 3. Hero Carousel */}
-      <HeroCarousel 
-        onOpenQuote={() => setIsQuoteModalOpen(true)}
-        onSelectService={handleSelectServiceById}
-        onScrollToRisk={() => scrollToSection('risk-assessment-section')}
-        slides={heroSlides}
-      />
+      {/* Primary Semantic Main Landmark for Search Engine Crawlers & Screen Readers */}
+      <main id="main-content" role="main" tabIndex={-1} className="outline-none">
+        {/* 3. Hero Carousel (Contains page Primary <h1>) */}
+        <HeroCarousel 
+          onOpenQuote={() => setIsQuoteModalOpen(true)}
+          onSelectService={handleSelectServiceById}
+          onScrollToRisk={() => scrollToSection('risk-assessment-section')}
+          onScrollToServices={() => scrollToSection('featured-services-section')}
+          slides={heroSlides}
+        />
 
-      {/* 4. Breaking News Ticker */}
-      <BreakingNewsTicker 
-        newsItems={breakingNews}
-        onOpenNewsModal={handleOpenNewsModalFromTicker} 
-      />
+        {/* 4. Breaking News Ticker */}
+        <BreakingNewsTicker 
+          newsItems={breakingNews}
+          onOpenNewsModal={handleOpenNewsModalFromTicker} 
+        />
 
-      {/* 5. Certifications & Achievements Carousel */}
-      <CertificationsCarousel onSelectCert={handleSelectCert} />
+        {/* 5. Certifications & Achievements Carousel */}
+        <CertificationsCarousel onSelectCert={handleSelectCert} />
 
-      {/* 6. Key Stats & National Footprint */}
-      <KeyStatsFootprint stats={stats} />
+        {/* 6. Key Stats & National Footprint */}
+        <KeyStatsFootprint stats={stats} />
 
-      {/* 7. Interactive Security Risk Assessment Tool (AI Scanner) */}
-      <SecurityRiskAssessment onOpenConsultationWithData={handleOpenConsultationWithData} />
+        {/* 7. Interactive Security Risk Assessment Tool (AI Scanner) */}
+        <SecurityRiskAssessment onOpenConsultationWithData={handleOpenConsultationWithData} />
 
-      {/* 8. Featured Security Services Carousel */}
-      <FeaturedServices onSelectService={handleSelectServiceById} />
+        {/* 8. Featured Security Services Carousel */}
+        <FeaturedServices onSelectService={handleSelectServiceById} />
 
-      {/* 9. Specialized Solution Matrix by Industry */}
-      <SolutionMatrixTabs onOpenSolutionDetail={handleOpenSolutionDetail} />
+        {/* 9. Specialized Solution Matrix by Industry */}
+        <SolutionMatrixTabs onOpenSolutionDetail={handleOpenSolutionDetail} />
 
-      {/* 10. Case Studies & Success Stories */}
-      <CaseStudiesSection 
-        caseStudies={caseStudies.length > 0 ? caseStudies : undefined}
-        onSelectCaseStudy={handleSelectCaseStudy}
-        onOpenAllCaseStudies={() => scrollToSection('featured-services-section')}
-      />
+        {/* 10. Case Studies & Success Stories */}
+        <CaseStudiesSection 
+          caseStudies={caseStudies.length > 0 ? caseStudies : undefined}
+          onSelectCaseStudy={handleSelectCaseStudy}
+          onOpenAllCaseStudies={() => scrollToSection('featured-services-section')}
+        />
 
-      {/* 11. Security Library & PCCC Handbooks */}
-      <SecurityLibrarySection onSelectArticle={handleSelectArticle} />
+        {/* 11. Security Library & PCCC Handbooks */}
+        <SecurityLibrarySection onSelectArticle={handleSelectArticle} />
 
-      {/* 12. Events & News */}
-      <EventsAndNews onSelectNews={handleSelectNews} posts={posts} />
+        {/* 12. Events & News */}
+        <EventsAndNews onSelectNews={handleSelectNews} posts={posts} />
 
-      {/* 12.5. Recruitment Announcement (Liên Tục Tuyển Dụng) */}
-      <RecruitmentSection 
-        onOpenRecruitmentModal={() => setIsRecruitmentModalOpen(true)} 
-      />
+        {/* 12.5. Recruitment Announcement (Liên Tục Tuyển Dụng) */}
+        <RecruitmentSection 
+          onOpenRecruitmentModal={() => setIsRecruitmentModalOpen(true)} 
+        />
 
-      {/* 13. Strategic Partners & Clients */}
-      <PartnersAndClients />
+        {/* 13. Strategic Partners & Clients */}
+        <PartnersAndClients />
 
-      {/* 14. Consultation & Site Audit Request Form */}
-      <ConsultationForm initialData={auditDataForForm} />
+        {/* 14. Consultation & Site Audit Request Form */}
+        <ConsultationForm initialData={auditDataForForm} />
+      </main>
 
-      {/* 15. Footer */}
+      {/* 15. Semantic Footer */}
       <Footer 
         onScrollToSection={scrollToSection}
         onOpenQuote={() => setIsQuoteModalOpen(true)}
@@ -419,7 +431,7 @@ export default function App() {
             )}
 
             <div className="p-6 sm:p-8 space-y-5 overflow-y-auto flex-1">
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 leading-snug uppercase tracking-tight font-['Plus_Jakarta_Sans']">
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-950 leading-[1.3] uppercase tracking-wide sm:tracking-wider font-['Plus_Jakarta_Sans',sans-serif]">
                 {infoModalData.title}
               </h3>
 

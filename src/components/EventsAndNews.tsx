@@ -31,11 +31,11 @@ export const EventsAndNews: React.FC<EventsAndNewsProps> = ({ onSelectNews, post
     <section id="news-section" className="bg-slate-50 text-slate-900 py-16 sm:py-24 border-b border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-8">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 uppercase tracking-tight font-['Plus_Jakarta_Sans']">
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-10">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-950 uppercase tracking-wide sm:tracking-wider leading-[1.35] sm:leading-[1.3] font-['Plus_Jakarta_Sans',sans-serif]">
             Sự Kiện & Tin Tức
           </h2>
-          <p className="mt-3 text-xs sm:text-sm text-slate-600 font-normal leading-relaxed">
+          <p className="mt-3.5 sm:mt-4 text-sm sm:text-base text-slate-600 font-normal leading-relaxed">
             Cập nhật những hoạt động đào tạo, diễn tập võ thuật, sự kiện nội bộ và tin tức mới nhất từ Lâm Sơn Động Security.
           </p>
         </div>
@@ -77,7 +77,9 @@ export const EventsAndNews: React.FC<EventsAndNewsProps> = ({ onSelectNews, post
               <div className="relative h-64 sm:h-80 overflow-hidden bg-slate-100">
                 <img
                   src={featuredNews.imageUrl}
-                  alt={featuredNews.title}
+                  alt={`Tin tức an ninh: ${featuredNews.title} - Lâm Sơn Động`}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
@@ -123,7 +125,9 @@ export const EventsAndNews: React.FC<EventsAndNewsProps> = ({ onSelectNews, post
                   <div className="w-full sm:w-36 h-28 shrink-0 overflow-hidden bg-slate-100 border border-slate-200 rounded">
                     <img
                       src={item.imageUrl}
-                      alt={item.title}
+                      alt={`Tin sự kiện: ${item.title} - Lâm Sơn Động`}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>

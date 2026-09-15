@@ -128,11 +128,11 @@ export const KeyStatsFootprint: React.FC<KeyStatsFootprintProps> = ({ stats: pro
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 uppercase tracking-tight font-['Plus_Jakarta_Sans']">
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-950 uppercase tracking-wide sm:tracking-wider leading-[1.35] sm:leading-[1.3] font-['Plus_Jakarta_Sans',sans-serif]">
             Chỉ Số Năng Lực & Dấu Ấn Phủ Sóng Toàn Quốc
           </h2>
-          <p className="mt-2 text-xs sm:text-sm text-slate-600 font-normal leading-relaxed">
+          <p className="mt-3.5 sm:mt-4 text-sm sm:text-base text-slate-600 font-normal leading-relaxed">
             Dữ liệu định lượng minh bạch từ hơn 100+ mục tiêu trọng điểm, cao ốc văn phòng hạng A và tổ hợp công nghiệp được bảo vệ an toàn 24/7.
           </p>
         </div>

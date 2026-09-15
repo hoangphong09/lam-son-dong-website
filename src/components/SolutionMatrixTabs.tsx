@@ -42,11 +42,11 @@ export const SolutionMatrixTabs: React.FC<SolutionMatrixTabsProps> = ({ onOpenSo
     <section id="solutions-matrix-section" className="bg-slate-50 text-slate-900 py-16 sm:py-20 border-b border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Title */}
-        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 uppercase tracking-normal">
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-950 uppercase tracking-wide sm:tracking-wider leading-[1.35] sm:leading-[1.3] font-['Plus_Jakarta_Sans',sans-serif]">
             Giải Pháp Chuyên Sâu Theo Từng Ngành Nghề
           </h2>
-          <p className="mt-3 text-xs sm:text-sm text-slate-600 font-normal leading-relaxed tracking-normal">
+          <p className="mt-3.5 sm:mt-4 text-sm sm:text-base text-slate-600 font-normal leading-relaxed">
             Mỗi lĩnh vực đòi hỏi một phương án bảo vệ chuyên biệt. Khám phá các giải pháp an ninh tiêu chuẩn được Lâm Sơn Động thiết kế riêng cho từng loại hình cơ sở.
           </p>
         </div>

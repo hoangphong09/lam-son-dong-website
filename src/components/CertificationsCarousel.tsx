@@ -12,11 +12,11 @@ export const CertificationsCarousel: React.FC<CertificationsCarouselProps> = ({ 
     <section id="certifications-section" className="bg-white text-slate-900 py-16 sm:py-20 border-b border-slate-200 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 uppercase tracking-tight font-['Plus_Jakarta_Sans']">
+        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-950 uppercase tracking-wide sm:tracking-wider leading-[1.35] sm:leading-[1.3] font-['Plus_Jakarta_Sans',sans-serif]">
             Thành Tựu Nổi Bật & Chứng Nhận Tiêu Chuẩn
           </h2>
-          <p className="mt-3 text-xs sm:text-sm text-slate-600 font-normal leading-relaxed">
+          <p className="mt-3.5 sm:mt-4 text-sm sm:text-base text-slate-600 font-normal leading-relaxed">
             Những giấy phép, chứng nhận danh giá trong nước và quốc tế là minh chứng cho năng lực vững vàng của Lâm Sơn Động. Chúng tôi cam kết mang đến các giải pháp an ninh với tiêu chuẩn chất lượng cao nhất.
           </p>
         </div>
