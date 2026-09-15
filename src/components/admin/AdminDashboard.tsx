@@ -7,9 +7,6 @@ import {
   deletePost,
   getHeroSlides,
   saveHeroSlides,
-  getCaseStudies,
-  saveCaseStudy,
-  deleteCaseStudy,
   getQuoteRequests,
   updateQuoteRequest,
   deleteQuoteRequest,
@@ -30,13 +27,10 @@ import {
   deleteBreakingNews,
   toggleBreakingNewsActive,
   resetBreakingNewsToDefault,
-  SUPABASE_SETUP_SQL,
 } from '../../lib/supabase';
-import { STORAGE_SETUP_SQL } from '../../lib/storage';
-import { HeroSlide, CaseStudy, QuoteRequest, StatMetric, QuoteOption, QuoteOptionCategory, BreakingNewsItem } from '../../types';
+import { HeroSlide, QuoteRequest, StatMetric, QuoteOption, QuoteOptionCategory, BreakingNewsItem } from '../../types';
 import { PostModal } from './PostModal';
 import { HeroSlideModal } from './HeroSlideModal';
-import { CaseStudyModal } from './CaseStudyModal';
 import { StatModal } from './StatModal';
 import { QuoteOptionModal } from './QuoteOptionModal';
 import { BreakingNewsModal } from './BreakingNewsModal';
@@ -101,29 +95,25 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   onStatsUpdated,
   onBreakingNewsUpdated,
 }) => {
-  // Navigation tabs support routing: /admin/stats, /admin/quote-requests, /admin/quote-settings, /admin/breaking-news, etc.
-  type AdminTab = 'stats' | 'quotes' | 'quote-settings' | 'breaking-news' | 'posts' | 'hero' | 'casestudies' | 'database';
+  // Navigation tabs for business management
+  type AdminTab = 'quotes' | 'posts' | 'hero' | 'breaking-news' | 'stats' | 'quote-settings';
 
   const getInitialTab = (): AdminTab => {
     const path = window.location.pathname;
     const hash = window.location.hash;
-    if (path === '/admin/stats' || hash === '#admin/stats' || hash.includes('tab=stats')) return 'stats';
-    if (path === '/admin/quote-requests' || path === '/admin/quotes' || hash === '#admin/quote-requests' || hash.includes('tab=quotes')) return 'quotes';
-    if (path === '/admin/quote-settings' || path === '/admin/quote-options' || path === '/admin/pricing' || hash === '#admin/quote-settings' || hash.includes('tab=quote-settings') || hash.includes('tab=pricing')) return 'quote-settings';
+    if (path === '/admin/posts' || hash === '#admin/posts' || hash.includes('tab=posts')) return 'posts';
+    if (path === '/admin/hero' || hash === '#admin/hero' || hash.includes('tab=hero')) return 'hero';
     if (path === '/admin/breaking-news' || hash === '#admin/breaking-news' || hash.includes('tab=breaking-news')) return 'breaking-news';
-    if (path === '/admin/hero' || hash.includes('tab=hero')) return 'hero';
-    if (path === '/admin/casestudies' || hash.includes('tab=casestudies')) return 'casestudies';
-    if (path === '/admin/database' || hash.includes('tab=database')) return 'database';
-    return 'stats';
+    if (path === '/admin/stats' || hash === '#admin/stats' || hash.includes('tab=stats')) return 'stats';
+    if (path === '/admin/quote-settings' || path === '/admin/pricing' || hash.includes('tab=quote-settings') || hash.includes('tab=pricing')) return 'quote-settings';
+    return 'quotes';
   };
 
   const [activeTab, setActiveTab] = useState<AdminTab>(getInitialTab);
 
   const switchTab = (tab: AdminTab) => {
     setActiveTab(tab);
-    if (tab === 'stats') {
-      window.history.replaceState(null, '', '#admin/stats');
-    } else if (tab === 'quotes') {
+    if (tab === 'quotes') {
       window.history.replaceState(null, '', '#admin/quote-requests');
     } else if (tab === 'quote-settings') {
       window.history.replaceState(null, '', '#admin/quote-settings');
@@ -189,18 +179,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [editingSlide, setEditingSlide] = useState<HeroSlide | null>(null);
   const [isHeroModalOpen, setIsHeroModalOpen] = useState(false);
 
-  // Case Studies state
-  const [caseStudies, setCaseStudies] = useState<CaseStudy[]>([]);
-  const [isLoadingCases, setIsLoadingCases] = useState(true);
-  const [caseSearchTerm, setCaseSearchTerm] = useState('');
-  const [editingCaseStudy, setEditingCaseStudy] = useState<CaseStudy | null>(null);
-  const [isCaseModalOpen, setIsCaseModalOpen] = useState(false);
-  const [deletingCaseId, setDeletingCaseId] = useState<string | null>(null);
-
-  // Database Tab state
-  const [copiedSql, setCopiedSql] = useState(false);
-  const [copiedStorageSql, setCopiedStorageSql] = useState(false);
-
   // Listen to hash changes
   useEffect(() => {
     const handleHashChange = () => {
@@ -211,8 +189,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       else if (hash === '#admin/breaking-news') setActiveTab('breaking-news');
       else if (hash === '#admin/posts') setActiveTab('posts');
       else if (hash === '#admin/hero') setActiveTab('hero');
-      else if (hash === '#admin/casestudies') setActiveTab('casestudies');
-      else if (hash === '#admin/database') setActiveTab('database');
     };
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
@@ -228,7 +204,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       if (onStatsUpdated) onStatsUpdated(data || []);
     } catch (err: any) {
       console.error(err);
-      setStatNotice('Lỗi khi tải dữ liệu chỉ số từ Supabase.');
+      setStatNotice('Không thể tải dữ liệu chỉ số. Vui lòng thử lại.');
     } finally {
       setIsLoadingStats(false);
     }
@@ -252,13 +228,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setIsLoadingPosts(true);
     setPostNotice(null);
     try {
-      const { data, error, fromFallback } = await getPosts();
+      const { data } = await getPosts();
       setPosts(data || []);
-      if (error && fromFallback) {
-        setPostNotice(
-          `Lưu ý: Bảng 'posts' chưa được tạo trên Supabase hoặc chưa cấp quyền. Dữ liệu đang được đồng bộ tự động qua bộ nhớ đệm an toàn.`
-        );
-      }
     } catch (err: any) {
       console.error(err);
     } finally {
@@ -276,19 +247,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       console.error(err);
     } finally {
       setIsLoadingHero(false);
-    }
-  };
-
-  // Fetch Case Studies
-  const loadCaseStudies = async () => {
-    setIsLoadingCases(true);
-    try {
-      const cs = await getCaseStudies();
-      setCaseStudies(cs);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoadingCases(false);
     }
   };
 
@@ -317,7 +275,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       if (onBreakingNewsUpdated) onBreakingNewsUpdated(data || []);
     } catch (err: any) {
       console.error(err);
-      setBreakingNewsNotice('Lỗi khi tải danh sách tin nhanh từ Supabase.');
+      setBreakingNewsNotice('Không thể tải danh sách tin nhanh. Vui lòng thử lại.');
     } finally {
       setIsLoadingBreakingNews(false);
     }
@@ -330,7 +288,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     loadBreakingNews();
     loadPosts();
     loadHeroSlides();
-    loadCaseStudies();
   }, []);
 
   // BREAKING NEWS HANDLERS
@@ -546,32 +503,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setEditingSlide(null);
   };
 
-  // CASE STUDY HANDLERS
-  const handleSaveCase = async (cs: CaseStudy) => {
-    await saveCaseStudy(cs);
-    await loadCaseStudies();
-    setEditingCaseStudy(null);
-  };
-
-  const handleConfirmDeleteCase = async () => {
-    if (!deletingCaseId) return;
-    await deleteCaseStudy(deletingCaseId);
-    setDeletingCaseId(null);
-    await loadCaseStudies();
-  };
-
-  const handleCopySql = () => {
-    navigator.clipboard.writeText(SUPABASE_SETUP_SQL);
-    setCopiedSql(true);
-    setTimeout(() => setCopiedSql(false), 3000);
-  };
-
-  const handleCopyStorageSql = () => {
-    navigator.clipboard.writeText(STORAGE_SETUP_SQL);
-    setCopiedStorageSql(true);
-    setTimeout(() => setCopiedStorageSql(false), 3000);
-  };
-
   // Filter Stats
   const filteredStats = stats.filter((st) => {
     const s = statSearchTerm.toLowerCase();
@@ -653,176 +584,146 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   const uniqueCategories = Array.from(new Set(posts.map((p) => p.category).filter(Boolean)));
 
-  // Filter Case Studies
-  const filteredCaseStudies = caseStudies.filter((cs) => {
-    const s = caseSearchTerm.toLowerCase();
-    return (
-      cs.title.toLowerCase().includes(s) ||
-      cs.client.toLowerCase().includes(s) ||
-      cs.sector.toLowerCase().includes(s) ||
-      cs.solution.toLowerCase().includes(s)
-    );
-  });
-
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 selection:bg-[#c5a059] selection:text-black font-['Be_Vietnam_Pro'] antialiased">
       {/* Top Admin Header Bar */}
-      <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-xs backdrop-blur-md">
+      <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           {/* Brand & Title */}
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-amber-50 border border-amber-300 text-amber-700 flex items-center justify-center rounded">
-              <Shield className="w-5 h-5" />
+          <div>
+            <div className="flex items-center gap-2.5">
+              <span className="text-base sm:text-lg font-bold tracking-tight text-slate-900 font-['Plus_Jakarta_Sans']">
+                Quản Trị Website
+              </span>
+              <span className="hidden sm:inline-block text-xs font-semibold bg-amber-100 text-amber-950 px-2 py-0.5 rounded-full border border-amber-300">
+                Bảo Vệ Lâm Sơn Động
+              </span>
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm sm:text-base font-bold uppercase tracking-tight text-slate-900 font-['Plus_Jakarta_Sans']">
-                  HỆ THỐNG QUẢN TRỊ NỘI DUNG
-                </span>
-                <span className="hidden sm:inline-block text-[10px] font-mono uppercase tracking-widest bg-amber-100 text-amber-900 px-2 py-0.5 rounded font-bold border border-amber-300">
-                  SUPABASE CLOUD
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-500 font-mono hidden sm:block">
-                Bảo Vệ Chuyên Nghiệp Lâm Sơn Động • {user?.email || 'admin@lamsondong.com'}
-              </p>
-            </div>
+            <p className="text-xs text-slate-500 font-normal hidden sm:block mt-0.5">
+              Tài khoản: <span className="text-slate-700 font-medium">{user?.email || 'admin@lamsondong.com'}</span>
+            </p>
           </div>
 
           {/* Quick Actions */}
           <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={onBackToHome}
-              className="px-3.5 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-black border border-slate-300 text-xs font-mono uppercase tracking-wider transition-all flex items-center gap-1.5 rounded"
-              title="Quay lại giao diện người dùng"
+              className="px-3.5 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-300 text-xs font-medium transition-all flex items-center gap-1.5 rounded-lg"
+              title="Quay lại xem trang chủ"
             >
               <ExternalLink className="w-3.5 h-3.5 text-amber-700" />
-              <span className="hidden sm:inline">Về Trang Chủ</span>
+              <span>Xem Trang Chủ</span>
             </button>
 
             <button
               onClick={onLogout}
-              className="px-3.5 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-mono uppercase tracking-wider transition-all flex items-center gap-1.5 rounded"
-              title="Đăng xuất khỏi bảng quản trị"
+              className="px-3.5 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-medium transition-all flex items-center gap-1.5 rounded-lg"
+              title="Đăng xuất khỏi hệ thống quản trị"
             >
               <LogOut className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Đăng xuất</span>
+              <span>Đăng xuất</span>
             </button>
           </div>
         </div>
 
-        {/* Tab Navigation */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-1 border-t border-slate-200 text-xs font-mono uppercase tracking-wider overflow-x-auto">
-          {/* TAB 1: HIỆU QUẢ THỰC TẾ (STATS) */}
-          <button
-            onClick={() => switchTab('stats')}
-            className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-all shrink-0 ${
-              activeTab === 'stats'
-                ? 'border-[#c5a059] text-amber-900 font-bold bg-amber-50/60'
-                : 'border-transparent text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <BarChart3 className="w-4 h-4 text-amber-700" />
-            <span>Hiệu Quả Thực Tế ({stats.length})</span>
-          </button>
-
-          {/* TAB 2: YÊU CẦU BÁO GIÁ (LEADS) */}
+        {/* Tab Navigation - Clean, Friendly, Non-tech */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-2 border-t border-slate-200 text-xs overflow-x-auto py-1.5">
+          {/* TAB 1: YÊU CẦU BÁO GIÁ */}
           <button
             onClick={() => switchTab('quotes')}
-            className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-all shrink-0 ${
+            className={`py-2 px-3.5 rounded-lg font-semibold flex items-center gap-2 transition-all shrink-0 cursor-pointer ${
               activeTab === 'quotes'
-                ? 'border-[#c5a059] text-amber-900 font-bold bg-amber-50/60'
-                : 'border-transparent text-slate-600 hover:text-slate-900'
+                ? 'bg-amber-100/90 text-amber-950 border border-amber-300'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
             }`}
           >
-            <Inbox className="w-4 h-4 text-amber-700" />
-            <span>Yêu Cầu Báo Giá ({quoteRequests.length})</span>
-            {quoteRequests.filter(q => q.status === 'new').length > 0 && (
-              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-            )}
-          </button>
-
-          {/* TAB 2.5: CẤU HÌNH BÁO GIÁ & ĐƠN GIÁ (DYNAMIC OPTIONS) */}
-          <button
-            onClick={() => switchTab('quote-settings')}
-            className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-all shrink-0 ${
-              activeTab === 'quote-settings'
-                ? 'border-[#c5a059] text-amber-900 font-bold bg-amber-50/60'
-                : 'border-transparent text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <SlidersHorizontal className="w-4 h-4 text-amber-700" />
-            <span>Cấu Hình Báo Giá ({quoteOptions.length})</span>
-          </button>
-
-          {/* TAB 2.8: TIN NHANH (BREAKING NEWS TICKER) */}
-          <button
-            onClick={() => switchTab('breaking-news')}
-            className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-all shrink-0 ${
-              activeTab === 'breaking-news'
-                ? 'border-[#c5a059] text-amber-900 font-bold bg-amber-50/60'
-                : 'border-transparent text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <BellRing className="w-4 h-4 text-amber-700" />
-            <span>Tin Nhanh ({breakingNews.length})</span>
-            {breakingNews.filter((b) => b.is_active !== false).length > 0 && (
-              <span className="text-[10px] bg-emerald-100 text-emerald-800 font-mono px-1.5 py-0.5 rounded font-bold">
-                {breakingNews.filter((b) => b.is_active !== false).length} bật
+            <span>Khách Hàng & Báo Giá</span>
+            {quoteRequests.filter(q => q.status === 'new').length > 0 ? (
+              <span className="text-[11px] bg-red-600 text-white font-bold px-2 py-0.5 rounded-full animate-pulse">
+                {quoteRequests.filter(q => q.status === 'new').length} mới
+              </span>
+            ) : (
+              <span className="text-[11px] text-slate-500 bg-slate-200/80 px-1.5 py-0.2 rounded-full font-normal">
+                {quoteRequests.length}
               </span>
             )}
           </button>
 
-          {/* TAB 3: BÀI VIẾT */}
+          {/* TAB 2: BÀI VIẾT & TIN TỨC */}
           <button
             onClick={() => switchTab('posts')}
-            className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-all shrink-0 ${
+            className={`py-2 px-3.5 rounded-lg font-semibold flex items-center gap-2 transition-all shrink-0 cursor-pointer ${
               activeTab === 'posts'
-                ? 'border-[#c5a059] text-amber-900 font-bold bg-amber-50/60'
-                : 'border-transparent text-slate-600 hover:text-slate-900'
+                ? 'bg-amber-100/90 text-amber-950 border border-amber-300'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
             }`}
           >
-            <FileText className="w-4 h-4" />
-            <span>Bài Viết ({posts.length})</span>
+            <span>Tin Tức & Bài Viết</span>
+            <span className="text-[11px] text-slate-500 bg-slate-200/80 px-1.5 py-0.2 rounded-full font-normal">
+              {posts.length}
+            </span>
           </button>
 
-          {/* TAB 4: BANNER HERO */}
+          {/* TAB 3: BANNER TRANG CHỦ */}
           <button
             onClick={() => switchTab('hero')}
-            className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-all shrink-0 ${
+            className={`py-2 px-3.5 rounded-lg font-semibold flex items-center gap-2 transition-all shrink-0 cursor-pointer ${
               activeTab === 'hero'
-                ? 'border-[#c5a059] text-amber-900 font-bold bg-amber-50/60'
-                : 'border-transparent text-slate-600 hover:text-slate-900'
+                ? 'bg-amber-100/90 text-amber-950 border border-amber-300'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
             }`}
           >
-            <LayoutTemplate className="w-4 h-4" />
-            <span>Banner Hero ({heroSlides.length})</span>
+            <span>Banner Trang Chủ</span>
+            <span className="text-[11px] text-slate-500 bg-slate-200/80 px-1.5 py-0.2 rounded-full font-normal">
+              {heroSlides.length}
+            </span>
           </button>
 
-          {/* TAB 5: DỰ ÁN TIÊU BIỂU */}
+          {/* TAB 4: THÔNG BÁO CHẠY CHỮ */}
           <button
-            onClick={() => switchTab('casestudies')}
-            className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-all shrink-0 ${
-              activeTab === 'casestudies'
-                ? 'border-[#c5a059] text-amber-900 font-bold bg-amber-50/60'
-                : 'border-transparent text-slate-600 hover:text-slate-900'
+            onClick={() => switchTab('breaking-news')}
+            className={`py-2 px-3.5 rounded-lg font-semibold flex items-center gap-2 transition-all shrink-0 cursor-pointer ${
+              activeTab === 'breaking-news'
+                ? 'bg-amber-100/90 text-amber-950 border border-amber-300'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
             }`}
           >
-            <Briefcase className="w-4 h-4" />
-            <span>Dự Án Tiêu Biểu ({caseStudies.length})</span>
+            <span>Dòng Tin Nhanh 24/7</span>
+            {breakingNews.filter((b) => b.is_active !== false).length > 0 && (
+              <span className="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-semibold">
+                {breakingNews.filter((b) => b.is_active !== false).length} đang bật
+              </span>
+            )}
           </button>
 
-          {/* TAB 6: CƠ SỞ DỮ LIỆU SQL */}
+          {/* TAB 5: SỐ LIỆU NĂNG LỰC */}
           <button
-            onClick={() => switchTab('database')}
-            className={`py-3 px-4 border-b-2 flex items-center gap-2 transition-all shrink-0 ${
-              activeTab === 'database'
-                ? 'border-[#c5a059] text-amber-900 font-bold bg-amber-50/60'
-                : 'border-transparent text-slate-600 hover:text-slate-900'
+            onClick={() => switchTab('stats')}
+            className={`py-2 px-3.5 rounded-lg font-semibold flex items-center gap-2 transition-all shrink-0 cursor-pointer ${
+              activeTab === 'stats'
+                ? 'bg-amber-100/90 text-amber-950 border border-amber-300'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
             }`}
           >
-            <Database className="w-4 h-4" />
-            <span>Cơ Sở Dữ Liệu SQL</span>
+            <span>Số Liệu Nổi Bật</span>
+            <span className="text-[11px] text-slate-500 bg-slate-200/80 px-1.5 py-0.2 rounded-full font-normal">
+              {stats.length}
+            </span>
+          </button>
+
+          {/* TAB 6: CÀI ĐẶT BÁO GIÁ */}
+          <button
+            onClick={() => switchTab('quote-settings')}
+            className={`py-2 px-3.5 rounded-lg font-semibold flex items-center gap-2 transition-all shrink-0 cursor-pointer ${
+              activeTab === 'quote-settings'
+                ? 'bg-amber-100/90 text-amber-950 border border-amber-300'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            }`}
+          >
+            <span>Cài Đặt Bảng Giá</span>
+            <span className="text-[11px] text-slate-500 bg-slate-200/80 px-1.5 py-0.2 rounded-full font-normal">
+              {quoteOptions.length}
+            </span>
           </button>
         </div>
       </header>
@@ -835,60 +736,70 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         {/* ========================================================= */}
         {activeTab === 'stats' && (
           <div className="space-y-6 animate-fadeIn">
-            {/* Action Bar */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-white p-4 border border-slate-200 rounded shadow-xs">
-              <div className="flex flex-1 items-center gap-3">
-                <div className="relative flex-1 max-w-md">
-                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    value={statSearchTerm}
-                    onChange={(e) => setStatSearchTerm(e.target.value)}
-                    placeholder="Tìm theo tiêu đề, giá trị, mô tả chỉ số..."
-                    className="w-full pl-9 pr-3.5 py-2 bg-slate-50 border border-slate-300 focus:border-amber-600 focus:bg-white text-slate-900 text-xs rounded focus:outline-hidden"
-                  />
-                </div>
-
-                <button
-                  onClick={loadStats}
-                  className="p-2 bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-600 hover:text-slate-900 rounded transition-colors"
-                  title="Tải lại danh sách chỉ số"
-                >
-                  <RefreshCw className={`w-4 h-4 ${isLoadingStats ? 'animate-spin' : ''}`} />
-                </button>
+            {/* Header Section */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-5 border border-slate-200 rounded-xl shadow-xs">
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 font-['Plus_Jakarta_Sans']">
+                  Số Liệu Năng Lực & Uy Tín
+                </h2>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Các chỉ số năng lực nổi bật xuất hiện ở trang chủ (Ví dụ: 15+ Năm Kinh Nghiệm, 500+ Nhân Sự, 100% Hài Lòng).
+                </p>
               </div>
 
-              <div className="flex items-center gap-3">
-                <div className="text-xs font-mono text-slate-600">
-                  Tổng số: <span className="font-bold text-slate-900">{stats.length}</span> chỉ số
-                  {' • '}<span className="text-emerald-700 font-bold">{stats.filter(s => s.is_active !== false).length} đang hiển thị</span>
-                </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={loadStats}
+                  className="p-2 bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-700 rounded-lg transition-colors cursor-pointer"
+                  title="Tải lại dữ liệu"
+                >
+                  <RefreshCw className={`w-4 h-4 ${isLoadingStats ? 'animate-spin text-amber-700' : ''}`} />
+                </button>
 
                 <button
                   onClick={() => {
                     setEditingStat(null);
                     setIsStatModalOpen(true);
                   }}
-                  className="px-4 py-2 bg-amber-700 hover:bg-amber-800 text-white text-xs font-mono font-bold uppercase tracking-wider rounded shadow-xs flex items-center gap-1.5 transition-colors shrink-0"
+                  className="px-4 py-2 bg-amber-700 hover:bg-amber-800 text-white text-xs font-semibold rounded-lg shadow-xs flex items-center gap-1.5 transition-colors shrink-0 cursor-pointer"
                 >
                   <Plus className="w-4 h-4" />
-                  <span>Thêm Chỉ Số Mới</span>
+                  <span>Thêm Số Liệu Mới</span>
                 </button>
               </div>
             </div>
 
+            {/* Action & Search Bar */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-white p-4 border border-slate-200 rounded-xl shadow-xs">
+              <div className="relative flex-1 max-w-md">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={statSearchTerm}
+                  onChange={(e) => setStatSearchTerm(e.target.value)}
+                  placeholder="Tìm kiếm số liệu theo tiêu đề, giá trị..."
+                  className="w-full pl-9 pr-3.5 py-2 bg-slate-50 border border-slate-300 focus:border-amber-600 focus:bg-white text-slate-900 text-xs rounded-lg focus:outline-hidden"
+                />
+              </div>
+
+              <div className="text-xs text-slate-600">
+                Tổng cộng: <strong className="text-slate-900">{stats.length}</strong> chỉ số
+                {' • '}<span className="text-emerald-700 font-semibold">{stats.filter(s => s.is_active !== false).length} đang hiển thị trang chủ</span>
+              </div>
+            </div>
+
             {statNotice && (
-              <div className="p-3 bg-amber-50 border border-amber-200 text-amber-900 text-xs rounded flex items-center gap-2">
+              <div className="p-3 bg-amber-50 border border-amber-200 text-amber-900 text-xs rounded-lg flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 shrink-0 text-amber-700" />
                 <span>{statNotice}</span>
               </div>
             )}
 
             {/* Stats Table / List */}
-            <div className="bg-white border border-slate-200 rounded shadow-xs overflow-hidden">
+            <div className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-50 border-b border-slate-200 text-slate-700 font-mono uppercase tracking-wider">
+                  <thead className="bg-slate-50 border-b border-slate-200 text-slate-700 font-semibold">
                     <tr>
                       <th className="py-3.5 px-4 text-center w-24">Thứ Tự</th>
                       <th className="py-3.5 px-4 w-40">Giá Trị & Đơn Vị</th>
@@ -901,9 +812,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <tbody className="divide-y divide-slate-100">
                     {isLoadingStats ? (
                       <tr>
-                        <td colSpan={6} className="py-12 text-center text-slate-500 font-mono">
+                        <td colSpan={6} className="py-12 text-center text-slate-500">
                           <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-amber-600" />
-                          Đang tải chỉ số hiệu quả thực tế từ Supabase...
+                          Đang tải dữ liệu chỉ số...
                         </td>
                       </tr>
                     ) : filteredStats.length === 0 ? (
@@ -1026,21 +937,53 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         {/* ========================================================= */}
         {activeTab === 'quotes' && (
           <div className="space-y-6 animate-fadeIn">
+            {/* Header Section */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-5 border border-slate-200 rounded-xl shadow-xs">
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 font-['Plus_Jakarta_Sans']">
+                  Khách Hàng & Yêu Cầu Báo Giá
+                </h2>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Danh sách khách hàng để lại thông tin cần tư vấn hoặc báo giá dịch vụ bảo vệ trên website. Bấm vào số điện thoại để gọi trực tiếp.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={loadQuoteRequests}
+                  className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-700 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                  title="Tải lại danh sách"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isLoadingQuotes ? 'animate-spin text-amber-700' : ''}`} />
+                  <span>Làm mới</span>
+                </button>
+
+                <button
+                  onClick={() => switchTab('quote-settings')}
+                  className="px-3.5 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                  title="Mở cấu hình các mức giá và tùy chọn"
+                >
+                  <SlidersHorizontal className="w-3.5 h-3.5 text-amber-700" />
+                  <span>Cài đặt bảng giá</span>
+                </button>
+              </div>
+            </div>
+
             {/* Email Forwarding Notification Banner */}
-            <div className="bg-amber-50/80 border border-amber-200 text-amber-950 px-4 py-3 rounded-lg text-xs flex items-center justify-between gap-3 shadow-2xs">
+            <div className="bg-amber-50/80 border border-amber-200 text-amber-950 px-4 py-3 rounded-xl text-xs flex items-center justify-between gap-3 shadow-2xs">
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-amber-700 shrink-0" />
                 <span>
-                  <strong>Thông báo chuyển tiếp Email:</strong> Tất cả yêu cầu báo giá, khảo sát an ninh, đơn ứng tuyển tuyển dụng và đăng ký nhận bản tin mới đều được tự động gửi thông tin chi tiết về hòm thư: <code className="bg-white px-1.5 py-0.5 rounded border border-amber-300 font-bold text-amber-900 font-mono">congtybaovelamsondong@gmail.com</code>
+                  <strong>Hòm thư nhận thông báo:</strong> Mọi yêu cầu báo giá mới trên web đều được gửi đồng thời về: <code className="bg-white px-1.5 py-0.5 rounded border border-amber-300 font-bold text-amber-900">congtybaovelamsondong@gmail.com</code>
                 </span>
               </div>
-              <span className="text-[11px] font-mono font-semibold text-amber-800 shrink-0 hidden sm:inline-block">
+              <span className="text-[11px] font-semibold text-emerald-700 shrink-0 hidden sm:inline-block">
                 ● Tự động 24/7
               </span>
             </div>
 
             {/* Filter & Search Bar */}
-            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 bg-white p-4 border border-slate-200 rounded shadow-xs">
+            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 bg-white p-4 border border-slate-200 rounded-xl shadow-xs">
               <div className="flex flex-wrap items-center gap-3 flex-1">
                 {/* Search box */}
                 <div className="relative flex-1 min-w-[220px]">
@@ -1049,8 +992,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     type="text"
                     value={quoteSearchTerm}
                     onChange={(e) => setQuoteSearchTerm(e.target.value)}
-                    placeholder="Tìm theo khách hàng, điện thoại, email, dịch vụ, công ty..."
-                    className="w-full pl-9 pr-3.5 py-2 bg-slate-50 border border-slate-300 focus:border-amber-600 focus:bg-white text-slate-900 text-xs rounded focus:outline-hidden"
+                    placeholder="Tìm theo tên khách, số điện thoại, email, dịch vụ..."
+                    className="w-full pl-9 pr-3.5 py-2 bg-slate-50 border border-slate-300 focus:border-amber-600 focus:bg-white text-slate-900 text-xs rounded-lg focus:outline-hidden"
                   />
                 </div>
 
@@ -1060,7 +1003,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <select
                     value={quoteStatusFilter}
                     onChange={(e) => setQuoteStatusFilter(e.target.value)}
-                    className="px-3 py-2 bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded focus:outline-hidden font-medium"
+                    className="px-3 py-2 bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded-lg focus:outline-hidden font-medium"
                   >
                     <option value="all">Tất cả trạng thái</option>
                     <option value="new">Mới nhận (Chờ xử lý)</option>
@@ -1076,7 +1019,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <select
                     value={quoteDateFilter}
                     onChange={(e) => setQuoteDateFilter(e.target.value as any)}
-                    className="px-3 py-2 bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded focus:outline-hidden font-medium"
+                    className="px-3 py-2 bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded-lg focus:outline-hidden font-medium"
                   >
                     <option value="all">Tất cả thời gian</option>
                     <option value="today">Hôm nay (24h qua)</option>
@@ -1084,46 +1027,30 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <option value="month">30 ngày qua</option>
                   </select>
                 </div>
-
-                <button
-                  onClick={loadQuoteRequests}
-                  className="p-2 bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-600 hover:text-slate-900 rounded transition-colors"
-                  title="Tải lại danh sách"
-                >
-                  <RefreshCw className={`w-4 h-4 ${isLoadingQuotes ? 'animate-spin' : ''}`} />
-                </button>
               </div>
 
               {/* Counter badges */}
-              <div className="flex items-center gap-2 text-xs font-mono">
-                <span className="px-2 py-1 bg-amber-100 text-amber-900 border border-amber-300 rounded font-bold">
+              <div className="flex items-center gap-2 text-xs">
+                <span className="px-2.5 py-1 bg-amber-100 text-amber-950 border border-amber-300 rounded-lg font-semibold">
                   {quoteRequests.filter(q => q.status === 'new').length} Mới
                 </span>
-                <span className="px-2 py-1 bg-blue-100 text-blue-900 border border-blue-300 rounded font-bold">
+                <span className="px-2.5 py-1 bg-blue-50 text-blue-900 border border-blue-200 rounded-lg font-semibold">
                   {quoteRequests.filter(q => q.status === 'contacted' || q.status === 'processing').length} Đã liên hệ
                 </span>
-                <span className="px-2 py-1 bg-emerald-100 text-emerald-900 border border-emerald-300 rounded font-bold">
+                <span className="px-2.5 py-1 bg-emerald-50 text-emerald-900 border border-emerald-200 rounded-lg font-semibold">
                   {quoteRequests.filter(q => q.status === 'closed' || q.status === 'completed').length} Đã chốt
                 </span>
                 <span className="text-slate-500 ml-1">
                   (Tổng {filteredQuotes.length} yêu cầu)
                 </span>
-                <button
-                  onClick={() => switchTab('quote-settings')}
-                  className="ml-auto sm:ml-2 px-3 py-1 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded text-xs font-mono font-bold flex items-center gap-1.5 transition-colors shadow-2xs"
-                  title="Mở cấu hình tùy chọn và đơn giá form báo giá"
-                >
-                  <SlidersHorizontal className="w-3.5 h-3.5 text-amber-700" />
-                  <span>Cấu hình form báo giá</span>
-                </button>
               </div>
             </div>
 
             {/* Table of Quote Requests */}
-            <div className="bg-white border border-slate-200 rounded shadow-xs overflow-hidden">
+            <div className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-50 border-b border-slate-200 text-slate-700 font-mono uppercase tracking-wider">
+                  <thead className="bg-slate-50 border-b border-slate-200 text-slate-700 font-semibold">
                     <tr>
                       <th className="py-3.5 px-4 w-32">Thời Gian</th>
                       <th className="py-3.5 px-4">Khách Hàng & Liên Hệ</th>
@@ -1136,9 +1063,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <tbody className="divide-y divide-slate-100">
                     {isLoadingQuotes ? (
                       <tr>
-                        <td colSpan={6} className="py-12 text-center text-slate-500 font-mono">
+                        <td colSpan={6} className="py-12 text-center text-slate-500">
                           <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-amber-600" />
-                          Đang tải danh sách yêu cầu báo giá từ Supabase...
+                          Đang tải danh sách yêu cầu báo giá...
                         </td>
                       </tr>
                     ) : filteredQuotes.length === 0 ? (
@@ -1302,8 +1229,42 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         {/* ========================================================= */}
         {activeTab === 'quote-settings' && (
           <div className="space-y-6 animate-fadeIn">
+            {/* Header Section */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-5 border border-slate-200 rounded-xl shadow-xs">
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 font-['Plus_Jakarta_Sans']">
+                  Cài Đặt Bảng Giá & Tùy Chọn Tính Phí
+                </h2>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Tùy chỉnh danh mục loại hình mục tiêu, các gói ca trực và đơn giá ước tính để khách hàng tự dự toán chi phí trên website.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleResetQuoteOptions}
+                  className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-300 text-xs font-semibold flex items-center gap-1.5 rounded-lg transition-colors cursor-pointer"
+                  title="Khôi phục lại danh sách tùy chọn mặc định ban đầu"
+                >
+                  <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
+                  <span className="hidden sm:inline">Khôi phục mặc định</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setEditingQuoteOption(null);
+                    setIsQuoteOptionModalOpen(true);
+                  }}
+                  className="px-4 py-2 bg-amber-700 hover:bg-amber-800 text-white text-xs font-semibold flex items-center gap-1.5 rounded-lg shadow-xs transition-colors cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Thêm Tùy Chọn Mới</span>
+                </button>
+              </div>
+            </div>
+
             {/* Top Filter & Actions Bar */}
-            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 bg-white p-4 border border-slate-200 rounded shadow-xs">
+            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 bg-white p-4 border border-slate-200 rounded-xl shadow-xs">
               <div className="flex flex-wrap items-center gap-3 flex-1">
                 {/* Search input */}
                 <div className="relative flex-1 min-w-[220px]">
@@ -1644,72 +1605,66 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         {activeTab === 'breaking-news' && (
           <div className="space-y-6">
             {/* Header & Quick stats */}
-            <div className="bg-white p-5 border border-slate-200 rounded shadow-xs">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="p-1.5 bg-amber-100 text-amber-800 rounded">
-                      <BellRing className="w-5 h-5" />
-                    </span>
-                    <h2 className="text-base font-bold text-slate-900 uppercase tracking-tight font-['Plus_Jakarta_Sans']">
-                      Bản Tin Nhanh 24/7 (Breaking News Ticker)
-                    </h2>
-                  </div>
-                  <p className="text-xs text-slate-600 mt-1 font-sans">
-                    Các dòng thông báo khẩn cấp, tin tức an ninh và sự kiện chạy chữ liên tục dưới banner trang chủ.
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-2.5">
-                  <button
-                    onClick={handleResetBreakingNews}
-                    className="flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-mono font-bold uppercase rounded border border-slate-300 transition-colors"
-                    title="Khôi phục danh sách bản tin mẫu"
-                  >
-                    <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
-                    <span>Khôi phục mẫu</span>
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      setEditingBreakingNews(null);
-                      setIsBreakingNewsModalOpen(true);
-                    }}
-                    className="flex items-center gap-2 px-4 py-2 bg-[#c5a059] hover:bg-[#b8860b] text-slate-950 text-xs font-mono font-bold uppercase rounded transition-colors shadow-xs"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span>Thêm Bản Tin Mới</span>
-                  </button>
-                </div>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-5 border border-slate-200 rounded-xl shadow-xs">
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 font-['Plus_Jakarta_Sans']">
+                  Dòng Tin Nhanh 24/7 (Đầu Trang Web)
+                </h2>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Các câu thông báo quan trọng chạy ngang trên đầu trang chủ (khuyến mãi, thông báo an ninh, tuyển dụng). Bạn có thể bật/tắt hiển thị ngay lập tức.
+                </p>
               </div>
 
-              {breakingNewsNotice && (
-                <div className="mt-4 p-3 bg-amber-50 border border-amber-200 text-amber-900 text-xs rounded">
-                  {breakingNewsNotice}
-                </div>
-              )}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleResetBreakingNews}
+                  className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-300 text-xs font-semibold flex items-center gap-1.5 rounded-lg transition-colors cursor-pointer"
+                  title="Khôi phục danh sách thông báo mẫu"
+                >
+                  <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
+                  <span className="hidden sm:inline">Khôi phục mẫu</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setEditingBreakingNews(null);
+                    setIsBreakingNewsModalOpen(true);
+                  }}
+                  className="px-4 py-2 bg-amber-700 hover:bg-amber-800 text-white text-xs font-semibold rounded-lg shadow-xs flex items-center gap-1.5 transition-colors shrink-0 cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Thêm Bản Tin Mới</span>
+                </button>
+              </div>
             </div>
 
+            {breakingNewsNotice && (
+              <div className="p-3 bg-amber-50 border border-amber-200 text-amber-900 text-xs rounded-lg flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0 text-amber-700" />
+                <span>{breakingNewsNotice}</span>
+              </div>
+            )}
+
             {/* Filter toolbar */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-4 border border-slate-200 rounded shadow-xs">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-4 border border-slate-200 rounded-xl shadow-xs">
               <div className="relative flex-1 max-w-md">
                 <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   value={breakingNewsSearchTerm}
                   onChange={(e) => setBreakingNewsSearchTerm(e.target.value)}
-                  placeholder="Tìm theo nội dung bản tin hoặc đường dẫn..."
-                  className="w-full pl-9 pr-3.5 py-2 bg-slate-50 border border-slate-300 focus:border-amber-600 focus:bg-white text-slate-900 text-xs rounded focus:outline-hidden font-sans"
+                  placeholder="Tìm theo nội dung bản tin..."
+                  className="w-full pl-9 pr-3.5 py-2 bg-slate-50 border border-slate-300 focus:border-amber-600 focus:bg-white text-slate-900 text-xs rounded-lg focus:outline-hidden"
                 />
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 text-xs">
                 <Filter className="w-3.5 h-3.5 text-slate-400" />
-                <span className="text-xs text-slate-500 font-mono">Trạng thái:</span>
+                <span className="text-slate-500">Lọc theo:</span>
                 <select
                   value={breakingNewsStatusFilter}
                   onChange={(e) => setBreakingNewsStatusFilter(e.target.value as any)}
-                  className="px-3 py-1.5 bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded focus:outline-hidden font-mono"
+                  className="px-3 py-1.5 bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded-lg focus:outline-hidden font-medium"
                 >
                   <option value="all">Tất cả ({breakingNews.length})</option>
                   <option value="active">Đang bật ({breakingNews.filter((b) => b.is_active !== false).length})</option>
@@ -1719,16 +1674,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </div>
 
             {/* Breaking News Table */}
-            <div className="bg-white border border-slate-200 rounded shadow-xs overflow-hidden">
+            <div className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
-                    <tr className="bg-slate-900 text-white font-mono uppercase tracking-wider text-[11px] border-b border-slate-800">
-                      <th className="py-3 px-4 w-24 text-center">Thứ tự</th>
-                      <th className="py-3 px-4">Nội dung bản tin nhanh</th>
-                      <th className="py-3 px-4 w-52">Đường dẫn liên kết</th>
-                      <th className="py-3 px-4 w-32 text-center">Trạng thái</th>
-                      <th className="py-3 px-4 w-28 text-right">Thao tác</th>
+                    <tr className="bg-slate-50 border-b border-slate-200 text-slate-700 font-semibold">
+                      <th className="py-3 px-4 w-24 text-center">Thứ Tự</th>
+                      <th className="py-3 px-4">Nội Dung Bản Tin Nhanh</th>
+                      <th className="py-3 px-4 w-52">Đường Dẫn Chi Tiết</th>
+                      <th className="py-3 px-4 w-32 text-center">Trạng Thái</th>
+                      <th className="py-3 px-4 w-28 text-right">Thao Tác</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-200">
@@ -1885,8 +1840,43 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
         )}
         {activeTab === 'posts' && (
-          <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-white p-4 border border-slate-200 rounded shadow-xs">
+          <div className="space-y-6 animate-fadeIn">
+            {/* Header Section */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-5 border border-slate-200 rounded-xl shadow-xs">
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 font-['Plus_Jakarta_Sans']">
+                  Quản Lý Bài Viết & Tin Tức
+                </h2>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Đăng tải bài viết tin tức hoạt động, cẩm nang an ninh và giới thiệu các phương án bảo vệ chuyên nghiệp.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={loadPosts}
+                  className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-700 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                  title="Tải lại danh sách"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isLoadingPosts ? 'animate-spin text-amber-700' : ''}`} />
+                  <span>Làm mới</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setEditingPost(null);
+                    setIsPostModalOpen(true);
+                  }}
+                  className="px-4 py-2 bg-amber-700 hover:bg-amber-800 text-white text-xs font-semibold rounded-lg shadow-xs flex items-center gap-1.5 transition-colors shrink-0 cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Thêm Bài Viết Mới</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Filter & Search Bar */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-white p-4 border border-slate-200 rounded-xl shadow-xs">
               <div className="flex flex-1 items-center gap-3">
                 <div className="relative flex-1 max-w-md">
                   <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -1894,8 +1884,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     type="text"
                     value={postSearchTerm}
                     onChange={(e) => setPostSearchTerm(e.target.value)}
-                    placeholder="Tìm kiếm bài viết theo tiêu đề, slug, tóm tắt..."
-                    className="w-full pl-9 pr-3.5 py-2 bg-slate-50 border border-slate-300 focus:border-amber-600 focus:bg-white text-slate-900 text-xs rounded focus:outline-hidden"
+                    placeholder="Tìm kiếm bài viết theo tiêu đề, nội dung..."
+                    className="w-full pl-9 pr-3.5 py-2 bg-slate-50 border border-slate-300 focus:border-amber-600 focus:bg-white text-slate-900 text-xs rounded-lg focus:outline-hidden"
                   />
                 </div>
 
@@ -1904,7 +1894,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <select
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="px-3 py-2 bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded focus:outline-hidden"
+                    className="px-3 py-2 bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded-lg focus:outline-hidden font-medium"
                   >
                     <option value="all">Tất cả chuyên mục</option>
                     {uniqueCategories.map((cat) => (
@@ -1914,36 +1904,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     ))}
                   </select>
                 </div>
-
-                <button
-                  onClick={loadPosts}
-                  className="p-2 bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-600 hover:text-slate-900 rounded transition-colors"
-                  title="Tải lại danh sách"
-                >
-                  <RefreshCw className={`w-4 h-4 ${isLoadingPosts ? 'animate-spin' : ''}`} />
-                </button>
               </div>
 
-              <div className="flex items-center gap-3">
-                <div className="text-xs font-mono text-slate-600">
-                  Tổng số: <span className="font-bold text-slate-900">{posts.length}</span> bài viết
-                </div>
-
-                <button
-                  onClick={() => {
-                    setEditingPost(null);
-                    setIsPostModalOpen(true);
-                  }}
-                  className="px-4 py-2 bg-amber-700 hover:bg-amber-800 text-white text-xs font-mono font-bold uppercase tracking-wider rounded shadow-xs flex items-center gap-1.5 transition-colors shrink-0"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Thêm Bài Viết Mới</span>
-                </button>
+              <div className="text-xs text-slate-600">
+                Tổng cộng: <strong className="text-slate-900">{posts.length}</strong> bài viết
               </div>
             </div>
 
             {postNotice && (
-              <div className="p-3 bg-amber-50 border border-amber-200 text-amber-900 text-xs rounded flex items-center gap-2">
+              <div className="p-3 bg-amber-50 border border-amber-200 text-amber-900 text-xs rounded-lg flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 shrink-0 text-amber-700" />
                 <span>{postNotice}</span>
               </div>
@@ -1952,9 +1921,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             {/* Posts Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {isLoadingPosts ? (
-                <div className="col-span-full py-12 text-center text-slate-500 font-mono">
+                <div className="col-span-full py-12 text-center text-slate-500">
                   <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-amber-600" />
-                  Đang tải danh sách bài viết từ Supabase...
+                  Đang tải danh sách bài viết...
                 </div>
               ) : filteredPosts.length === 0 ? (
                 <div className="col-span-full py-12 text-center text-slate-500 font-mono">
@@ -2033,23 +2002,25 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         {/* TAB 4: BANNER HERO                                         */}
         {/* ========================================================= */}
         {activeTab === 'hero' && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between bg-white p-4 border border-slate-200 rounded shadow-xs">
+          <div className="space-y-6 animate-fadeIn">
+            {/* Header Section */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-5 border border-slate-200 rounded-xl shadow-xs">
               <div>
-                <h2 className="text-sm font-bold uppercase tracking-tight text-slate-900 font-['Plus_Jakarta_Sans']">
-                  Quản lý Slide Banner Hero Trang Chủ
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 font-['Plus_Jakarta_Sans']">
+                  Banner Trình Chiếu Đầu Trang Chủ
                 </h2>
-                <p className="text-xs text-slate-500 font-light mt-0.5">
-                  Tùy chỉnh tiêu đề, slogan, hình ảnh và khẩu hiệu hành động hiển thị ở đầu trang web.
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Các hình ảnh lớn xuất hiện ở phần đầu trang web. Bạn có thể thay đổi hình ảnh, tiêu đề và nút kêu gọi hành động.
                 </p>
               </div>
 
               <button
                 onClick={loadHeroSlides}
-                className="p-2 bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-600 hover:text-slate-900 rounded transition-colors"
+                className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-700 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer self-start sm:self-auto"
                 title="Tải lại slides"
               >
-                <RefreshCw className={`w-4 h-4 ${isLoadingHero ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`w-3.5 h-3.5 ${isLoadingHero ? 'animate-spin text-amber-700' : ''}`} />
+                <span>Làm mới</span>
               </button>
             </div>
 
@@ -2057,7 +2028,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               {heroSlides.map((slide, index) => (
                 <div
                   key={slide.id}
-                  className="bg-white border border-slate-200 rounded shadow-xs overflow-hidden flex flex-col justify-between"
+                  className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden flex flex-col justify-between"
                 >
                   <div>
                     <div className="h-48 bg-slate-100 overflow-hidden relative">
@@ -2066,27 +2037,27 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         alt={slide.title}
                         className="w-full h-full object-cover"
                       />
-                      <div className="absolute top-2.5 left-2.5 bg-slate-900/80 text-amber-400 text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded">
-                        Slide 0{index + 1}
+                      <div className="absolute top-2.5 left-2.5 bg-slate-900/80 text-amber-300 text-xs font-semibold px-2.5 py-1 rounded-md">
+                        Banner 0{index + 1}
                       </div>
                     </div>
 
                     <div className="p-5 space-y-2">
-                      <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-800">
+                      <div className="text-xs font-semibold uppercase tracking-wider text-amber-800">
                         {slide.subtitle}
                       </div>
                       <h3 className="font-bold text-slate-900 text-base">
                         {slide.title}
                       </h3>
-                      <p className="text-xs text-slate-600 font-light line-clamp-2">
+                      <p className="text-xs text-slate-600 line-clamp-2">
                         {slide.description}
                       </p>
                     </div>
                   </div>
 
                   <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
-                    <span className="text-xs font-mono text-slate-500">
-                      Nút: <strong className="text-slate-800">{slide.ctaText}</strong>
+                    <span className="text-xs text-slate-600">
+                      Nút bấm: <strong className="text-slate-900">{slide.ctaText}</strong>
                     </span>
 
                     <button
@@ -2094,10 +2065,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         setEditingSlide(slide);
                         setIsHeroModalOpen(true);
                       }}
-                      className="px-3.5 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded text-xs font-mono font-bold uppercase flex items-center gap-1.5 transition-colors"
+                      className="px-3.5 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-950 border border-amber-300 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
                     >
-                      <Edit2 className="w-3.5 h-3.5" />
-                      <span>Sửa Slide</span>
+                      <Edit2 className="w-3.5 h-3.5 text-amber-700" />
+                      <span>Chỉnh Sửa Banner</span>
                     </button>
                   </div>
                 </div>
@@ -2106,187 +2077,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
         )}
 
-        {/* ========================================================= */}
-        {/* TAB 5: DỰ ÁN TIÊU BIỂU (CASE STUDIES)                      */}
-        {/* ========================================================= */}
-        {activeTab === 'casestudies' && (
-          <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-white p-4 border border-slate-200 rounded shadow-xs">
-              <div className="flex flex-1 items-center gap-3">
-                <div className="relative flex-1 max-w-md">
-                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    value={caseSearchTerm}
-                    onChange={(e) => setCaseSearchTerm(e.target.value)}
-                    placeholder="Tìm theo tên dự án, đối tác, lĩnh vực..."
-                    className="w-full pl-9 pr-3.5 py-2 bg-slate-50 border border-slate-300 focus:border-amber-600 focus:bg-white text-slate-900 text-xs rounded focus:outline-hidden"
-                  />
-                </div>
-
-                <button
-                  onClick={loadCaseStudies}
-                  className="p-2 bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-600 hover:text-slate-900 rounded transition-colors"
-                  title="Tải lại danh sách"
-                >
-                  <RefreshCw className={`w-4 h-4 ${isLoadingCases ? 'animate-spin' : ''}`} />
-                </button>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <div className="text-xs font-mono text-slate-600">
-                  Tổng số: <span className="font-bold text-slate-900">{caseStudies.length}</span> dự án
-                </div>
-
-                <button
-                  onClick={() => {
-                    setEditingCaseStudy(null);
-                    setIsCaseModalOpen(true);
-                  }}
-                  className="px-4 py-2 bg-amber-700 hover:bg-amber-800 text-white text-xs font-mono font-bold uppercase tracking-wider rounded shadow-xs flex items-center gap-1.5 transition-colors shrink-0"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Thêm Dự Án Mới</span>
-                </button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredCaseStudies.map((cs) => (
-                <div
-                  key={cs.id}
-                  className="bg-white border border-slate-200 rounded shadow-xs overflow-hidden flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="h-44 bg-slate-100 overflow-hidden relative">
-                      <img
-                        src={cs.imageUrl}
-                        alt={cs.title}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute top-2.5 left-2.5 bg-slate-900/80 text-amber-400 text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded">
-                        {cs.sector}
-                      </div>
-                    </div>
-
-                    <div className="p-4 space-y-2">
-                      <div className="text-[11px] font-mono text-slate-500">
-                        Khách hàng: <span className="font-bold text-slate-800">{cs.client}</span>
-                      </div>
-                      <h3 className="font-bold text-slate-900 text-sm">
-                        {cs.title}
-                      </h3>
-                      <p className="text-xs text-slate-600 line-clamp-2">
-                        {cs.solution}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="p-4 border-t border-slate-100 flex items-center justify-between">
-                    <span className="text-[10px] font-mono text-slate-500">
-                      ID: {cs.id}
-                    </span>
-
-                    <div className="flex items-center gap-1">
-                      <button
-                        onClick={() => {
-                          setEditingCaseStudy(cs);
-                          setIsCaseModalOpen(true);
-                        }}
-                        className="p-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 rounded text-xs"
-                        title="Sửa dự án"
-                      >
-                        <Edit2 className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() => setDeletingCaseId(cs.id)}
-                        className="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded text-xs"
-                        title="Xóa dự án"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ========================================================= */}
-        {/* TAB 6: DATABASE & SQL SETUP                                */}
-        {/* ========================================================= */}
-        {activeTab === 'database' && (
-          <div className="space-y-6">
-            {/* Storage Bucket Setup Card */}
-            <div className="bg-white border border-slate-200 rounded-xl shadow-xs p-6 space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 border border-amber-200 rounded-md text-amber-900 text-xs font-mono font-bold mb-2">
-                    <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-                    Supabase Storage Bucket
-                  </div>
-                  <h2 className="text-base font-bold uppercase tracking-tight text-slate-900 font-['Plus_Jakarta_Sans']">
-                    Cấu Hình Bucket Ảnh Bài Viết (<code className="text-amber-800 font-mono lowercase">post-images</code>)
-                  </h2>
-                  <p className="text-xs text-slate-500 font-light mt-0.5">
-                    Hỗ trợ tải tệp trực tiếp từ máy tính lên Cloud Storage thay vì nhập URL thủ công (Giới hạn 5MB/ảnh, Public Read + Authenticated CRUD RLS).
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={handleCopyStorageSql}
-                  className="px-4 py-2 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-lg font-mono text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
-                >
-                  {copiedStorageSql ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
-                  <span>{copiedStorageSql ? 'Đã sao chép Storage SQL!' : 'Sao chép SQL Storage'}</span>
-                </button>
-              </div>
-
-              <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-600 space-y-1.5 font-mono">
-                <p><strong>Bước 1:</strong> Mở <a href="https://supabase.com/dashboard" target="_blank" rel="noreferrer" className="text-amber-700 underline font-bold">Supabase Dashboard</a> -&gt; Chọn project <strong>reuogjwrzfavdlidwujk</strong>.</p>
-                <p><strong>Bước 2:</strong> Vào menu <strong>SQL Editor</strong> -&gt; Chọn <strong>New Query</strong>.</p>
-                <p><strong>Bước 3:</strong> Dán đoạn mã dưới đây và bấm <strong>RUN</strong> để tạo bucket <code className="text-amber-700 font-bold">post-images</code> và thiết lập 4 chính sách bảo mật RLS.</p>
-              </div>
-
-              <pre className="p-4 bg-slate-900 text-amber-400 font-mono text-xs rounded-lg overflow-x-auto max-h-64">
-                <code>{STORAGE_SETUP_SQL}</code>
-              </pre>
-            </div>
-
-            {/* Database Tables Setup Card */}
-            <div className="bg-white border border-slate-200 rounded-xl shadow-xs p-6 space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                  <h2 className="text-base font-bold uppercase tracking-tight text-slate-900 font-['Plus_Jakarta_Sans']">
-                    Cơ Sở Dữ Liệu Supabase Cloud Toàn Diện
-                  </h2>
-                  <p className="text-xs text-slate-500 font-light mt-0.5">
-                    Dự án kết nối: <span className="font-mono text-amber-800 font-bold">reuogjwrzfavdlidwujk.supabase.co</span>
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={handleCopySql}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 rounded-lg font-mono text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
-                >
-                  {copiedSql ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
-                  <span>{copiedSql ? 'Đã sao chép SQL!' : 'Sao chép toàn bộ SQL'}</span>
-                </button>
-              </div>
-
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Bao gồm bảng <strong>stats</strong>, <strong>quote_requests</strong>, <strong>posts</strong>, <strong>hero_slides</strong>, <strong>case_studies</strong>, <strong>quote_options</strong>, <strong>breaking_news</strong> và bucket <strong>post-images</strong>:
-              </p>
-
-              <pre className="p-4 bg-slate-900 text-amber-400 font-mono text-xs rounded-lg overflow-x-auto max-h-80">
-                <code>{SUPABASE_SETUP_SQL}</code>
-              </pre>
-            </div>
-          </div>
-        )}
       </main>
 
       {/* ========================================================= */}
@@ -2324,17 +2114,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         }}
         onSave={handleSaveHeroSlide}
         slide={editingSlide}
-      />
-
-      {/* 4. Case Study Modal */}
-      <CaseStudyModal
-        isOpen={isCaseModalOpen}
-        onClose={() => {
-          setIsCaseModalOpen(false);
-          setEditingCaseStudy(null);
-        }}
-        onSave={handleSaveCase}
-        caseStudy={editingCaseStudy}
       />
 
       {/* 4.5. Quote Option Modal (Create/Edit) */}
@@ -2444,37 +2223,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </button>
               <button
                 onClick={handleConfirmDeletePost}
-                className="px-5 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs font-mono uppercase tracking-wider rounded"
-              >
-                Xác nhận xóa
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* 7. Delete Case Study Modal */}
-      {deletingCaseId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-          <div className="bg-white border border-red-200 p-6 max-w-md w-full space-y-4 shadow-xl text-slate-900 rounded">
-            <div className="flex items-center gap-3 text-red-600">
-              <AlertTriangle className="w-6 h-6" />
-              <h3 className="font-bold uppercase tracking-tight text-base font-['Plus_Jakarta_Sans']">
-                Xác nhận xóa dự án
-              </h3>
-            </div>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Hành động này sẽ xóa vĩnh viễn dự án này khỏi cơ sở dữ liệu. Bạn có chắc chắn muốn tiếp tục?
-            </p>
-            <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-3">
-              <button
-                onClick={() => setDeletingCaseId(null)}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs font-mono uppercase"
-              >
-                Hủy bỏ
-              </button>
-              <button
-                onClick={handleConfirmDeleteCase}
                 className="px-5 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs font-mono uppercase tracking-wider rounded"
               >
                 Xác nhận xóa

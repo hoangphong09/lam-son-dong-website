@@ -68,17 +68,17 @@ export const PostImageUploader: React.FC<PostImageUploaderProps> = ({
     setFileName(file.name);
     setFileSize((file.size / (1024 * 1024)).toFixed(2) + ' MB');
     setUploading(true);
-    setUploadProgressText('Đang kết nối và tải ảnh lên Supabase Storage...');
+    setUploadProgressText('Đang tải ảnh lên hệ thống...');
 
     try {
-      // 2. Perform upload to Supabase Storage
+      // 2. Perform upload to Storage
       const publicUrl = await uploadPostImage(file);
       onImageChange(publicUrl);
       setUploadSuccess(true);
       setUploadProgressText('Tải lên thành công!');
     } catch (err: any) {
       console.error('Lỗi tải ảnh:', err);
-      setUploadError(err.message || 'Không thể tải ảnh lên Supabase Storage.');
+      setUploadError(err.message || 'Không thể tải ảnh lên hệ thống.');
       setUploadSuccess(false);
     } finally {
       setUploading(false);
@@ -212,7 +212,7 @@ export const PostImageUploader: React.FC<PostImageUploaderProps> = ({
             <div className="space-y-1">
               <p className="text-sm sm:text-base font-bold text-slate-900 font-['Plus_Jakarta_Sans']">
                 {isUploading ? (
-                  uploadProgressText || 'Đang tải ảnh lên Supabase Storage...'
+                  uploadProgressText || 'Đang tải ảnh lên hệ thống...'
                 ) : isDragging ? (
                   'Thả tệp ảnh vào đây để tải lên...'
                 ) : (
@@ -314,12 +314,9 @@ export const PostImageUploader: React.FC<PostImageUploaderProps> = ({
             />
 
             {/* Overlay tag */}
-            <div className="absolute top-3 left-3 bg-slate-950/85 px-3 py-1.5 text-xs font-mono text-white border border-slate-700 flex items-center gap-2 rounded-md shadow-xs backdrop-blur-xs">
+            <div className="absolute top-3 left-3 bg-slate-950/85 px-3 py-1.5 text-xs text-white border border-slate-700 flex items-center gap-2 rounded-md shadow-xs backdrop-blur-xs">
               <ImageIcon className="w-3.5 h-3.5 text-amber-400" />
-              <span>{isSupabaseStored ? 'Supabase Storage' : 'Ảnh bài viết'}</span>
-              {isSupabaseStored && (
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              )}
+              <span>Ảnh bìa bài viết</span>
             </div>
 
             {/* Quick Actions floating on preview */}

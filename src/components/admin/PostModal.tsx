@@ -109,7 +109,7 @@ export const PostModal: React.FC<PostModalProps> = ({
         <div className="px-6 sm:px-8 py-5 border-b border-slate-200 bg-slate-50/90 flex items-center justify-between shrink-0">
           <div>
             <h2 className="text-lg sm:text-xl md:text-2xl font-bold uppercase tracking-tight text-slate-900 font-['Plus_Jakarta_Sans']">
-              {postToEdit ? 'Chỉnh sửa thông tin bài viết' : 'Soạn thảo bài viết mới lên Supabase'}
+              {postToEdit ? 'Chỉnh sửa bài viết' : 'Soạn thảo bài viết mới'}
             </h2>
           </div>
           <button
@@ -283,7 +283,7 @@ export const PostModal: React.FC<PostModalProps> = ({
                   ? 'Đang tải ảnh...'
                   : postToEdit
                   ? 'Lưu thay đổi'
-                  : 'Đăng bài lên Supabase'}
+                  : 'Đăng bài viết'}
               </span>
             </button>
           </div>

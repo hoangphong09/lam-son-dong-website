@@ -111,15 +111,12 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, onBackTo
       <div className="w-full max-w-md bg-white border border-slate-200 p-8 shadow-xl relative z-10 rounded-sm">
         {/* Header Branding */}
         <div className="text-center space-y-3 pb-6 border-b border-slate-200">
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-amber-50 border border-amber-200 text-amber-700 rounded mb-1">
-            <Shield className="w-7 h-7" />
-          </div>
           <div>
             <h1 className="text-xl font-bold uppercase tracking-tight text-slate-900 font-['Plus_Jakarta_Sans']">
               CỔNG QUẢN TRỊ VIÊN
             </h1>
             <p className="text-[11px] font-mono text-amber-800 uppercase tracking-widest mt-1 font-bold">
-              Bảo Vệ Lâm Sơn Động • Supabase CMS
+              Bảo Vệ Lâm Sơn Động
             </p>
           </div>
         </div>
@@ -141,17 +138,6 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, onBackTo
             <p>{successMessage}</p>
           </div>
         )}
-
-        {/* Credentials Reminder */}
-        <div className="mt-6 p-3 bg-amber-50/70 border border-amber-200/80 rounded flex items-start gap-2.5 text-xs text-amber-900 font-mono">
-          <KeyRound className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
-          <div className="space-y-0.5 text-[11px] leading-relaxed">
-            <p className="font-bold uppercase tracking-wider text-amber-950">Xác thực bắt buộc</p>
-            <p className="text-amber-800 font-normal">
-              Đăng nhập bằng tài khoản Quản trị viên đã được cấp phép trong hệ thống.
-            </p>
-          </div>
-        </div>
 
         {/* Login Form */}
         <form onSubmit={handleAuth} className="mt-5 space-y-4">
@@ -212,12 +198,6 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, onBackTo
           </button>
         </form>
 
-        {/* Security Footer Notice */}
-        <div className="mt-6 pt-4 border-t border-slate-200 text-center">
-          <p className="text-[10px] text-slate-500 font-mono">
-            Hệ thống an ninh Supabase Cloud • Xác thực tài khoản độc quyền
-          </p>
-        </div>
       </div>
     </div>
   );
