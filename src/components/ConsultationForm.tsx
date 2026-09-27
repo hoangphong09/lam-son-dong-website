@@ -115,7 +115,7 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({ initialData 
         setErrorMessage(res.error || 'Có lỗi khi gửi thông tin yêu cầu. Vui lòng thử lại hoặc gọi Hotline!');
       }
     } catch (err: any) {
-      setErrorMessage('Lỗi kết nối máy chủ. Vui lòng gọi trực tiếp hotline 0903.298.899 để được hỗ trợ nhanh nhất!');
+      setErrorMessage('Lỗi kết nối máy chủ. Vui lòng gọi trực tiếp hotline 0339.269.524 để được hỗ trợ nhanh nhất!');
     } finally {
       setLoading(false);
     }
@@ -194,11 +194,11 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({ initialData 
                 </span>
                 <p className="text-xs text-slate-700">Liên hệ trực tiếp Hotline Trực Ban Tác Chiến 24/7:</p>
                 <a 
-                  href="tel:0903298899" 
+                  href="tel:0339269524" 
                   className="text-lg font-black font-mono text-amber-900 flex items-center gap-2 hover:underline"
                 >
                   <PhoneCall className="w-4 h-4 text-amber-700" />
-                  0903.298.899
+                  0339.269.524
                 </a>
               </div>
             </div>

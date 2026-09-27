@@ -25,14 +25,14 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/65 backdrop-blur-xs animate-in fade-in duration-200">
       <div 
-        className="bg-white border border-slate-200 w-full max-w-3xl max-h-[92vh] flex flex-col shadow-2xl text-slate-900 rounded-xl overflow-hidden relative"
+        className="bg-white border border-slate-200 w-full max-w-3xl max-h-[92vh] flex flex-col shadow-2xl text-slate-900 rounded-2xl overflow-hidden relative"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close Button */}
+        {/* Sleek Close Button */}
         <button
           onClick={onClose}
           aria-label="Đóng chi tiết dịch vụ"
-          className="absolute top-4 right-4 sm:top-5 sm:right-5 w-9 h-9 sm:w-10 sm:h-10 bg-slate-950/70 hover:bg-slate-950/90 text-white border border-white/20 flex items-center justify-center transition-all z-30 rounded-lg shadow-md backdrop-blur-xs"
+          className="absolute top-4 right-4 sm:top-5 sm:right-5 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-950/50 hover:bg-slate-950/80 backdrop-blur-md text-white/90 hover:text-white border border-white/20 flex items-center justify-center transition-all z-30 shadow-md cursor-pointer hover:scale-105 active:scale-95"
         >
           <X className="w-5 h-5" />
         </button>
@@ -115,31 +115,35 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
           </div>
         </div>
 
-        {/* Action CTAs (Sticky Bottom Footer) */}
-        <div className="p-5 sm:p-6 border-t border-slate-200 bg-slate-50/95 flex flex-col sm:flex-row items-center justify-between gap-4 shrink-0">
-          <div className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-700 font-medium">
-            <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0" />
+        {/* Refined Action CTAs (Sticky Bottom Footer) */}
+        <div className="p-4 sm:p-5 md:p-6 border-t border-slate-200 bg-slate-50/95 flex flex-col sm:flex-row items-center justify-between gap-4 shrink-0">
+          <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-700 font-medium">
+            <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600 shrink-0" />
             <span>Cam kết chịu trách nhiệm & bồi thường 100% rủi ro</span>
           </div>
 
-          <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
+            {/* Elegant Phone Button */}
             <a
-              href="tel:0908113888"
-              className="px-4 sm:px-5 py-3 bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 rounded-lg shadow-2xs transition-colors shrink-0"
+              href="tel:0339269524"
+              className="h-11 sm:h-12 px-4 sm:px-5 bg-white hover:bg-amber-50/60 border border-slate-200 hover:border-amber-400 text-slate-800 hover:text-amber-900 font-semibold text-xs sm:text-sm rounded-xl shadow-2xs hover:shadow-xs transition-all flex items-center justify-center gap-2 whitespace-nowrap group shrink-0"
             >
-              <PhoneCall className="w-4 h-4 text-amber-700" />
-              <span className="font-mono">0908.113.888</span>
+              <div className="w-6 h-6 rounded-full bg-amber-50 group-hover:bg-amber-100/80 flex items-center justify-center transition-colors">
+                <PhoneCall className="w-3.5 h-3.5 text-amber-700" />
+              </div>
+              <span className="font-mono font-bold tracking-tight">0339.269.524</span>
             </a>
 
+            {/* Premium Gold Quote CTA Button */}
             <button
               onClick={() => {
                 onClose();
                 onOpenQuote();
               }}
-              className="flex-1 sm:flex-initial px-6 sm:px-7 py-3 bg-[#c5a059] hover:bg-[#b8860b] text-slate-950 font-black text-xs sm:text-sm uppercase tracking-widest flex items-center justify-center gap-2 transition-all rounded-lg shadow-sm hover:shadow-md cursor-pointer"
+              className="h-11 sm:h-12 px-5 sm:px-6 bg-gradient-to-r from-[#c5a059] to-[#b8860b] hover:from-[#d4af37] hover:to-[#c5a059] text-slate-950 font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 cursor-pointer whitespace-nowrap group shrink-0"
             >
               <span>Yêu Cầu Báo Giá</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </button>
           </div>
         </div>

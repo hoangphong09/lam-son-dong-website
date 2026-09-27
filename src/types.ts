@@ -107,6 +107,7 @@ export interface NewsItem {
   summary: string;
   imageUrl: string;
   isFeatured?: boolean;
+  content?: string;
 }
 
 export interface ClientPartner {

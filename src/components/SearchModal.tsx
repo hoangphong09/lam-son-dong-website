@@ -28,7 +28,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-12 sm:pt-20 p-3 sm:p-6 bg-slate-900/65 backdrop-blur-xs animate-in fade-in duration-150">
       <div 
-        className="bg-white border border-slate-200 w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl text-slate-900 rounded-xl overflow-hidden"
+        className="bg-white border border-slate-200 w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl text-slate-900 rounded-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Input Bar */}
@@ -45,7 +45,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
           <button
             onClick={onClose}
             aria-label="Đóng tìm kiếm"
-            className="w-8 h-8 sm:w-9 sm:h-9 bg-slate-200/80 hover:bg-[#c5a059] text-slate-600 hover:text-slate-950 rounded-lg flex items-center justify-center transition-all shrink-0 ml-2"
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 flex items-center justify-center transition-all shrink-0 ml-2 cursor-pointer hover:scale-105 active:scale-95"
           >
             <X className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
@@ -71,7 +71,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                   <button
                     key={idx}
                     onClick={() => setQuery(tag)}
-                    className="px-3.5 py-2 bg-slate-100 border border-slate-200 hover:border-amber-500 hover:bg-amber-50 text-xs sm:text-sm text-slate-700 hover:text-amber-900 uppercase tracking-wider transition-all font-medium rounded-lg cursor-pointer"
+                    className="px-3.5 py-1.5 bg-slate-100 hover:bg-amber-50/80 border border-slate-200 hover:border-amber-400 text-xs sm:text-sm text-slate-700 hover:text-amber-900 transition-all font-medium rounded-xl cursor-pointer hover:-translate-y-0.5 active:translate-y-0 shadow-2xs"
                   >
                     {tag}
                   </button>

@@ -87,14 +87,14 @@ export const QuoteCalculatorModal: React.FC<QuoteCalculatorModalProps> = ({ isOp
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/65 backdrop-blur-xs animate-in fade-in duration-200">
       <div 
-        className="bg-white border border-slate-200 w-full max-w-2xl max-h-[92vh] flex flex-col shadow-2xl text-slate-900 rounded-xl overflow-hidden relative"
+        className="bg-white border border-slate-200 w-full max-w-2xl max-h-[92vh] flex flex-col shadow-2xl text-slate-900 rounded-2xl overflow-hidden relative"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close button */}
+        {/* Sleek Close button */}
         <button
           onClick={onClose}
           aria-label="Đóng cửa sổ"
-          className="absolute top-4 right-4 sm:top-5 sm:right-5 w-9 h-9 sm:w-10 sm:h-10 bg-white/90 hover:bg-slate-100 border border-slate-200 hover:border-amber-600 text-slate-600 hover:text-black flex items-center justify-center transition-all z-20 rounded-lg shadow-xs"
+          className="absolute top-4 right-4 sm:top-5 sm:right-5 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 border border-slate-200 flex items-center justify-center transition-all z-20 cursor-pointer hover:scale-105 active:scale-95 shadow-2xs"
         >
           <X className="w-5 h-5" />
         </button>
@@ -132,7 +132,7 @@ export const QuoteCalculatorModal: React.FC<QuoteCalculatorModalProps> = ({ isOp
               <div className="pt-3">
                 <button
                   onClick={onClose}
-                  className="px-8 py-3.5 bg-[#c5a059] hover:bg-[#b8860b] text-slate-950 font-black text-xs sm:text-sm uppercase tracking-widest rounded-lg shadow-sm transition-all"
+                  className="h-11 sm:h-12 px-7 bg-gradient-to-r from-[#c5a059] to-[#b8860b] hover:from-[#d4af37] hover:to-[#c5a059] text-slate-950 font-bold text-xs sm:text-sm uppercase tracking-wider rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer inline-flex items-center justify-center gap-2 hover:-translate-y-0.5 active:translate-y-0"
                 >
                   Đóng cửa sổ
                 </button>
@@ -307,7 +307,7 @@ export const QuoteCalculatorModal: React.FC<QuoteCalculatorModalProps> = ({ isOp
                     <input
                       type="tel"
                       required
-                      placeholder="VD: 0908 113 888"
+                      placeholder="VD: 0339 269 524"
                       value={contactPhone}
                       onChange={(e) => setContactPhone(e.target.value)}
                       className="w-full px-4 py-3 bg-slate-50 border border-slate-300 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-hidden focus:bg-white focus:border-amber-600 focus:ring-1 focus:ring-amber-600 font-mono rounded-lg transition-all"
@@ -318,9 +318,9 @@ export const QuoteCalculatorModal: React.FC<QuoteCalculatorModalProps> = ({ isOp
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 bg-[#c5a059] hover:bg-[#b8860b] text-slate-950 font-black text-xs sm:text-sm uppercase tracking-widest flex items-center justify-center gap-2 transition-all rounded-lg shadow-sm hover:shadow-md cursor-pointer disabled:opacity-50"
+                  className="w-full h-12 sm:h-13 bg-gradient-to-r from-[#c5a059] to-[#b8860b] hover:from-[#d4af37] hover:to-[#c5a059] text-slate-950 font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 cursor-pointer disabled:opacity-50 group"
                 >
-                  <Send className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <Send className="w-4 h-4 text-slate-950 group-hover:translate-x-0.5 transition-transform" />
                   <span>{loading ? 'Đang gửi dữ liệu...' : 'Nhận Bảng Báo Giá Chi Tiết & Hợp Đồng Mẫu'}</span>
                 </button>
               </form>

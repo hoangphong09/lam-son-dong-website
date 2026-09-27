@@ -203,7 +203,7 @@ export default function App() {
       title: news.title,
       category: `Sự Kiện & Tin Tức / ${news.category}`,
       date: news.date,
-      content: `${news.summary}\n\nNỘI DUNG CHI TIẾT SỰ KIỆN:\nBan Lãnh Đạo Lâm Sơn Động Security cùng toàn thể cán bộ nghiệp vụ và lực lượng vệ sĩ đã tổ chức thành công chương trình huấn luyện định kỳ, nâng cao thể lực, võ thuật ứng dụng và nghiệp vụ PCCC chuyên sâu. Chúng tôi cam kết không ngừng nâng cao chất lượng dịch vụ vì sự an toàn tuyệt đối của quý đối tác.`,
+      content: news.content || `${news.summary}\n\nNỘI DUNG CHI TIẾT SỰ KIỆN:\nBan Lãnh Đạo Lâm Sơn Động Security cùng toàn thể cán bộ nghiệp vụ và lực lượng vệ sĩ đã tổ chức thành công chương trình huấn luyện định kỳ, nâng cao thể lực, võ thuật ứng dụng và nghiệp vụ PCCC chuyên sâu. Chúng tôi cam kết không ngừng nâng cao chất lượng dịch vụ vì sự an toàn tuyệt đối của quý đối tác.`,
       imageUrl: news.imageUrl
     });
   };
@@ -228,7 +228,7 @@ export default function App() {
       title: 'Bản Tin Cảnh Báo An Ninh Khẩn Cấp',
       category: 'Tin Nóng 24/7',
       date: new Date().toLocaleDateString('vi-VN'),
-      content: `${text}\n\nKhuyến cáo từ Bộ Phận Nghiệp Vụ Lâm Sơn Động: Quý doanh nghiệp cần tăng cường kiểm tra hệ thống camera giám sát, kiểm soát chặt chẽ sổ giao ca và phối hợp diễn tập phương án PCCC khẩn cấp. Hotline hỗ trợ 24/7: (024) 38777012.`
+      content: `${text}\n\nKhuyến cáo từ Bộ Phận Nghiệp Vụ Lâm Sơn Động: Quý doanh nghiệp cần tăng cường kiểm tra hệ thống camera giám sát, kiểm soát chặt chẽ sổ giao ca và phối hợp diễn tập phương án PCCC khẩn cấp. Hotline hỗ trợ 24/7: 0339.269.524.`
     });
   };
 
@@ -405,13 +405,13 @@ export default function App() {
           onClick={() => setInfoModalData(null)}
         >
           <div 
-            className="bg-white border border-slate-200 w-full max-w-2xl max-h-[92vh] flex flex-col shadow-2xl text-slate-900 rounded-xl overflow-hidden relative"
+            className="bg-white border border-slate-200 w-full max-w-2xl max-h-[92vh] flex flex-col shadow-2xl text-slate-900 rounded-2xl overflow-hidden relative"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={() => setInfoModalData(null)}
               aria-label="Đóng cửa sổ"
-              className="absolute top-4 right-4 sm:top-5 sm:right-5 w-9 h-9 sm:w-10 sm:h-10 bg-slate-950/70 hover:bg-slate-950/90 text-white border border-white/20 flex items-center justify-center transition-all z-20 rounded-lg shadow-md backdrop-blur-xs"
+              className="absolute top-4 right-4 sm:top-5 sm:right-5 w-9 h-9 rounded-full bg-slate-950/50 hover:bg-slate-950/80 backdrop-blur-md text-white/90 hover:text-white border border-white/20 flex items-center justify-center transition-all z-20 cursor-pointer hover:scale-105 active:scale-95 shadow-md"
             >
               <X className="w-5 h-5" />
             </button>
@@ -465,7 +465,7 @@ export default function App() {
             <div className="p-4 sm:p-5 border-t border-slate-200 bg-slate-50/90 flex justify-end shrink-0">
               <button
                 onClick={() => setInfoModalData(null)}
-                className="px-7 py-3 bg-[#c5a059] hover:bg-[#b8860b] text-slate-950 font-bold text-xs sm:text-sm uppercase tracking-widest transition-all rounded-lg shadow-sm cursor-pointer"
+                className="h-10 sm:h-11 px-6 bg-gradient-to-r from-[#c5a059] to-[#b8860b] hover:from-[#d4af37] hover:to-[#c5a059] text-slate-950 font-bold text-xs sm:text-sm uppercase tracking-wider transition-all rounded-xl shadow-xs hover:shadow-sm cursor-pointer hover:-translate-y-0.5 active:translate-y-0"
               >
                 Đóng
               </button>

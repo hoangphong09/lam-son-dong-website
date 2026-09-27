@@ -29,7 +29,7 @@ export const FloatingActions: React.FC<FloatingActionsProps> = ({ onOpenQuote })
       {/* Hotline 24/7 Call Pulse Button */}
       <a
         id="float-hotline-btn"
-        href="tel:0908113888"
+        href="tel:0339269524"
         title="Gọi Hotline khẩn cấp 24/7"
         className="relative flex items-center justify-center w-12 h-12 bg-white border-2 border-amber-600 text-amber-700 rounded-full shadow-xl hover:scale-110 active:scale-95 transition-all group"
       >

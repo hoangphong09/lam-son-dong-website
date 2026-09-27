@@ -160,11 +160,11 @@ export const RecruitmentModal: React.FC<RecruitmentModalProps> = ({ isOpen, onCl
         className="bg-white border border-slate-200 w-full max-w-4xl max-h-[92vh] flex flex-col shadow-2xl text-slate-900 rounded-2xl overflow-hidden relative"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close Button */}
+        {/* Sleek Close Button */}
         <button
           onClick={onClose}
           aria-label="Đóng bảng tuyển dụng"
-          className="absolute top-4 right-4 sm:top-5 sm:right-5 w-8 h-8 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors z-20 cursor-pointer"
+          className="absolute top-4 right-4 sm:top-5 sm:right-5 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 flex items-center justify-center transition-all z-20 cursor-pointer hover:scale-105 active:scale-95"
         >
           <X className="w-5 h-5" />
         </button>
@@ -429,7 +429,7 @@ export const RecruitmentModal: React.FC<RecruitmentModalProps> = ({ isOpen, onCl
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full sm:w-auto px-6 py-2.5 bg-[#c5a059] hover:bg-[#b8860b] disabled:opacity-70 text-slate-950 font-bold text-xs uppercase tracking-wider rounded-lg transition-all shadow-xs cursor-pointer flex items-center justify-center gap-2"
+                    className="w-full sm:w-auto h-11 px-6 bg-gradient-to-r from-[#c5a059] to-[#b8860b] hover:from-[#d4af37] hover:to-[#c5a059] disabled:opacity-70 text-slate-950 font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs hover:shadow-sm hover:-translate-y-0.5 active:translate-y-0 cursor-pointer flex items-center justify-center gap-2 group"
                   >
                     {isSubmitting ? (
                       <>
@@ -439,7 +439,7 @@ export const RecruitmentModal: React.FC<RecruitmentModalProps> = ({ isOpen, onCl
                     ) : (
                       <>
                         <span>Nộp Đơn Ứng Tuyển Ngay</span>
-                        <ChevronRight className="w-4 h-4" />
+                        <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                       </>
                     )}
                   </button>
@@ -449,33 +449,33 @@ export const RecruitmentModal: React.FC<RecruitmentModalProps> = ({ isOpen, onCl
           </div>
         </div>
 
-        {/* Modal Footer - Fixed CTA bar */}
+        {/* Modal Footer - Refined CTA bar */}
         <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
           <div className="flex items-center gap-2 text-xs text-slate-600">
             <HeartHandshake className="w-4 h-4 text-amber-700 shrink-0" />
             <span>Liên hệ để nhận tư vấn & hướng dẫn nộp hồ sơ:</span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
             <a
               href="tel:0981962288"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-800 hover:text-amber-800 transition-colors shadow-xs"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white border border-slate-200 hover:border-amber-400 rounded-xl text-xs font-semibold text-slate-800 hover:text-amber-900 transition-all shadow-2xs hover:shadow-xs"
             >
               <PhoneCall className="w-3.5 h-3.5 text-amber-700" />
-              <span>0981.962.288 – Mr. Phúc</span>
+              <span className="font-mono">0981.962.288 – Mr. Phúc</span>
             </a>
 
             <a
               href="tel:0975751246"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-800 hover:text-amber-800 transition-colors shadow-xs"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-white border border-slate-200 hover:border-amber-400 rounded-xl text-xs font-semibold text-slate-800 hover:text-amber-900 transition-all shadow-2xs hover:shadow-xs"
             >
               <PhoneCall className="w-3.5 h-3.5 text-amber-700" />
-              <span>0975.751.246 – Mrs. Luyến</span>
+              <span className="font-mono">0975.751.246 – Mrs. Luyến</span>
             </a>
 
             <button
               onClick={onClose}
-              className="px-3.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 rounded-xl text-xs font-medium transition-colors cursor-pointer"
             >
               Đóng
             </button>
