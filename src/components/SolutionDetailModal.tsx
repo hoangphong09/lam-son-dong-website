@@ -52,10 +52,8 @@ export const SolutionDetailModal: React.FC<SolutionDetailModalProps> = ({
 
         {/* Modal Header - Clean, minimal, non-distracting */}
         <div className="px-6 py-5 sm:px-8 sm:py-6 bg-white border-b border-slate-200 relative shrink-0">
-          <div className="flex items-center gap-2 mb-1.5 text-xs font-semibold text-amber-800">
+          <div className="mb-1.5 text-xs font-semibold text-amber-800">
             <span>{categoryName}</span>
-            <span className="text-slate-300 font-normal">•</span>
-            <span className="text-slate-500 font-medium">{solution.tag}</span>
           </div>
 
           <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-normal leading-snug pr-8">

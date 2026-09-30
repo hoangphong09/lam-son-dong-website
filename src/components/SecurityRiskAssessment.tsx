@@ -217,7 +217,7 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
   return (
     <section 
       id="risk-assessment-section" 
-      className="bg-slate-50 text-slate-900 py-20 border-b border-slate-200 relative overflow-hidden"
+      className="bg-slate-50 text-slate-900 py-20 border-b border-slate-200 relative overflow-hidden scroll-mt-20"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}

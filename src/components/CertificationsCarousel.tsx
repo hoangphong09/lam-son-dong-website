@@ -9,7 +9,7 @@ interface CertificationsCarouselProps {
 
 export const CertificationsCarousel: React.FC<CertificationsCarouselProps> = ({ onSelectCert }) => {
   return (
-    <section id="certifications-section" className="bg-white text-slate-900 py-16 sm:py-20 border-b border-slate-200 relative">
+    <section id="certifications-section" className="bg-white text-slate-900 py-16 sm:py-20 border-b border-slate-200 relative scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">

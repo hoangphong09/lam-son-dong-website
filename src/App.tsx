@@ -11,7 +11,6 @@ import { SolutionMatrixTabs } from './components/SolutionMatrixTabs';
 import { CaseStudiesSection } from './components/CaseStudiesSection';
 import { SecurityLibrarySection } from './components/SecurityLibrarySection';
 import { EventsAndNews } from './components/EventsAndNews';
-import { PartnersAndClients } from './components/PartnersAndClients';
 import { ConsultationForm } from './components/ConsultationForm';
 import { Footer } from './components/Footer';
 import { FloatingActions } from './components/FloatingActions';
@@ -329,10 +328,7 @@ export default function App() {
           onOpenRecruitmentModal={() => setIsRecruitmentModalOpen(true)} 
         />
 
-        {/* 13. Strategic Partners & Clients */}
-        <PartnersAndClients />
-
-        {/* 14. Consultation & Site Audit Request Form */}
+        {/* 13. Consultation & Site Audit Request Form */}
         <ConsultationForm initialData={auditDataForForm} />
       </main>
 

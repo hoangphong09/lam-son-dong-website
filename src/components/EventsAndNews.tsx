@@ -29,7 +29,7 @@ export const EventsAndNews: React.FC<EventsAndNewsProps> = ({ onSelectNews, post
   const sideNews = latestFour.slice(1, 4);
 
   return (
-    <section id="news-section" className="bg-slate-50 text-slate-900 py-16 sm:py-24 border-b border-slate-200 scroll-mt-14">
+    <section id="news-section" className="bg-slate-50 text-slate-900 py-16 sm:py-24 border-b border-slate-200 scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">

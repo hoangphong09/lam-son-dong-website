@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowRight } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { HERO_SLIDES } from '../data/mockData';
 import { HeroSlide } from '../types';
 
@@ -18,15 +18,35 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
 }) => {
   const activeSlides = slides && slides.length > 0 ? slides : HERO_SLIDES;
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
-  // Auto transition slide every 6 seconds (6000ms)
+  // Preload all slide images into memory immediately to eliminate lazy-load pop/flicker
   useEffect(() => {
-    if (activeSlides.length <= 1) return;
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % activeSlides.length);
-    }, 6000);
-    return () => clearInterval(interval);
+    activeSlides.forEach((slide) => {
+      if (slide.imageUrl) {
+        const img = new Image();
+        img.src = slide.imageUrl;
+      }
+    });
+  }, [activeSlides]);
+
+  // Next / Previous slide handlers
+  const handlePrev = useCallback(() => {
+    setCurrentIndex((prev) => (prev === 0 ? activeSlides.length - 1 : prev - 1));
   }, [activeSlides.length]);
+
+  const handleNext = useCallback(() => {
+    setCurrentIndex((prev) => (prev + 1) % activeSlides.length);
+  }, [activeSlides.length]);
+
+  // Auto-advance interval (5 seconds) with pause-on-hover behavior
+  useEffect(() => {
+    if (activeSlides.length <= 1 || isPaused) return;
+    const interval = setInterval(() => {
+      handleNext();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [activeSlides.length, isPaused, handleNext]);
 
   const handleGoToServices = () => {
     if (onScrollToServices) {
@@ -51,7 +71,6 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
   };
 
   if (activeSlides.length === 0) return null;
-  const currentSlide = activeSlides[currentIndex];
 
   // Helper to format headline gracefully with balanced hierarchy and gold accent
   const renderFormattedTitle = (rawTitle: string) => {
@@ -94,78 +113,128 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
   return (
     <section 
       id="hero-section"
-      className="relative bg-slate-950 text-white overflow-hidden min-h-[540px] sm:min-h-[600px] lg:min-h-[660px] flex items-center border-b border-slate-800"
+      aria-label="Banner Giới Thiệu Lâm Sơn Động Security"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      className="relative bg-slate-950 text-white overflow-hidden min-h-[540px] sm:min-h-[600px] lg:min-h-[660px] flex items-center border-b border-slate-800 select-none"
     >
-      {/* Background Image Carousel Layer */}
-      {activeSlides.map((slide, index) => (
-        <div
-          key={slide.id}
-          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-            index === currentIndex ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'
-          }`}
-        >
-          {/* Crisp photo: full background immersion across the canvas */}
-          <img
-            src={slide.imageUrl}
-            alt={`Lâm Sơn Động Security - ${slide.title}`}
-            loading={index === 0 ? 'eager' : 'lazy'}
-            decoding="async"
-            fetchPriority={index === 0 ? 'high' : 'auto'}
-            onError={(e) => {
-              (e.currentTarget as HTMLImageElement).src = '/images/hero-1.jpg';
-            }}
-            className={`w-full h-full object-cover object-[70%_center] sm:object-center lg:object-[78%_center] filter contrast-[1.08] saturate-[1.12] brightness-[0.96] transition-transform duration-7000 ease-out ${
-              index === currentIndex ? 'scale-100 opacity-100' : 'scale-105 opacity-0'
-            }`}
-          />
+      {/* ========================================================================= */}
+      {/* CONTINUOUS HORIZONTAL SLIDER TRACK: Hardware-accelerated flex row         */}
+      {/* Uses translate3d with cubic-bezier easing to completely eliminate flicker */}
+      {/* ========================================================================= */}
+      <div 
+        className="flex w-full h-full transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] will-change-transform"
+        style={{ transform: `translate3d(-${currentIndex * 100}%, 0, 0)` }}
+      >
+        {activeSlides.map((slide, index) => (
+          <div
+            key={slide.id || index}
+            className="w-full min-w-full shrink-0 relative flex items-center min-h-[540px] sm:min-h-[600px] lg:min-h-[660px] overflow-hidden"
+          >
+            {/* Background Image Container */}
+            <div className="absolute inset-0 z-0 overflow-hidden">
+              <img
+                src={slide.imageUrl}
+                alt={`Lâm Sơn Động Security - ${slide.title}`}
+                loading="eager"
+                decoding="async"
+                fetchPriority={index === 0 ? 'high' : 'auto'}
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).src = '/images/hero-1.jpg';
+                }}
+                className="w-full h-full object-cover object-[70%_center] sm:object-center lg:object-[78%_center] filter contrast-[1.08] saturate-[1.12] brightness-[0.96]"
+              />
 
-          {/* Left-to-right subtle dark gradient overlay for optimal text contrast */}
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/60 to-transparent pointer-events-none"></div>
+              {/* Left-to-right subtle dark gradient overlay for optimal text contrast */}
+              <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/70 to-slate-950/20 sm:to-transparent pointer-events-none" />
 
-          {/* Subtle bottom gradient transition */}
-          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-slate-950/75 to-transparent pointer-events-none"></div>
-        </div>
-      ))}
+              {/* Bottom gradient transition */}
+              <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-slate-950/90 via-slate-950/50 to-transparent pointer-events-none" />
+            </div>
 
-      {/* Main Content Container - Vertically Centered */}
-      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24 w-full flex flex-col justify-center min-h-[520px] sm:min-h-[580px] lg:min-h-[620px]">
-        
-        {/* Content Box with Refined Typography & Alignment */}
-        <div className="max-w-2xl lg:max-w-3xl">
-          {/* Primary Headline */}
-          <h1 className="font-['Plus_Jakarta_Sans',sans-serif] mb-5">
-            {renderFormattedTitle(currentSlide.title)}
-          </h1>
+            {/* Slide Content Box: Stays perfectly in sync with the slide background */}
+            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24 w-full flex flex-col justify-center">
+              <div className="max-w-2xl lg:max-w-3xl">
+                {/* Primary Headline */}
+                <h1 className="font-['Plus_Jakarta_Sans',sans-serif] mb-5">
+                  {renderFormattedTitle(slide.title)}
+                </h1>
 
-          {/* Subtitle Description */}
-          <p className="text-base sm:text-lg md:text-xl text-slate-100 font-normal leading-relaxed max-w-xl lg:max-w-2xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] mb-8">
-            {currentSlide.description}
-          </p>
+                {/* Subtitle Description */}
+                <p className="text-base sm:text-lg md:text-xl text-slate-100 font-normal leading-relaxed max-w-xl lg:max-w-2xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] mb-8">
+                  {slide.description}
+                </p>
 
-          {/* Action Buttons: Clean text without leading icons */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 sm:gap-4">
-            {/* Primary Action Button: Dịch Vụ Bảo Vệ */}
-            <button
-              id="hero-services-cta-btn"
-              onClick={handleGoToServices}
-              className="flex items-center justify-center gap-2.5 bg-gradient-to-r from-[#c5a059] to-[#b8860b] hover:from-[#d4af37] hover:to-[#c5a059] text-slate-950 font-extrabold text-xs sm:text-sm uppercase tracking-wider font-['Plus_Jakarta_Sans',sans-serif] px-7 py-3.5 sm:py-4 rounded-xl shadow-lg shadow-black/40 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer group"
-            >
-              <span>Dịch Vụ Bảo Vệ</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
+                {/* Action CTA Buttons */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 sm:gap-4">
+                  {/* Primary Action Button: Dịch Vụ Bảo Vệ */}
+                  <button
+                    id={`hero-services-cta-btn-${index}`}
+                    onClick={handleGoToServices}
+                    className="flex items-center justify-center gap-2.5 bg-gradient-to-r from-[#c5a059] to-[#b8860b] hover:from-[#d4af37] hover:to-[#c5a059] text-slate-950 font-extrabold text-xs sm:text-sm uppercase tracking-wider font-['Plus_Jakarta_Sans',sans-serif] px-7 py-3.5 sm:py-4 rounded-xl shadow-lg shadow-black/40 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer group"
+                  >
+                    <span>Dịch Vụ Bảo Vệ</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </button>
 
-            {/* Secondary Action Button: Đánh Giá Rủi Ro */}
-            <button
-              id="hero-risk-cta-btn"
-              onClick={handleGoToRisk}
-              className="flex items-center justify-center backdrop-blur-md bg-white/10 hover:bg-white/20 text-white border border-white/25 hover:border-white/40 text-xs sm:text-sm font-bold uppercase tracking-wider font-['Plus_Jakarta_Sans',sans-serif] px-7 py-3.5 sm:py-4 rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer hover:-translate-y-0.5 active:translate-y-0"
-            >
-              <span>Đánh Giá Rủi Ro</span>
-            </button>
+                  {/* Secondary Action Button: Đánh Giá Rủi Ro */}
+                  <button
+                    id={`hero-risk-cta-btn-${index}`}
+                    onClick={handleGoToRisk}
+                    className="flex items-center justify-center backdrop-blur-md bg-white/10 hover:bg-white/20 text-white border border-white/25 hover:border-white/40 text-xs sm:text-sm font-bold uppercase tracking-wider font-['Plus_Jakarta_Sans',sans-serif] px-7 py-3.5 sm:py-4 rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer hover:-translate-y-0.5 active:translate-y-0"
+                  >
+                    <span>Đánh Giá Rủi Ro</span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-
+        ))}
       </div>
+
+      {/* ========================================================================= */}
+      {/* NAVIGATION CONTROLS: Next/Prev Arrows & Active Pagination Dots            */}
+      {/* ========================================================================= */}
+      {activeSlides.length > 1 && (
+        <>
+          {/* Previous Arrow Button: Instant color change on hover, no transitions or transforms */}
+          <button
+            type="button"
+            onClick={handlePrev}
+            aria-label="Slide trước"
+            className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-slate-950/60 hover:bg-slate-900 border border-white/20 hover:border-amber-400 text-white/80 hover:text-amber-400 flex items-center justify-center cursor-pointer shadow-xl"
+          >
+            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+          </button>
+
+          {/* Next Arrow Button: Instant color change on hover, no transitions or transforms */}
+          <button
+            type="button"
+            onClick={handleNext}
+            aria-label="Slide tiếp theo"
+            className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-slate-950/60 hover:bg-slate-900 border border-white/20 hover:border-amber-400 text-white/80 hover:text-amber-400 flex items-center justify-center cursor-pointer shadow-xl"
+          >
+            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+          </button>
+
+          {/* Pagination Indicators (Simple Circular Dots) */}
+          <div className="absolute bottom-11 sm:bottom-12 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-slate-950/60 backdrop-blur-md border border-white/10 shadow-lg">
+            {activeSlides.map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setCurrentIndex(idx)}
+                aria-label={`Chuyển tới slide ${idx + 1}`}
+                className={`w-2.5 h-2.5 rounded-full cursor-pointer ${
+                  idx === currentIndex 
+                    ? 'bg-white' 
+                    : 'bg-white/40 hover:bg-white/70'
+                }`}
+              />
+            ))}
+          </div>
+        </>
+      )}
     </section>
   );
 };
