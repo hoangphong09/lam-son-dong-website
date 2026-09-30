@@ -108,6 +108,28 @@
   animation-play-state: paused !important;
 }
 
+/* Breaking News Ticker Slide */
+@keyframes ticker-slide {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.ticker-slide-track {
+  display: flex;
+  width: max-content;
+  animation: ticker-slide 110s linear infinite;
+  will-change: transform;
+}
+
+.ticker-slide-container:hover .ticker-slide-track,
+.ticker-slide-track:hover {
+  animation-play-state: paused !important;
+}
+
 
 
 

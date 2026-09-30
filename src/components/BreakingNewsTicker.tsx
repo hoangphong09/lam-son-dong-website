@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { ChevronRight, ExternalLink } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { ChevronRight } from 'lucide-react';
 import { BreakingNewsItem } from '../types';
-import { getBreakingNews } from '../lib/supabase';
+import { getBreakingNews, INITIAL_BREAKING_NEWS } from '../lib/supabase';
 
 interface BreakingNewsTickerProps {
   newsItems?: BreakingNewsItem[];
@@ -10,46 +10,41 @@ interface BreakingNewsTickerProps {
 
 export const BreakingNewsTicker: React.FC<BreakingNewsTickerProps> = ({ newsItems, onOpenNewsModal }) => {
   const [items, setItems] = useState<BreakingNewsItem[]>(newsItems || []);
-  const [currentIdx, setCurrentIdx] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     if (newsItems && newsItems.length > 0) {
       setItems(newsItems);
     } else {
       getBreakingNews().then((data) => {
-        setItems(data);
+        if (data && data.length > 0) {
+          setItems(data);
+        }
       });
     }
   }, [newsItems]);
 
   // Filter only active items and sort by display_order
-  const activeItems = items
-    .filter((item) => item.is_active !== false)
-    .sort((a, b) => (Number(a.display_order) || 0) - (Number(b.display_order) || 0));
+  const activeItems = useMemo(() => {
+    const valid = items
+      .filter((item) => item.is_active !== false)
+      .sort((a, b) => (Number(a.display_order) || 0) - (Number(b.display_order) || 0));
+    return valid.length > 0 ? valid : INITIAL_BREAKING_NEWS;
+  }, [items]);
 
-  useEffect(() => {
-    if (activeItems.length <= 1 || isPaused) return;
+  // Construct a seamless repeating array for infinite smooth sliding marquee
+  const tickerItems = useMemo(() => {
+    const list: BreakingNewsItem[] = [];
+    const repeatCount = Math.max(3, Math.ceil(8 / activeItems.length));
+    for (let i = 0; i < repeatCount; i++) {
+      list.push(...activeItems);
+    }
+    // Duplicate the entire sequence for the -50% translateX CSS keyframe
+    return [...list, ...list];
+  }, [activeItems]);
 
-    const timer = setInterval(() => {
-      setCurrentIdx((prev) => (prev + 1) % activeItems.length);
-    }, 4500);
-
-    return () => clearInterval(timer);
-  }, [activeItems.length, isPaused]);
-
-  // Keep index within bounds if active items change
-  const currentItem = activeItems[currentIdx % (activeItems.length || 1)] || {
-    id: 0,
-    title: 'Lâm Sơn Động Security - Hệ thống an ninh chuẩn hóa toàn diện 24/7',
-    link: '',
-    is_active: true,
-    display_order: 1,
-  };
-
-  const handleClickItem = () => {
-    if (currentItem.link) {
-      const link = currentItem.link.trim();
+  const handleItemClick = (item: BreakingNewsItem) => {
+    if (item.link) {
+      const link = item.link.trim();
       if (link.startsWith('#')) {
         const el = document.getElementById(link.replace('#', ''));
         if (el) {
@@ -64,50 +59,68 @@ export const BreakingNewsTicker: React.FC<BreakingNewsTickerProps> = ({ newsItem
         return;
       }
     }
-    onOpenNewsModal(currentItem.title);
+    onOpenNewsModal(item.title);
+  };
+
+  const handleViewMore = () => {
+    const newsSection = document.getElementById('news-section');
+    if (newsSection) {
+      newsSection.scrollIntoView({ behavior: 'smooth' });
+    } else if (activeItems.length > 0) {
+      onOpenNewsModal(activeItems[0].title);
+    }
   };
 
   return (
     <section 
       id="breaking-news-ticker-section" 
-      className="bg-slate-100 border-b border-slate-200 py-2.5 px-4 sm:px-6 lg:px-8 transition-colors"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
+      aria-label="Tin nhanh an ninh 24/7"
+      className="relative z-30 -mt-6 sm:-mt-7 lg:-mt-8 mb-4 sm:mb-6 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8"
     >
-      <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-        {/* Ticker Content */}
-        <div className="flex items-center gap-3 w-full sm:w-auto overflow-hidden">
-          {/* Gold Pill Badge */}
-          <div className="flex items-center gap-1.5 bg-amber-100 border border-amber-300 text-amber-900 text-[10px] font-mono font-bold uppercase tracking-[0.25em] px-2.5 py-1 rounded shrink-0 shadow-2xs">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-600 animate-pulse"></span>
-            <span>TIN NHANH:</span>
-          </div>
+      {/* Prominent floating capsule bar */}
+      <div 
+        className="ticker-slide-container relative flex items-center justify-between gap-2.5 sm:gap-4 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 text-white rounded-2xl sm:rounded-full border border-amber-500/40 shadow-[0_14px_40px_rgba(0,0,0,0.65)] ring-1 ring-white/10 p-2 sm:p-2.5 pl-3.5 sm:pl-6 overflow-hidden"
+      >
+        {/* Left Label: "Tin nóng:" with live radar beacon indicator */}
+        <div className="flex items-center gap-2 shrink-0 select-none py-1">
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+          </span>
+          <span className="text-xs sm:text-sm font-extrabold text-amber-400 tracking-wide font-['Plus_Jakarta_Sans',sans-serif] whitespace-nowrap">
+            Tin nóng:
+          </span>
+        </div>
 
-          {/* Scrolling / Animated text */}
-          <div className="overflow-hidden relative h-6 flex items-center flex-1">
-            <p 
-              key={currentItem.id}
-              className="text-xs sm:text-sm font-normal text-slate-700 truncate animate-in fade-in slide-in-from-bottom-2 duration-300 hover:text-amber-800 cursor-pointer tracking-normal transition-colors"
-              onClick={handleClickItem}
-              title={currentItem.title}
-            >
-              {currentItem.title}
-            </p>
+        {/* Center: Smooth continuous sliding track with soft edge masks */}
+        <div className="relative flex-1 overflow-hidden h-7 sm:h-8 flex items-center [mask-image:linear-gradient(to_right,transparent,black_3%,black_97%,transparent)]">
+          <div className="ticker-slide-track flex items-center whitespace-nowrap">
+            {tickerItems.map((item, idx) => (
+              <div 
+                key={`${item.id}-${idx}`}
+                className="inline-flex items-center group/item cursor-pointer"
+                onClick={() => handleItemClick(item)}
+              >
+                <span className="text-xs sm:text-sm text-slate-100 group-hover/item:text-amber-300 font-medium transition-colors">
+                  {item.title}
+                </span>
+                <span className="mx-5 sm:mx-7 text-amber-500/60 font-bold select-none text-xs">
+                  •
+                </span>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Action button */}
+        {/* Right Action Button: "Xem thêm" */}
         <button
           id="ticker-read-more-btn"
-          onClick={handleClickItem}
-          className="shrink-0 flex items-center gap-1 text-[10px] font-mono font-bold uppercase tracking-wider text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-50 px-3 py-1 border border-slate-300 hover:border-amber-600 transition-all rounded shadow-xs"
+          onClick={handleViewMore}
+          aria-label="Xem thêm tin tức"
+          className="bg-white hover:bg-slate-100 active:bg-slate-200 text-slate-950 font-bold text-xs sm:text-sm px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full shadow-md hover:shadow-lg transition-all shrink-0 cursor-pointer whitespace-nowrap hover:scale-105 active:scale-95 flex items-center gap-1 group/btn"
         >
-          <span>Chi tiết</span>
-          {currentItem.link && (currentItem.link.startsWith('http') || currentItem.link.startsWith('/')) ? (
-            <ExternalLink className="w-3.5 h-3.5 text-amber-700" />
-          ) : (
-            <ChevronRight className="w-3.5 h-3.5 text-amber-700" />
-          )}
+          <span>Xem thêm</span>
+          <ChevronRight className="w-3.5 h-3.5 text-slate-950 group-hover/btn:translate-x-0.5 transition-transform" />
         </button>
       </div>
     </section>
