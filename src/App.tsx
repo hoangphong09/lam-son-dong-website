@@ -19,7 +19,9 @@ import { ServiceDetailModal } from './components/ServiceDetailModal';
 import { SolutionDetailModal } from './components/SolutionDetailModal';
 import { SearchModal } from './components/SearchModal';
 import { RecruitmentModal } from './components/RecruitmentModal';
-import { RecruitmentSection } from './components/RecruitmentSection';
+import { AboutUsPage } from './components/AboutUsPage';
+import { RecruitmentPage } from './components/RecruitmentPage';
+import { ScrollReveal } from './components/ScrollReveal';
 import { AdminLogin } from './components/admin/AdminLogin';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 
@@ -32,6 +34,11 @@ export default function App() {
   // Admin route & session states
   const [isAdminView, setIsAdminView] = useState(() => {
     return window.location.pathname.startsWith('/admin') || window.location.hash.startsWith('#admin');
+  });
+  const [currentRoute, setCurrentRoute] = useState<'home' | 'about' | 'recruitment'>(() => {
+    if (window.location.pathname === '/ve-chung-toi' || window.location.hash === '#ve-chung-toi') return 'about';
+    if (window.location.pathname === '/tuyen-dung' || window.location.hash === '#tuyen-dung') return 'recruitment';
+    return 'home';
   });
   const [adminUser, setAdminUser] = useState<any>(() => {
     const saved = localStorage.getItem('lsd_admin_session');
@@ -92,10 +99,17 @@ export default function App() {
       }
     });
 
-    // Listen to hash and popstate for /admin and #admin
+    // Listen to hash and popstate for /admin, #admin, /ve-chung-toi and /tuyen-dung
     const handleLocationCheck = () => {
       const isAdm = window.location.pathname.startsWith('/admin') || window.location.hash.startsWith('#admin');
       setIsAdminView(isAdm);
+      if (window.location.pathname === '/ve-chung-toi' || window.location.hash === '#ve-chung-toi') {
+        setCurrentRoute('about');
+      } else if (window.location.pathname === '/tuyen-dung' || window.location.hash === '#tuyen-dung') {
+        setCurrentRoute('recruitment');
+      } else if (!isAdm) {
+        setCurrentRoute('home');
+      }
     };
 
     window.addEventListener('popstate', handleLocationCheck);
@@ -160,6 +174,30 @@ export default function App() {
     const el = document.getElementById(sectionId);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const navigateToAbout = () => {
+    window.history.pushState(null, '', '/ve-chung-toi');
+    setCurrentRoute('about');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navigateToRecruitment = () => {
+    window.history.pushState(null, '', '/tuyen-dung');
+    setCurrentRoute('recruitment');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navigateToHome = (targetSectionId?: string) => {
+    window.history.pushState(null, '', '/');
+    setCurrentRoute('home');
+    if (targetSectionId) {
+      setTimeout(() => {
+        scrollToSection(targetSectionId.replace(/^#/, ''));
+      }, 100);
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -277,67 +315,113 @@ export default function App() {
       {/* 1. Main Header & Navigation Bar */}
       <Navbar 
         onOpenQuote={() => setIsQuoteModalOpen(true)}
-        onSelectService={handleSelectServiceById}
-        onScrollToSection={scrollToSection}
+        onSelectService={(serviceId) => {
+          if (currentRoute !== 'home') {
+            navigateToHome('featured-services-section');
+          }
+          handleSelectServiceById(serviceId);
+        }}
+        onScrollToSection={(sectionId) => {
+          if (currentRoute !== 'home') {
+            navigateToHome(sectionId);
+          } else {
+            scrollToSection(sectionId);
+          }
+        }}
         onOpenSearch={() => setIsSearchModalOpen(true)}
         onOpenRecruitment={() => setIsRecruitmentModalOpen(true)}
+        currentRoute={currentRoute}
+        onNavigateToAbout={navigateToAbout}
+        onNavigateToRecruitment={navigateToRecruitment}
+        onNavigateToHome={navigateToHome}
       />
 
-      {/* Primary Semantic Main Landmark for Search Engine Crawlers & Screen Readers */}
-      <main id="main-content" role="main" tabIndex={-1} className="outline-none">
-        {/* 3. Hero Carousel (Contains page Primary <h1>) */}
-        <HeroCarousel 
+      {/* Conditionally Render About Us Page, Recruitment Page, or Main Home Page */}
+      {currentRoute === 'about' ? (
+        <AboutUsPage 
+          onNavigateToHome={navigateToHome}
           onOpenQuote={() => setIsQuoteModalOpen(true)}
-          onSelectService={handleSelectServiceById}
-          onScrollToRisk={() => scrollToSection('risk-assessment-section')}
-          onScrollToServices={() => scrollToSection('featured-services-section')}
-          slides={heroSlides}
+          onOpenRecruitment={() => setIsRecruitmentModalOpen(true)}
         />
-
-        {/* 4. Breaking News Ticker */}
-        <BreakingNewsTicker 
-          newsItems={breakingNews}
-          onOpenNewsModal={handleOpenNewsModalFromTicker} 
+      ) : currentRoute === 'recruitment' ? (
+        <RecruitmentPage 
+          onNavigateToHome={navigateToHome}
+          onOpenRecruitmentModal={() => setIsRecruitmentModalOpen(true)}
         />
+      ) : (
+        /* Primary Semantic Main Landmark for Search Engine Crawlers & Screen Readers */
+        <main id="main-content" role="main" tabIndex={-1} className="outline-none">
+          {/* 3. Hero Carousel (Contains page Primary <h1>) */}
+          <HeroCarousel 
+            onOpenQuote={() => setIsQuoteModalOpen(true)}
+            onSelectService={handleSelectServiceById}
+            onScrollToRisk={() => scrollToSection('risk-assessment-section')}
+            onScrollToServices={() => scrollToSection('featured-services-section')}
+            slides={heroSlides}
+          />
 
-        {/* 5. Certifications & Achievements Carousel */}
-        <CertificationsCarousel onSelectCert={handleSelectCert} />
+          {/* 4. Breaking News Ticker */}
+          <BreakingNewsTicker 
+            newsItems={breakingNews}
+            onOpenNewsModal={handleOpenNewsModalFromTicker} 
+          />
 
-        {/* 6. Key Stats & National Footprint */}
-        <KeyStatsFootprint stats={stats} />
+          {/* 5. Certifications & Achievements Carousel */}
+          <ScrollReveal direction="up" duration={700}>
+            <CertificationsCarousel onSelectCert={handleSelectCert} />
+          </ScrollReveal>
 
-        {/* 7. Interactive Security Risk Assessment Tool (AI Scanner) */}
-        <SecurityRiskAssessment onOpenConsultationWithData={handleOpenConsultationWithData} />
+          {/* 6. Key Stats & National Footprint */}
+          <ScrollReveal direction="up" duration={750}>
+            <KeyStatsFootprint stats={stats} />
+          </ScrollReveal>
 
-        {/* 8. Featured Security Services Carousel */}
-        <FeaturedServices onSelectService={handleSelectServiceById} />
+          {/* 7. Interactive Security Risk Assessment Tool (AI Scanner) */}
+          <ScrollReveal direction="up" duration={750}>
+            <SecurityRiskAssessment onOpenConsultationWithData={handleOpenConsultationWithData} />
+          </ScrollReveal>
 
-        {/* 9. Specialized Solution Matrix by Industry */}
-        <SolutionMatrixTabs onOpenSolutionDetail={handleOpenSolutionDetail} />
+          {/* 8. Featured Security Services Carousel */}
+          <ScrollReveal direction="up" duration={750}>
+            <FeaturedServices onSelectService={handleSelectServiceById} />
+          </ScrollReveal>
 
-        {/* 10. Case Studies & Success Stories */}
+          {/* 9. Specialized Solution Matrix by Industry */}
+          <ScrollReveal direction="up" duration={750}>
+            <SolutionMatrixTabs onOpenSolutionDetail={handleOpenSolutionDetail} />
+          </ScrollReveal>
 
-        {/* 11. Security Library & PCCC Handbooks */}
-        <SecurityLibrarySection onSelectArticle={handleSelectArticle} />
+          {/* 11. Security Library & PCCC Handbooks */}
+          <ScrollReveal direction="up" duration={750}>
+            <SecurityLibrarySection onSelectArticle={handleSelectArticle} />
+          </ScrollReveal>
 
-        {/* 12. Events & News */}
-        <EventsAndNews onSelectNews={handleSelectNews} posts={posts} />
+          {/* 12. Events & News */}
+          <ScrollReveal direction="up" duration={750}>
+            <EventsAndNews onSelectNews={handleSelectNews} posts={posts} />
+          </ScrollReveal>
 
-        {/* 12.5. Recruitment Announcement (Liên Tục Tuyển Dụng) */}
-        <RecruitmentSection 
-          onOpenRecruitmentModal={() => setIsRecruitmentModalOpen(true)} 
-        />
-
-        {/* 13. Consultation & Site Audit Request Form */}
-        <ConsultationForm initialData={auditDataForForm} />
-      </main>
+          {/* 13. Consultation & Site Audit Request Form */}
+          <ScrollReveal direction="up" duration={750}>
+            <ConsultationForm initialData={auditDataForForm} />
+          </ScrollReveal>
+        </main>
+      )}
 
       {/* 15. Semantic Footer */}
       <Footer 
-        onScrollToSection={scrollToSection}
+        onScrollToSection={(sectionId) => {
+          if (currentRoute !== 'home') {
+            navigateToHome(sectionId);
+          } else {
+            scrollToSection(sectionId);
+          }
+        }}
         onOpenQuote={() => setIsQuoteModalOpen(true)}
         onOpenRecruitment={() => setIsRecruitmentModalOpen(true)}
         onOpenAdmin={openAdminView}
+        onNavigateToAbout={navigateToAbout}
+        onNavigateToRecruitment={navigateToRecruitment}
       />
 
       {/* Floating Call & Quote Triggers */}

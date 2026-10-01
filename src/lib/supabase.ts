@@ -798,23 +798,27 @@ export async function createQuoteRequest(req: Partial<QuoteRequest>): Promise<{ 
     const { error } = await supabase.from('quote_requests').insert([dbPayload]);
     
     // Tự động gửi email thông báo chi tiết về congtybaovelamsondong@gmail.com
-    sendQuoteNotification({
-      source: req.source || 'consultation_form',
-      clientName,
-      phone,
-      email: email || undefined,
-      companyName: companyName || undefined,
-      jobTitle: (req as any).jobTitle || undefined,
-      region: (req as any).region || undefined,
-      serviceType: serviceNeeded,
-      targetType: (req as any).targetType || undefined,
-      guards24h: req.guards24h,
-      guards12h: req.guards12h,
-      totalEstimate: req.totalEstimate,
-      estimatedPriceFormatted: req.estimatedPriceFormatted,
-      options: (req as any).options || undefined,
-      message: message || undefined,
-    }).catch((err) => console.warn('Lỗi gửi email báo giá:', err));
+    try {
+      await sendQuoteNotification({
+        source: req.source || 'consultation_form',
+        clientName,
+        phone,
+        email: email || undefined,
+        companyName: companyName || undefined,
+        jobTitle: (req as any).jobTitle || undefined,
+        region: (req as any).region || undefined,
+        serviceType: serviceNeeded,
+        targetType: (req as any).targetType || undefined,
+        guards24h: req.guards24h,
+        guards12h: req.guards12h,
+        totalEstimate: req.totalEstimate,
+        estimatedPriceFormatted: req.estimatedPriceFormatted,
+        options: (req as any).options || undefined,
+        message: message || undefined,
+      });
+    } catch (mailErr) {
+      console.warn('Lỗi khi chuyển tiếp email báo giá:', mailErr);
+    }
 
     if (error) {
       console.warn('Supabase quote insert error, saved locally:', error.message);

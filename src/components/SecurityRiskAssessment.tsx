@@ -606,7 +606,7 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
                     Bản Đánh Giá Trên Mang Tính Chất Sơ Bộ Ban Đầu
                   </h4>
                   <p className="text-xs sm:text-sm text-slate-700 font-normal mt-2 leading-relaxed">
-                    Mỗi mục tiêu thực tế (nhà máy, tòa nhà hay kho bãi) đều có sơ đồ mặt bằng, góc khuất camera và lưu lượng giao thông hoàn toàn khác biệt. Để có <strong>phương án tác chiến chính xác 100%</strong> và <strong>báo giá cạnh tranh sát với thực tế</strong>, quý khách vui lòng liên hệ hoặc để lại thông tin để cán bộ chỉ huy an ninh Lâm Sơn Động trực tiếp đến <strong>khảo sát thực địa miễn phí</strong> trong vòng 24 giờ.
+                    Mỗi mục tiêu thực tế (nhà máy, tòa nhà hay kho bãi) đều có sơ đồ mặt bằng, góc khuất camera và lưu lượng giao thông hoàn toàn khác biệt. Để có <strong>phương án an ninh chính xác 100%</strong> và <strong>báo giá cạnh tranh sát với thực tế</strong>, quý khách vui lòng liên hệ hoặc để lại thông tin để cán bộ chỉ huy an ninh Lâm Sơn Động trực tiếp đến <strong>khảo sát thực địa miễn phí</strong> trong vòng 24 giờ.
                   </p>
                 </div>
 

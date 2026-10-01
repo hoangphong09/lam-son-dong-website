@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Users, Layers, Award, Globe, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Users, Layers, Award, Globe } from 'lucide-react';
 import { StatMetric } from '../types';
 import { getStats, INITIAL_STATS } from '../lib/supabase';
 
@@ -216,7 +216,6 @@ export const KeyStatsFootprint: React.FC<KeyStatsFootprintProps> = ({ stats: pro
   const [loading, setLoading] = useState(!propStats || propStats.length === 0);
   const [hasTriggered, setHasTriggered] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
-  const sliderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (propStats && propStats.length > 0) {
@@ -291,24 +290,18 @@ export const KeyStatsFootprint: React.FC<KeyStatsFootprintProps> = ({ stats: pro
     <Globe key="globe" className="w-8 h-8 sm:w-9 sm:h-9 text-slate-500 group-hover:text-amber-700 transition-colors" strokeWidth={1.75} />,
   ];
 
-  const handleScroll = (direction: 'left' | 'right') => {
-    if (!sliderRef.current) return;
-    const scrollAmount = direction === 'left' ? -320 : 320;
-    sliderRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-  };
-
   return (
     <section 
       ref={sectionRef} 
       id="stats-footprint-section" 
       aria-label="Chỉ số năng lực & Khách hàng đồng hành"
-      className="bg-slate-50 text-slate-900 py-16 sm:py-20 border-b border-slate-200 scroll-mt-20 relative overflow-hidden"
+      className="bg-white text-slate-900 py-16 sm:py-24 border-b border-slate-200 scroll-mt-20 relative overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* ========================================================================= */}
         {/* SECTION HEADER: Standard Title & Description Matching All Other Sections */}
         {/* ========================================================================= */}
-        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-20">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-950 uppercase tracking-wide sm:tracking-wider leading-[1.35] sm:leading-[1.3] font-['Plus_Jakarta_Sans',sans-serif]">
             Chỉ Số Năng Lực & Khách Hàng Đồng Hành
           </h2>
@@ -318,22 +311,19 @@ export const KeyStatsFootprint: React.FC<KeyStatsFootprintProps> = ({ stats: pro
         </div>
 
         {/* ========================================================================= */}
-        {/* CARD CONTAINER: Unified Elevated White Container for Metrics & Partners   */}
+        {/* METRICS & PARTNERS (SEAMLESS, NO ENCLOSING CARD BOX OR DUPLICATE BORDERS) */}
         {/* ========================================================================= */}
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-xs p-6 sm:p-8 lg:p-10">
+        <div className="w-full">
           {/* ======================================================================= */}
           {/* ROW 1: KEY PERFORMANCE METRICS                                          */}
-          {/* Icon on left, Bold Crimson Red Metric on top right, Label below         */}
           {/* ======================================================================= */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-10 items-center">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-12">
             {loading && activeStats.length === 0 ? (
               Array.from({ length: 4 }).map((_, idx) => (
-                <div key={idx} className="flex items-center gap-4 animate-pulse">
-                  <div className="w-10 h-10 bg-slate-200 rounded-lg" />
-                  <div className="space-y-2">
-                    <div className="h-6 w-20 bg-slate-200 rounded" />
-                    <div className="h-3 w-28 bg-slate-100 rounded" />
-                  </div>
+                <div key={idx} className="flex flex-col items-center animate-pulse space-y-3 text-center">
+                  <div className="h-12 w-28 bg-slate-100 rounded-lg" />
+                  <div className="h-4 w-36 bg-slate-100 rounded" />
+                  <div className="h-3 w-44 bg-slate-50 rounded" />
                 </div>
               ))
             ) : (
@@ -342,81 +332,72 @@ export const KeyStatsFootprint: React.FC<KeyStatsFootprintProps> = ({ stats: pro
                 return (
                   <div 
                     key={stat.id || idx}
-                    className="flex items-center gap-3.5 sm:gap-4.5 justify-start lg:justify-center group"
+                    className="flex flex-col items-center text-center group"
                   >
-                    {/* Left Metric Icon */}
-                    <div className="shrink-0 p-2.5 rounded-xl bg-slate-50 border border-slate-200 group-hover:border-amber-400 group-hover:bg-amber-50/70 transition-all shadow-2xs">
+                    {/* Minimalist Metric Icon */}
+                    <div className="mb-3 text-slate-400 group-hover:text-[#c5a059] transition-colors">
                       {metricIcons[idx % metricIcons.length]}
                     </div>
 
-                    {/* Right Metric Details */}
-                    <div className="min-w-0">
-                      <div className="flex items-baseline text-2xl sm:text-3xl lg:text-[32px] font-extrabold text-amber-700 font-mono tracking-tight leading-none group-hover:text-amber-800 transition-colors">
+                    {/* Bold High-Contrast Metric Value */}
+                    <div className="flex items-baseline justify-center font-['Plus_Jakarta_Sans',sans-serif] tracking-tight">
+                      <span className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-950 tracking-tight leading-none group-hover:text-slate-800 transition-colors">
                         <AnimatedCounter value={stat.numeric_value} isVisible={hasTriggered} />
-                        {unit && (
-                          <span className="ml-1 text-xl sm:text-2xl font-bold text-amber-800 font-mono">
-                            {unit}
-                          </span>
-                        )}
-                      </div>
-                      <div className="text-xs sm:text-sm font-semibold text-slate-800 group-hover:text-slate-950 mt-1.5 leading-snug line-clamp-1 transition-colors">
-                        {stat.title}
-                      </div>
+                      </span>
+                      {unit && (
+                        <span className="ml-1 text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#c5a059]">
+                          {unit}
+                        </span>
+                      )}
                     </div>
+
+                    {/* Metric Title (Full Text, Never Truncated) */}
+                    <div className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-slate-950 mt-2.5 leading-snug transition-colors">
+                      {stat.title}
+                    </div>
+
+                    {/* Metric Description */}
+                    {stat.description && (
+                      <p className="text-xs text-slate-500 mt-1.5 max-w-[240px] leading-relaxed hidden sm:block">
+                        {stat.description}
+                      </p>
+                    )}
                   </div>
                 );
               })
             )}
           </div>
 
-          {/* Divider Spacing */}
-          <div className="my-8 sm:my-10 border-t border-slate-100" />
+          {/* Soft Elegant Divider */}
+          <div className="my-12 sm:my-16 border-t border-slate-100" />
 
           {/* ======================================================================= */}
-          {/* ROW 2: ENTERPRISE PARTNERS SLIDER CAROUSEL                              */}
-          {/* Single clean circular border, corporate logos only, synchronized buttons*/}
+          {/* ROW 2: ENTERPRISE PARTNERS CONVEYOR BELT (BĂNG CHUYỀN TỰ ĐỘNG VÔ TẬN)   */}
           {/* ======================================================================= */}
-          <div className="relative flex items-center gap-3 sm:gap-4">
-            {/* Left Arrow Button */}
-            <button
-              onClick={() => handleScroll('left')}
-              aria-label="Đối tác trước"
-              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-50 hover:bg-white border border-slate-200 hover:border-amber-500 text-slate-700 hover:text-amber-900 flex items-center justify-center shrink-0 transition-all cursor-pointer shadow-2xs hover:shadow-xs hover:scale-105 active:scale-95"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
+          <div className="relative w-full overflow-hidden marquee-container py-2">
+            {/* Left & Right Soft Fade Gradients */}
+            <div className="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-28 bg-gradient-to-r from-white via-white/80 to-transparent z-10" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-28 bg-gradient-to-l from-white via-white/80 to-transparent z-10" />
 
-            {/* Center Scrollable Slider Track */}
-            <div 
-              ref={sliderRef}
-              className="flex-1 overflow-x-auto no-scrollbar scroll-smooth flex items-center gap-6 sm:gap-8 py-2 px-1 select-none"
-            >
-              {ENTERPRISE_PARTNERS.map((partner) => (
+            {/* Continuous Conveyor Track (Seamless loop) */}
+            <div className="flex items-center marquee-track-left">
+              {[...ENTERPRISE_PARTNERS, ...ENTERPRISE_PARTNERS].map((partner, idx) => (
                 <div 
-                  key={partner.id}
-                  className="flex flex-col items-center shrink-0 group cursor-pointer w-20 sm:w-24 text-center"
+                  key={`${partner.id}-${idx}`}
+                  className="flex flex-col items-center shrink-0 group cursor-pointer w-28 sm:w-36 text-center mx-3 sm:mx-6"
                 >
-                  {/* Single Clean Circular Border (No inner duplicated border) */}
-                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white border border-slate-200 group-hover:border-amber-500 shadow-2xs group-hover:shadow-md flex items-center justify-center p-2.5 transition-all duration-300 group-hover:scale-105 overflow-hidden">
+                  {/* Clean Corporate Logo Container */}
+                  <div className="h-12 sm:h-14 w-full flex items-center justify-center p-1 transition-all duration-300 group-hover:scale-110">
                     {partner.renderLogo()}
                   </div>
 
-                  {/* Name Underneath (Uppercase & Bold) */}
-                  <span className="text-[10px] sm:text-xs font-bold text-slate-700 uppercase tracking-wider mt-2.5 group-hover:text-amber-900 transition-colors line-clamp-1">
+                  {/* Name Underneath */}
+                  <span className="text-[11px] sm:text-xs font-bold text-slate-600 uppercase tracking-wider mt-2 group-hover:text-slate-950 transition-colors">
                     {partner.name}
                   </span>
                 </div>
               ))}
             </div>
-
-            {/* Right Arrow Button */}
-            <button
-              onClick={() => handleScroll('right')}
-              aria-label="Đối tác tiếp theo"
-              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-50 hover:bg-white border border-slate-200 hover:border-amber-500 text-slate-700 hover:text-amber-900 flex items-center justify-center shrink-0 transition-all cursor-pointer shadow-2xs hover:shadow-xs hover:scale-105 active:scale-95"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
           </div>
         </div>
       </div>

@@ -31,6 +31,11 @@ export interface NavItemConfig {
 
 export const DEFAULT_NAV_ITEMS: NavItemConfig[] = [
   {
+    id: 'about',
+    label: 'Về chúng tôi',
+    targetId: 'about-page',
+  },
+  {
     id: 'services',
     label: 'Dịch Vụ',
     targetId: 'featured-services-section',
@@ -50,10 +55,11 @@ export const DEFAULT_NAV_ITEMS: NavItemConfig[] = [
     id: 'recruitment',
     label: 'Tuyển Dụng',
     targetId: 'recruitment-section',
-    badge: {
-      text: 'Hot',
-      variant: 'hot',
-    },
+  },
+  {
+    id: 'profile',
+    label: 'Hồ sơ năng lực',
+    targetId: 'profile-static',
   },
 ];
 
@@ -64,6 +70,10 @@ interface NavbarProps {
   onOpenSearch: () => void;
   onOpenRecruitment?: () => void;
   customNavItems?: NavItemConfig[];
+  currentRoute?: 'home' | 'about' | 'recruitment';
+  onNavigateToAbout?: () => void;
+  onNavigateToRecruitment?: () => void;
+  onNavigateToHome?: (sectionId?: string) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ 
@@ -71,7 +81,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   onSelectService, 
   onScrollToSection,
   onOpenSearch,
-  customNavItems
+  customNavItems,
+  currentRoute = 'home',
+  onNavigateToAbout,
+  onNavigateToRecruitment,
+  onNavigateToHome
 }) => {
   const navItems = customNavItems && customNavItems.length > 0 ? customNavItems : DEFAULT_NAV_ITEMS;
   
@@ -117,7 +131,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     {
       id: 'srv-smart-patrol',
       title: 'Giám Sát An Ninh AI & Smart Patrol',
-      desc: 'Trung tâm chỉ huy tác chiến SOC 24/7, ứng dụng AI nhận diện và tuần tra số hóa realtime'
+      desc: 'Trung tâm giám sát điều hành SOC 24/7, ứng dụng AI nhận diện và tuần tra số hóa realtime'
     }
   ];
 
@@ -172,6 +186,49 @@ export const Navbar: React.FC<NavbarProps> = ({
    * Click handler for nav items
    */
   const handleNavClick = (item: NavItemConfig) => {
+    // 1. "Về chúng tôi" navigates to /ve-chung-toi
+    if (item.id === 'about') {
+      if (onNavigateToAbout) {
+        onNavigateToAbout();
+      } else {
+        window.history.pushState(null, '', '/ve-chung-toi');
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      }
+      setMobileMenuOpen(false);
+      setActiveDropdown(null);
+      return;
+    }
+
+    // 2. "Tuyển Dụng" navigates to /tuyen-dung
+    if (item.id === 'recruitment') {
+      if (onNavigateToRecruitment) {
+        onNavigateToRecruitment();
+      } else {
+        window.history.pushState(null, '', '/tuyen-dung');
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      }
+      setMobileMenuOpen(false);
+      setActiveDropdown(null);
+      return;
+    }
+
+    // 3. "Hồ sơ năng lực" (No action for now as requested)
+    if (item.id === 'profile') {
+      setMobileMenuOpen(false);
+      setActiveDropdown(null);
+      return;
+    }
+
+    // 4. If currently on a non-home page (About or Recruitment), navigate to Home first and then scroll
+    if (currentRoute !== 'home') {
+      if (onNavigateToHome) {
+        onNavigateToHome(item.targetId);
+      }
+      setMobileMenuOpen(false);
+      setActiveDropdown(null);
+      return;
+    }
+
     setActiveNavId(item.id);
     isClickScrollingRef.current = true;
     if (clickTimeoutRef.current) clearTimeout(clickTimeoutRef.current);
@@ -186,11 +243,17 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   /**
-   * Brand Logo click: Scroll to top
+   * Brand Logo click: Scroll to top or return to home
    */
   const handleBrandClick = () => {
     setActiveNavId('');
-    scrollToTarget('hero-section');
+    if (currentRoute !== 'home') {
+      if (onNavigateToHome) {
+        onNavigateToHome();
+      }
+    } else {
+      scrollToTarget('hero-section');
+    }
     setMobileMenuOpen(false);
     setActiveDropdown(null);
   };
@@ -311,7 +374,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* ================================================================= */}
           <nav className="hidden lg:flex items-center gap-1.5 xl:gap-3 h-full whitespace-nowrap px-2">
             {navItems.map((item) => {
-              const isActive = activeNavId === item.id;
+              const isItemActive = currentRoute === 'about' 
+                ? item.id === 'about' 
+                : currentRoute === 'recruitment'
+                  ? item.id === 'recruitment'
+                  : activeNavId === item.id;
 
               // Render Dropdown item for Services
               if (item.hasDropdown) {
@@ -326,7 +393,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       id={`nav-link-${item.id}`}
                       onClick={() => handleNavClick(item)}
                       className={`group relative h-full px-3.5 xl:px-4 flex items-center gap-1.5 text-[14px] font-medium transition-colors cursor-pointer whitespace-nowrap tracking-normal ${
-                        isActive || activeDropdown === item.id
+                        isItemActive || activeDropdown === item.id
                           ? 'text-amber-900 font-bold' 
                           : 'text-slate-700 hover:text-amber-800'
                       }`}
@@ -336,7 +403,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         className={`w-3.5 h-3.5 transition-transform duration-200 ${
                           activeDropdown === item.id 
                             ? 'rotate-180 text-amber-800' 
-                            : isActive ? 'text-amber-800' : 'text-slate-400 group-hover:text-amber-800'
+                            : isItemActive ? 'text-amber-800' : 'text-slate-400 group-hover:text-amber-800'
                         }`} 
                       />
                     </button>
@@ -351,9 +418,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                     id={`nav-link-${item.id}`}
                     onClick={() => handleNavClick(item)}
                     className={`group relative h-full px-3.5 xl:px-4 flex items-center text-[14px] font-medium transition-colors cursor-pointer whitespace-nowrap tracking-normal ${
-                      isActive 
+                      isItemActive 
                         ? 'text-amber-900 font-bold' 
-                        : 'text-slate-700 hover:text-amber-800'
+                        : item.id === 'profile'
+                          ? 'text-slate-500 hover:text-slate-800'
+                          : 'text-slate-700 hover:text-amber-800'
                     }`}
                   >
                     <span>{item.label}</span>
@@ -500,7 +569,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <span>Cam kết khảo sát thực địa & lập phương án miễn phí trong <strong>24 Giờ</strong></span>
                   </div>
                   <div className="font-mono text-slate-700">
-                    Trực ban chỉ huy tác chiến 24/7: <strong className="text-amber-800 font-bold">0339.269.524</strong>
+                    Hotline hỗ trợ an ninh 24/7: <strong className="text-amber-800 font-bold">0339.269.524</strong>
                   </div>
                 </div>
               </div>
@@ -542,7 +611,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* All Auto-Aligned Mobile Navigation Links */}
           <div className="space-y-1">
             {navItems.map((item) => {
-              const isActive = activeNavId === item.id;
+              const isItemActive = currentRoute === 'about' 
+                ? item.id === 'about' 
+                : currentRoute === 'recruitment'
+                  ? item.id === 'recruitment'
+                  : activeNavId === item.id;
 
               if (item.hasDropdown) {
                 return (
@@ -550,7 +623,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <button
                       onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
                       className={`w-full flex items-center justify-between px-3 py-2.5 text-xs font-semibold border-b border-slate-100 rounded-lg cursor-pointer transition-colors ${
-                        isActive 
+                        isItemActive 
                           ? 'bg-amber-50 text-amber-900 border-l-2 border-l-[#c5a059]' 
                           : 'text-slate-800 hover:text-amber-800 hover:bg-slate-50'
                       }`}
@@ -598,9 +671,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                   key={item.id}
                   onClick={() => handleNavClick(item)}
                   className={`w-full flex items-center justify-between px-3 py-2.5 text-xs font-semibold border-b border-slate-100 rounded-lg cursor-pointer transition-colors ${
-                    isActive 
+                    isItemActive 
                       ? 'bg-amber-50 text-amber-900 border-l-2 border-l-[#c5a059]' 
-                      : 'text-slate-800 hover:text-amber-800 hover:bg-slate-50'
+                      : item.id === 'profile'
+                        ? 'text-slate-500 hover:text-slate-800'
+                        : 'text-slate-800 hover:text-amber-800 hover:bg-slate-50'
                   }`}
                 >
                   <span className="flex items-center gap-2">

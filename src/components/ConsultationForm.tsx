@@ -1,16 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  ShieldCheck, 
-  Send, 
-  CheckCircle2, 
-  PhoneCall, 
-  Clock,
-  AlertCircle,
-  FileCheck2,
-  Building,
-  Mail,
-  User
-} from 'lucide-react';
 import { createQuoteRequest } from '../lib/supabase';
 
 interface ConsultationFormProps {
@@ -95,28 +83,26 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({ initialData 
         service_needed: serviceType,
         message: message.trim() || undefined,
         status: 'new',
-        // Backwards compatibility fields
         contactName: fullName.trim(),
         contactPhone: phoneNumber.trim(),
-        contactEmail: email.trim() || undefined,
-        companyName: companyName.trim() || undefined,
         jobTitle: jobTitle.trim() || undefined,
-        region,
-        serviceType,
-        targetType: serviceType,
+        region: region,
       });
 
-      if (res.success) {
-        setSubmitted(true);
-        if (res.data?.id) {
-          setSubmittedId(res.data.id);
-        }
-      } else {
-        setErrorMessage(res.error || 'Có lỗi khi gửi thông tin yêu cầu. Vui lòng thử lại hoặc gọi Hotline!');
+      if (res && res.error) {
+        console.error('Error submitting quote request:', res.error);
+        setErrorMessage('Không thể gửi yêu cầu lúc này. Vui lòng thử lại hoặc gọi trực tiếp Hotline 0339.269.524!');
+        setLoading(false);
+        return;
       }
+
+      const newId = res?.data?.[0]?.id || `LSD-${Date.now().toString().slice(-6)}`;
+      setSubmittedId(newId);
+      setSubmitted(true);
+      setLoading(false);
     } catch (err: any) {
-      setErrorMessage('Lỗi kết nối máy chủ. Vui lòng gọi trực tiếp hotline 0339.269.524 để được hỗ trợ nhanh nhất!');
-    } finally {
+      console.error('Unexpected submission error:', err);
+      setErrorMessage('Đã xảy ra lỗi kết nối. Vui lòng thử lại sau giây lát!');
       setLoading(false);
     }
   };
@@ -134,82 +120,103 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({ initialData 
   };
 
   return (
-    <section id="consultation-section" className="bg-white text-slate-900 py-16 sm:py-24 border-b border-slate-200 relative overflow-hidden scroll-mt-16 sm:scroll-mt-20">
+    <section 
+      id="consultation-section" 
+      className="bg-white text-slate-900 py-16 sm:py-24 relative overflow-hidden scroll-mt-16 sm:scroll-mt-20 border-b border-slate-200"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-slate-50 border border-slate-200 rounded-sm p-6 sm:p-10 lg:p-12 relative overflow-hidden shadow-sm">
-          {/* Background Watermark Shield Graphic */}
-          <div className="absolute -right-20 -bottom-20 w-96 h-96 opacity-5 pointer-events-none text-amber-800">
-            <ShieldCheck className="w-full h-full" />
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start relative z-10">
-            {/* Left Info & Guarantees */}
-            <div className="lg:col-span-5 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+          
+          {/* =============================================================== */}
+          {/* LEFT: BRAND LOGO & COMMITMENTS (NO ICONS, NO BORDER BOX)        */}
+          {/* =============================================================== */}
+          <div className="lg:col-span-5 space-y-10">
+            
+            {/* Company Logo & Brand Name (Header Logo) */}
+            <div className="flex items-center gap-4">
+              <img 
+                src="/logo.png" 
+                alt="Logo Bảo Vệ Lâm Sơn Động" 
+                className="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-sm"
+              />
               <div>
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-950 uppercase tracking-wide sm:tracking-wider leading-[1.35] sm:leading-[1.3] font-['Plus_Jakarta_Sans',sans-serif]">
-                  Yêu Cầu Khảo Sát & Báo Giá Miễn Phí
-                </h2>
-                <p className="mt-3.5 sm:mt-4 text-sm sm:text-base text-slate-600 font-normal leading-relaxed">
-                  Hãy chia sẻ yêu cầu an ninh mục tiêu của bạn. Chuyên gia nghiệp vụ Lâm Sơn Động sẽ trực tiếp đến khảo sát thực địa và lập phương án bố trí quân số hoàn toàn miễn phí trong vòng 24 giờ.
-                </p>
-              </div>
-
-              {/* Guarantees List */}
-              <div className="space-y-3 pt-2">
-                <div className="flex items-start gap-3 p-3.5 bg-white border border-slate-200 rounded shadow-xs">
-                  <div className="w-8 h-8 border border-amber-300 bg-amber-50 flex items-center justify-center text-amber-800 rounded shrink-0">
-                    <Clock className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wide">Phản Hồi & Khảo Sát Trong 24 Giờ</h4>
-                    <p className="text-[11px] text-slate-600 font-normal mt-0.5">Tiếp nhận thông tin và cử cán bộ phòng nghiệp vụ đến tận nơi</p>
-                  </div>
+                <div className="text-base sm:text-lg font-black tracking-wide text-slate-950 uppercase font-['Plus_Jakarta_Sans',sans-serif]">
+                  LÂM SƠN ĐỘNG SECURITY
                 </div>
-
-                <div className="flex items-start gap-3 p-3.5 bg-white border border-slate-200 rounded shadow-xs">
-                  <div className="w-8 h-8 border border-amber-300 bg-amber-50 flex items-center justify-center text-amber-800 rounded shrink-0">
-                    <ShieldCheck className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wide">Cam Kết Trách Nhiệm Toàn Diện</h4>
-                    <p className="text-[11px] text-slate-600 font-normal mt-0.5">Cam kết bồi thường 100% tài sản theo hợp đồng bảo vệ</p>
-                  </div>
+                <div className="text-xs uppercase tracking-widest text-[#c5a059] font-bold mt-0.5">
+                  DỊCH VỤ BẢO VỆ CHUYÊN NGHIỆP
                 </div>
-
-                <div className="flex items-start gap-3 p-3.5 bg-white border border-slate-200 rounded shadow-xs">
-                  <div className="w-8 h-8 border border-amber-300 bg-amber-50 flex items-center justify-center text-amber-800 rounded shrink-0">
-                    <FileCheck2 className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wide">Lập Phương Án & Dự Toán Chi Tiết</h4>
-                    <p className="text-[11px] text-slate-600 font-normal mt-0.5">Bản vẽ bố trí vọng gác, ca trực, tuần tra và trang thiết bị PCCC</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Direct Hotline Contact Box */}
-              <div className="p-4 bg-amber-50 border border-amber-200 rounded text-slate-900 space-y-1">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-900">
-                  CẦN TƯ VẤN KHẨN CẤP?
-                </span>
-                <p className="text-xs text-slate-700">Liên hệ trực tiếp Hotline Trực Ban Tác Chiến 24/7:</p>
-                <a 
-                  href="tel:0339269524" 
-                  className="text-lg font-black font-mono text-amber-900 flex items-center gap-2 hover:underline"
-                >
-                  <PhoneCall className="w-4 h-4 text-amber-700" />
-                  0339.269.524
-                </a>
               </div>
             </div>
 
-            {/* Right: Consultation & Quote Request Form */}
-            <div className="lg:col-span-7 bg-white p-6 sm:p-8 border border-slate-200 rounded shadow-sm">
+            {/* Commitments (Clean Numbered List, No Icons, No Borders) */}
+            <div className="space-y-6">
+              <div className="space-y-1">
+                <div className="font-mono text-xs font-bold text-slate-900 uppercase tracking-wider">
+                  01. PHẢN HỒI & KHẢO SÁT TRONG 24 GIỜ
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Tiếp nhận thông tin và cử cán bộ phòng nghiệp vụ đến tận nơi khảo sát mục tiêu.
+                </p>
+              </div>
+
+              <div className="space-y-1">
+                <div className="font-mono text-xs font-bold text-slate-900 uppercase tracking-wider">
+                  02. CAM KẾT TRÁCH NHIỆM TOÀN DIỆN
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Cam kết bồi thường 100% tài sản theo điều khoản hợp đồng bảo vệ chính thức.
+                </p>
+              </div>
+
+              <div className="space-y-1">
+                <div className="font-mono text-xs font-bold text-slate-900 uppercase tracking-wider">
+                  03. LẬP PHƯƠNG ÁN & DỰ TOÁN CHI TIẾT
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Bản vẽ bố trí vọng gác, ca trực, tuần tra và trang thiết bị PCCC chuyên dụng.
+                </p>
+              </div>
+            </div>
+
+            {/* Direct Hotline Contact (Clean Typography, No Heavy Border Box) */}
+            <div className="pt-6 border-t border-slate-200 space-y-1">
+              <div className="text-xs font-mono font-bold uppercase tracking-wider text-slate-900">
+                CẦN TƯ VẤN KHẨN CẤP?
+              </div>
+              <p className="text-xs text-slate-600">
+                Liên hệ trực tiếp Hotline 24/7:
+              </p>
+              <a 
+                href="tel:0339269524" 
+                className="inline-block text-2xl font-mono font-black text-slate-950 hover:text-amber-700 transition-colors pt-1"
+              >
+                0339.269.524
+              </a>
+            </div>
+
+          </div>
+
+          {/* =============================================================== */}
+          {/* RIGHT: HEADLINE, INTRO & CLEAN FORM (REF: IMAGE 2)              */}
+          {/* =============================================================== */}
+          <div className="lg:col-span-7">
+            
+            {/* Section Headline & Description */}
+            <div>
+              <h2 className="text-lg sm:text-2xl lg:text-[23px] xl:text-[27px] 2xl:text-3xl font-extrabold text-slate-950 uppercase tracking-tight font-['Plus_Jakarta_Sans',sans-serif] leading-tight whitespace-nowrap overflow-hidden text-ellipsis">
+                Yêu Cầu Khảo Sát & Báo Giá Miễn Phí
+              </h2>
+
+              <p className="mt-3.5 text-sm sm:text-base text-slate-600 font-normal leading-relaxed">
+                Hãy chia sẻ yêu cầu an ninh mục tiêu của bạn. Chuyên gia nghiệp vụ Lâm Sơn Động sẽ trực tiếp đến khảo sát thực địa và lập phương án bố trí quân số hoàn toàn miễn phí trong vòng 24 giờ.
+              </p>
+            </div>
+
+            {/* Form / Submitted Success View */}
+            <div className="mt-8">
               {submitted ? (
-                <div className="py-10 px-4 text-center space-y-4 animate-fadeIn">
-                  <div className="w-14 h-14 bg-emerald-50 border border-emerald-300 text-emerald-600 flex items-center justify-center rounded-full mx-auto">
-                    <CheckCircle2 className="w-8 h-8" />
-                  </div>
+                <div className="py-10 text-center space-y-4">
                   <div className="space-y-2">
                     <h3 className="text-xl font-bold uppercase tracking-tight text-slate-900 font-['Plus_Jakarta_Sans']">
                       Cảm Ơn Quý Khách Đã Tin Tưởng Lâm Sơn Động!
@@ -219,128 +226,120 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({ initialData 
                     </p>
                   </div>
 
-                  <div className="p-4 bg-slate-50 border border-slate-200 rounded text-xs text-slate-700 max-w-md mx-auto text-left space-y-1 font-mono">
+                  <div className="p-5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 max-w-md mx-auto text-left space-y-1.5 font-mono">
                     <div><span className="text-slate-500">Khách hàng:</span> <span className="font-bold text-slate-900">{fullName}</span></div>
-                    <div><span className="text-slate-500">Số điện thoại:</span> <span className="font-bold text-amber-800">{phoneNumber}</span></div>
+                    <div><span className="text-slate-500">Số điện thoại:</span> <span className="font-bold text-slate-900">{phoneNumber}</span></div>
                     <div><span className="text-slate-500">Dịch vụ:</span> <span className="text-slate-900">{serviceType}</span></div>
-                    <div className="text-[11px] text-emerald-700 font-sans mt-2 pt-2 border-t border-slate-200">
+                    <div className="text-[11px] text-slate-600 font-sans mt-2 pt-2 border-t border-slate-200">
                       * Cán bộ phòng Nghiệp vụ An ninh sẽ liên hệ xác nhận và xếp lịch khảo sát thực địa trong vòng 24 giờ.
                     </div>
                   </div>
 
                   <button
                     onClick={handleResetForm}
-                    className="mt-4 px-6 py-2.5 bg-amber-700 hover:bg-amber-800 text-white font-mono text-xs uppercase font-bold tracking-wider rounded shadow transition-all"
+                    className="mt-4 px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-mono text-xs uppercase font-bold tracking-wider rounded-lg transition-colors cursor-pointer"
                   >
                     Gửi Thêm Yêu Cầu Khác
                   </button>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <h3 className="text-base font-bold uppercase tracking-tight text-slate-900 font-['Plus_Jakarta_Sans']">
-                      Điền Thông Tin Yêu Cầu Báo Giá
-                    </h3>
-                    <p className="text-xs text-slate-500 mt-0.5">
-                      Vui lòng để lại thông tin liên hệ, chúng tôi sẽ bảo mật tuyệt đối dữ liệu doanh nghiệp của bạn.
-                    </p>
-                  </div>
-
+                  
                   {errorMessage && (
-                    <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded flex items-start gap-2 animate-fadeIn">
-                      <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-600" />
+                    <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg">
                       <span>{errorMessage}</span>
                     </div>
                   )}
 
+                  {/* Row 1: Full Name & Phone Number */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-[11px] font-mono font-bold uppercase tracking-wider text-slate-700 mb-1">
+                      <label className="block text-xs font-semibold text-slate-900 mb-1.5">
                         Họ và tên người liên hệ <span className="text-red-500">*</span>
                       </label>
-                      <div className="relative">
-                        <input
-                          id="form-fullname"
-                          type="text"
-                          required
-                          placeholder="VD: Nguyễn Văn A"
-                          value={fullName}
-                          onChange={(e) => setFullName(e.target.value)}
-                          className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:bg-white focus:border-amber-600 outline-hidden transition-all placeholder:text-slate-400 rounded"
-                        />
-                      </div>
+                      <input
+                        id="form-fullname"
+                        type="text"
+                        required
+                        placeholder="Họ và tên"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-slate-900 text-sm placeholder:text-slate-400 focus:border-slate-900 focus:ring-1 focus:ring-slate-900 outline-none transition-colors"
+                      />
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-mono font-bold uppercase tracking-wider text-slate-700 mb-1">
+                      <label className="block text-xs font-semibold text-slate-900 mb-1.5">
                         Số điện thoại <span className="text-red-500">*</span>
                       </label>
                       <input
                         id="form-phone"
                         type="tel"
                         required
-                        placeholder="VD: 0912 xxx xxx"
+                        placeholder="Số điện thoại"
                         value={phoneNumber}
                         onChange={(e) => setPhoneNumber(e.target.value)}
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:bg-white focus:border-amber-600 outline-hidden transition-all placeholder:text-slate-400 font-mono rounded"
+                        className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-slate-900 text-sm placeholder:text-slate-400 focus:border-slate-900 focus:ring-1 focus:ring-slate-900 outline-none transition-colors font-mono"
                       />
                     </div>
                   </div>
 
+                  {/* Row 2: Email & Company Name */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-[11px] font-mono font-bold uppercase tracking-wider text-slate-700 mb-1">
+                      <label className="block text-xs font-semibold text-slate-900 mb-1.5">
                         Email công việc
                       </label>
                       <input
                         id="form-email"
                         type="email"
-                        placeholder="VD: contact@company.com"
+                        placeholder="Email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:bg-white focus:border-amber-600 outline-hidden transition-all placeholder:text-slate-400 rounded"
+                        className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-slate-900 text-sm placeholder:text-slate-400 focus:border-slate-900 focus:ring-1 focus:ring-slate-900 outline-none transition-colors"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-mono font-bold uppercase tracking-wider text-slate-700 mb-1">
+                      <label className="block text-xs font-semibold text-slate-900 mb-1.5">
                         Tên công ty / Doanh nghiệp
                       </label>
                       <input
                         id="form-company"
                         type="text"
-                        placeholder="VD: Công ty Cổ phần ABC..."
+                        placeholder="Tên công ty"
                         value={companyName}
                         onChange={(e) => setCompanyName(e.target.value)}
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:bg-white focus:border-amber-600 outline-hidden transition-all placeholder:text-slate-400 rounded"
+                        className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-slate-900 text-sm placeholder:text-slate-400 focus:border-slate-900 focus:ring-1 focus:ring-slate-900 outline-none transition-colors"
                       />
                     </div>
                   </div>
 
+                  {/* Row 3: Job Title & Region */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-[11px] font-mono font-bold uppercase tracking-wider text-slate-700 mb-1">
+                      <label className="block text-xs font-semibold text-slate-900 mb-1.5">
                         Chức vụ người liên hệ
                       </label>
                       <input
                         id="form-jobtitle"
                         type="text"
-                        placeholder="VD: Trưởng phòng HC-NS, GĐ Điều hành..."
+                        placeholder="Chức danh công việc"
                         value={jobTitle}
                         onChange={(e) => setJobTitle(e.target.value)}
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:bg-white focus:border-amber-600 outline-hidden transition-all placeholder:text-slate-400 rounded"
+                        className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-slate-900 text-sm placeholder:text-slate-400 focus:border-slate-900 focus:ring-1 focus:ring-slate-900 outline-none transition-colors"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-mono font-bold uppercase tracking-wider text-slate-700 mb-1">
+                      <label className="block text-xs font-semibold text-slate-900 mb-1.5">
                         Khu vực / Tỉnh thành
                       </label>
                       <select
                         id="form-region"
                         value={region}
                         onChange={(e) => setRegion(e.target.value)}
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:bg-white focus:border-amber-600 outline-hidden transition-all rounded"
+                        className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-slate-900 text-sm focus:border-slate-900 focus:ring-1 focus:ring-slate-900 outline-none transition-colors"
                       >
                         <option value="Hà Nội & Miền Bắc">Hà Nội & Các tỉnh Miền Bắc</option>
                         <option value="TP.HCM & Miền Nam">TP. Hồ Chí Minh & Miền Nam</option>
@@ -352,15 +351,16 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({ initialData 
                     </div>
                   </div>
 
+                  {/* Row 4: Service Needed */}
                   <div>
-                    <label className="block text-[11px] font-mono font-bold uppercase tracking-wider text-slate-700 mb-1">
-                      Dịch vụ an ninh cần báo giá (service_needed)
+                    <label className="block text-xs font-semibold text-slate-900 mb-1.5">
+                      Dịch vụ an ninh cần báo giá
                     </label>
                     <select
                       id="form-service-type"
                       value={serviceType}
                       onChange={(e) => setServiceType(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:bg-white focus:border-amber-600 outline-hidden transition-all rounded"
+                      className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-slate-900 text-sm focus:border-slate-900 focus:ring-1 focus:ring-slate-900 outline-none transition-colors"
                     >
                       <option value="Bảo vệ Khu Công Nghiệp & Nhà Máy">Bảo vệ Khu Công Nghiệp & Nhà Máy</option>
                       <option value="Bảo vệ Tòa Nhà Văn Phòng & Cao Ốc">Bảo vệ Tòa Nhà Văn Phòng & Cao Ốc</option>
@@ -371,43 +371,50 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({ initialData 
                     </select>
                   </div>
 
+                  {/* Row 5: Message & Character Counter (Ref: Image 2) */}
                   <div>
-                    <label className="block text-[11px] font-mono font-bold uppercase tracking-wider text-slate-700 mb-1">
+                    <label className="block text-xs font-semibold text-slate-900 mb-1.5">
                       Mô tả sơ bộ về mục tiêu & yêu cầu đặc biệt
                     </label>
                     <textarea
                       id="form-message"
-                      rows={3}
+                      rows={4}
+                      maxLength={500}
                       placeholder="Ví dụ: Cần 4 vị trí bảo vệ 24/24 cho kho hàng 10.000m² tại KCN Tiên Sơn Bắc Ninh, yêu cầu trang bị tuần tra GPS và PCCC chuyên nghiệp..."
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 text-slate-900 text-xs focus:bg-white focus:border-amber-600 outline-hidden transition-all placeholder:text-slate-400 rounded"
+                      className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-lg text-slate-900 text-sm placeholder:text-slate-400 focus:border-slate-900 focus:ring-1 focus:ring-slate-900 outline-none transition-colors"
                     ></textarea>
+                    <div className="text-right text-xs text-slate-400 mt-1">
+                      {message.length} trong số 500 từ tối đa.
+                    </div>
                   </div>
 
-                  <p className="text-[11px] text-slate-500 font-normal leading-relaxed">
+                  {/* Privacy Disclaimer */}
+                  <p className="text-xs text-slate-500 font-normal leading-relaxed pt-1">
                     Bằng cách gửi yêu cầu, bạn đồng ý cho phép Lâm Sơn Động Security xử lý thông tin để khảo sát và lập báo giá theo Chính sách Bảo mật Thông tin.
                   </p>
 
+                  {/* Submit Button (Clean, No Icon) */}
                   <button
                     id="submit-consultation-btn"
                     type="submit"
                     disabled={loading}
-                    className="w-full py-3.5 bg-amber-700 hover:bg-amber-800 text-white font-mono font-bold text-xs uppercase tracking-wider active:scale-[0.99] transition-all flex items-center justify-center gap-2 rounded shadow-xs disabled:opacity-50"
+                    className="w-full py-3.5 px-6 bg-slate-950 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider rounded-lg transition-colors cursor-pointer disabled:opacity-50"
                   >
                     {loading ? (
                       <span>Đang gửi thông tin lên hệ thống...</span>
                     ) : (
-                      <>
-                        <Send className="w-4 h-4" />
-                        <span>Gửi Yêu Cầu Báo Giá & Khảo Sát Miễn Phí</span>
-                      </>
+                      <span>Gửi Yêu Cầu Báo Giá & Khảo Sát Miễn Phí</span>
                     )}
                   </button>
+
                 </form>
               )}
             </div>
+
           </div>
+
         </div>
       </div>
     </section>

@@ -601,7 +601,7 @@ export const NEWS_EVENTS: NewsItem[] = [
     category: 'Huấn luyện & Đào tạo',
     summary: 'Chương trình chuẩn hóa tác phong quân ngũ, văn hóa ứng xử văn minh và kỹ năng xử lý tình huống khẩn cấp cho hơn 800 cán bộ, nhân viên bảo vệ.',
     imageUrl: '/images/training.jpg',
-    content: 'Nhằm nâng cao chất lượng dịch vụ hướng tới tiêu chuẩn quốc tế, Ban Đào Tạo & Huấn Luyện Lâm Sơn Động đã tổ chức đợt sát hạch và bồi dưỡng nghiệp vụ định kỳ cho toàn thể nhân sự các chi nhánh.\n\nCÁC CHUYÊN ĐỀ CHÍNH:\n1. Văn hóa giao tiếp, đón tiếp khách hàng và quy tắc ứng xử lịch thiệp tại các tòa nhà cao ốc, TTTM.\n2. Kỹ năng nhận diện và xử lý xung đột, hòa giải mâu thuẫn văn minh tại mục tiêu cố định.\n3. Kiểm tra thể lực, võ thuật phòng vệ và kỹ năng sử dụng công cụ hỗ trợ theo đúng quy định pháp luật.\n4. Thực hành ghi chép sổ nhật ký ca trực số hóa và báo cáo trực ban tác chiến thời gian thực.',
+    content: 'Nhằm nâng cao chất lượng dịch vụ hướng tới tiêu chuẩn quốc tế, Ban Đào Tạo & Huấn Luyện Lâm Sơn Động đã tổ chức đợt sát hạch và bồi dưỡng nghiệp vụ định kỳ cho toàn thể nhân sự các chi nhánh.\n\nCÁC CHUYÊN ĐỀ CHÍNH:\n1. Văn hóa giao tiếp, đón tiếp khách hàng và quy tắc ứng xử lịch thiệp tại các tòa nhà cao ốc, TTTM.\n2. Kỹ năng nhận diện và xử lý xung đột, hòa giải mâu thuẫn văn minh tại mục tiêu cố định.\n3. Kiểm tra thể lực, võ thuật phòng vệ và kỹ năng sử dụng công cụ hỗ trợ theo đúng quy định pháp luật.\n4. Thực hành ghi chép sổ nhật ký ca trực số hóa và báo cáo ca trực an ninh thời gian thực.',
   },
   {
     id: 'news-7',
@@ -656,7 +656,7 @@ export const CLIENT_PARTNERS: ClientPartner[] = [
 
 export const FOOTER_DATA = {
   companyInfo: {
-    headquarters: 'Thôn Nội Am, Xã Liên Ninh, Huyện Thanh Trì, Hà Nội, Việt Nam',
+    headquarters: 'Số 14, 422/14/10 Ngô Gia Tự, Long Biên, Hà Nội, Việt Nam',
     hotline: '0339.269.524',
     email: 'congtybaovelamsondong@gmail.com',
     license: 'Giấy phép C06/BCA số 118/GCN-ANBV cấp bởi Cục Cảnh sát QLHC về TTXH - Bộ Công An',

@@ -53,24 +53,6 @@ const JOB_POSITIONS: JobPosition[] = [
     ]
   },
   {
-    id: 'pos-2',
-    title: 'Vệ Sĩ Cận Vệ & Hộ Tống Doanh Nhân, Lãnh Đạo Cấp Cao',
-    salary: '15.000.000 - 25.000.000 đ/tháng',
-    locations: 'Hà Nội & TP. Hồ Chí Minh (Công tác linh hoạt)',
-    type: 'Toàn thời gian theo lịch công tác',
-    quantity: 'Tuyển 10 người',
-    requirements: [
-      'Nam từ 22 - 40 tuổi, chiều cao từ 1m75, thể hình cân đối',
-      'Có đai đẳng võ thuật (Vovinam, Karatedo, Taekwondo, Cổ truyền)',
-      'Kỹ năng phản xạ nhạy bén, không có hình xăm lớn, lái xe thành thạo là lợi thế lớn'
-    ],
-    benefits: [
-      'Thu nhập cạnh tranh cùng phụ cấp công tác phí hấp dẫn',
-      'Môi trường làm việc đẳng cấp, chuyên nghiệp và bảo mật',
-      'Bảo hiểm tai nạn mức trách nhiệm cao 24/24'
-    ]
-  },
-  {
     id: 'pos-3',
     title: 'Chỉ Huy Trưởng / Đội Trưởng An Ninh Mục Tiêu KCN',
     salary: '14.000.000 - 18.000.000 đ/tháng',

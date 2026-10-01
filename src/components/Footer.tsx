@@ -16,13 +16,17 @@ interface FooterProps {
   onOpenQuote: () => void;
   onOpenAdmin?: () => void;
   onOpenRecruitment?: () => void;
+  onNavigateToAbout?: () => void;
+  onNavigateToRecruitment?: () => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({ 
   onScrollToSection, 
   onOpenQuote, 
   onOpenAdmin, 
-  onOpenRecruitment 
+  onOpenRecruitment,
+  onNavigateToAbout,
+  onNavigateToRecruitment
 }) => {
   const [emailSub, setEmailSub] = useState('');
   const [subSuccess, setSubSuccess] = useState(false);
@@ -124,7 +128,13 @@ export const Footer: React.FC<FooterProps> = ({
               <ul className="space-y-3 text-[13px] text-slate-300">
                 <li>
                   <button
-                    onClick={() => onScrollToSection('hero-section')}
+                    onClick={() => {
+                      if (onNavigateToAbout) {
+                        onNavigateToAbout();
+                      } else {
+                        onScrollToSection('hero-section');
+                      }
+                    }}
                     className="hover:text-[#e5be5a] transition-colors text-left cursor-pointer font-normal"
                   >
                     Về chúng tôi
@@ -165,7 +175,13 @@ export const Footer: React.FC<FooterProps> = ({
                 {onOpenRecruitment && (
                   <li>
                     <button
-                      onClick={onOpenRecruitment}
+                      onClick={() => {
+                        if (onNavigateToRecruitment) {
+                          onNavigateToRecruitment();
+                        } else {
+                          onOpenRecruitment();
+                        }
+                      }}
                       className="hover:text-[#e5be5a] transition-colors text-left cursor-pointer font-normal text-amber-400"
                     >
                       Tuyển dụng nhân sự
@@ -250,15 +266,6 @@ export const Footer: React.FC<FooterProps> = ({
           {/* ================================================================= */}
           <div className="lg:col-span-5">
             <div className="bg-[#21242c] border border-slate-700/80 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
-              
-              {/* Gold/Amber pin accent */}
-              <div className="flex items-center gap-2 mb-3">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#e5be5a] shadow-[0_0_10px_rgba(229,190,90,0.8)] inline-block" />
-                <span className="text-[10px] font-mono uppercase tracking-widest text-[#e5be5a] font-bold">
-                  BẢN TIN BẢO MẬT & PCCC
-                </span>
-              </div>
-
               {/* Card Headline */}
               <h3 className="text-base sm:text-[17px] font-bold text-white leading-snug font-['Plus_Jakarta_Sans',sans-serif]">
                 Đăng ký nhận những tài liệu chuyên sâu và các sự kiện, hoạt động mới nhất từ Lâm Sơn Động
