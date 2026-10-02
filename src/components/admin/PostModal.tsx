@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Post, generateSlug } from '../../lib/supabase';
-import { X, Save, RefreshCw } from 'lucide-react';
+import { X, Save, RefreshCw, AlertCircle } from 'lucide-react';
 import { PostImageUploader } from './PostImageUploader';
 
 interface PostModalProps {
@@ -36,8 +36,10 @@ export const PostModal: React.FC<PostModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [autoSlug, setAutoSlug] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
+    setErrorMessage(null);
     if (postToEdit) {
       setTitle(postToEdit.title || '');
       setSlug(postToEdit.slug || '');
@@ -78,6 +80,7 @@ export const PostModal: React.FC<PostModalProps> = ({
     if (!title.trim() || isUploadingImage) return;
 
     setIsSubmitting(true);
+    setErrorMessage(null);
     try {
       await onSave({
         title: title.trim(),
@@ -90,8 +93,9 @@ export const PostModal: React.FC<PostModalProps> = ({
         author: author.trim() || 'Ban Biên Tập Lâm Sơn Động',
       });
       onClose();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error submitting post:', err);
+      setErrorMessage(err.message || 'Lỗi khi lưu bài viết. Vui lòng thử lại.');
     } finally {
       setIsSubmitting(false);
     }
@@ -123,6 +127,15 @@ export const PostModal: React.FC<PostModalProps> = ({
 
         {/* Scrollable Form Body */}
         <form onSubmit={handleSubmit} className="p-6 sm:p-8 overflow-y-auto space-y-6 flex-1">
+          {errorMessage && (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3 text-red-800 text-xs">
+              <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+              <div className="flex-1 font-mono">
+                <span className="font-bold">Lỗi cập nhật: </span>
+                <span>{errorMessage}</span>
+              </div>
+            </div>
+          )}
           {/* Title */}
           <div>
             <label className="block text-xs sm:text-sm font-mono uppercase tracking-wider text-slate-800 font-bold mb-2">

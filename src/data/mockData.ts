@@ -541,7 +541,22 @@ export const RESEARCH_ARTICLES: ResearchArticle[] = [
     summary: 'Phân tích các lỗ hổng an ninh phổ biến tại các nhà máy FDI, nguy cơ thất thoát sở hữu trí tuệ và bài học kinh nghiệm thiết lập chốt chặn an ninh.',
     readTime: '8 phút',
     author: 'Hội đồng Cố vấn An ninh Lâm Sơn Động',
-    imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80',
+    content: `Trong bối cảnh làn sóng đầu tư FDI và chuỗi cung ứng toàn cầu dịch chuyển mạnh mẽ về Việt Nam năm 2026, vấn đề an ninh tài sản và bí mật công nghệ tại các khu công nghiệp trọng điểm đang đối diện với những thách thức chưa từng có. Không còn đơn thuần là nạn trộm cắp vặt, các doanh nghiệp sản xuất và logistics quy mô lớn hiện phải đối mặt với các đường dây gian lận có tổ chức, móc nối từ bên trong lẫn bên ngoài, gây thiệt hại hàng chục tỷ đồng mỗi năm.\n\nBáo cáo này được tổng hợp từ dữ liệu giám sát và xử lý thực tế tại hơn 100 nhà máy, cảng cạn và kho tổng trên toàn quốc do Lâm Sơn Động Security trực tiếp vận hành.`,
+    sections: [
+      {
+        heading: '1. Ba Lỗ Hổng Trọng Yếu Khiến Doanh Nghiệp Thất Thoát Tài Sản',
+        body: 'Thứ nhất là lỗ hổng tại cổng kiểm soát xuất nhập hàng hóa ca đêm. Khi mật độ phương tiện container và xe tải tăng cao, việc kiểm tra thủ công bằng mắt thường dễ dẫn đến sơ hở, tạo điều kiện cho hiện tượng kẹp hàng lậu hoặc khai khống khối lượng xuất kho.\n\nThứ hai là các "điểm mù" vành đai tường rào. Nhiều nhà máy sở hữu chu vi hàng rào từ 3km đến 8km nhưng hệ thống chiếu sáng và camera quan sát chưa khép kín, thiếu lực lượng tuần tra cơ động ngẫu nhiên khiến kẻ gian dễ dàng cắt rào thép gai đột nhập.\n\nThứ ba là nguy cơ tiếp tay nội bộ. Theo thống kê nghiệp vụ, hơn 68% các vụ trộm cắp linh kiện điện tử và hàng hóa giá trị cao đều có sự thông đồng giữa nhân sự nội bộ nhà máy (công nhân kho, lái xe nội bộ) với các đối tượng tiêu thụ bên ngoài.'
+      },
+      {
+        heading: '2. Mô Hình Phòng Thủ 4 Tầng Chuẩn Hóa Theo ISO 9001:2015',
+        body: 'Để giải quyết triệt để vấn đề này, Lâm Sơn Động đã ứng dụng mô hình bảo vệ 4 tầng liên hoàn:\n- Tầng 1 (Vành đai ngoại vi): Triển khai hệ thống Smart Patrol định vị GPS kết hợp tuần tra cơ động bằng xe máy điện chuyên dụng, cam kết kiểm soát toàn tuyến 30 phút/lượt.\n- Tầng 2 (Cổng chính & Xuất nhập): Phân luồng triệt để xe hàng - xe nhân viên - khách vãng lai. Kiểm tra mã QR lệnh xuất kho, niêm chì điện tử và soi chiếu hành lý công nhân lúc tan tầm.\n- Tầng 3 (Giám sát trung tâm SOC 24/7): Tích hợp camera AI phân tích hành vi bất thường, phát hiện vượt rào ảo và cảnh báo nhiệt khẩn cấp.\n- Tầng 4 (Thanh tra đột xuất): Đội cơ động đặc nhiệm kiểm tra tác phong, kiểm toán kho ngẫu nhiên vào các khung giờ nhạy cảm từ 00h00 đến 04h00 sáng.'
+      },
+      {
+        heading: '3. Cam Kết Trách Nhiệm Pháp Lý & Lời Khuyên Cho Nhà Quản Trị',
+        body: 'Một hợp đồng dịch vụ an ninh chuyên nghiệp bắt buộc phải có điều khoản cam kết bồi thường 100% giá trị tài sản khi xảy ra rủi ro do lỗi bảo vệ. Doanh nghiệp cần chủ động rà soát lại hợp đồng hiện tại, yêu cầu công ty an ninh xuất trình giấy chứng nhận đủ điều kiện ANTT do Bộ Công An cấp và báo cáo bảo hiểm trách nhiệm công cộng hàng năm để đảm bảo quyền lợi pháp lý tối đa.'
+      }
+    ]
   },
   {
     id: 'art-2',
@@ -551,7 +566,22 @@ export const RESEARCH_ARTICLES: ResearchArticle[] = [
     summary: 'Hướng dẫn chuẩn hóa quy trình 4 bước tại chỗ khi phát hiện đám cháy: Báo động - Cắt điện - Dập lửa - Sơ tán thoát nạn.',
     readTime: '6 phút',
     author: 'Ban Cố Vấn An Ninh & PCCC',
-    imageUrl: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=600&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=800&q=80',
+    content: `Cháy nổ tại các tòa nhà cao ốc văn phòng, trung tâm thương mại và chung cư phức hợp là mối hiểm họa khôn lường có thể bùng phát bất cứ lúc nào từ chập điện, bình gas hay pin xe điện tầng hầm. Trong đám cháy nhà cao tầng, khói độc và khí CO chính là nguyên nhân gây tử vong hàng đầu (chiếm hơn 80% trường hợp), chứ không phải ngọn lửa trực tiếp.\n\nCẩm nang này cung cấp những kỹ năng sinh tồn thực chiến và hướng dẫn hành động chuẩn mực trong "3 phút vàng" đầu tiên khi chuông báo cháy reo.`,
+    sections: [
+      {
+        heading: '1. Quy Trình 4 Bước Phản Ứng Nhanh Tại Chỗ',
+        body: 'Bước 1: Báo động khẩn cấp - Lập tức nhấn nút báo cháy vách tường gần nhất hoặc hô hoán thông báo cho mọi người xung quanh, đồng thời gọi ngay đường dây nóng 114 và Ban Quản Lý mục tiêu.\n\nBước 2: Cắt điện cục bộ - Ngắt aptomat khu vực xảy ra chập cháy để ngăn ngừa hiện tượng phóng điện lan truyền và tránh nguy cơ điện giật cho lực lượng ứng cứu.\n\nBước 3: Sử dụng bình chữa cháy tại chỗ - Nếu đám cháy mới phát sinh ở diện tích nhỏ, sử dụng bình bột chữa cháy ABC hoặc bình khí CO2 hướng loa phun vào gốc lửa từ khoảng cách an toàn 1.5m - 2m.\n\nBước 4: Tổ chức sơ tán có trật tự - Nhanh chóng di chuyển theo chỉ dẫn của nhân viên an ninh tòa nhà, ưu tiên hỗ trợ người già, phụ nữ có thai và trẻ em.'
+      },
+      {
+        heading: '2. Năm Sai Lầm Chết Người Cần Tuyệt Đối Tránh Khi Thoát Nạn',
+        body: '1. Tuyệt đối KHÔNG sử dụng thang máy: Khi xảy ra hỏa hoạn, nguồn điện tòa nhà có thể bị ngắt bất cứ lúc nào, khiến thang máy kẹt lưng chừng và trở thành ống dẫn khói độc ngạt thở.\n\n2. KHÔNG chen lấn, xô đẩy tại cầu thang thoát hiểm: Hãy giữ bình tĩnh, bám tay vịn cầu thang bộ và di chuyển theo hàng lối để tránh thảm họa giẫm đạp.\n\n3. KHÔNG chạy ngược lên tầng mái nếu không chắc chắn cửa sân thượng mở: Luôn ưu tiên chạy xuống dưới mặt đất theo thang bộ thoát hiểm có điều áp chống khói.\n\n4. KHÔNG quay lại lấy tài sản có giá trị: Sinh mạng là trên hết, chỉ một vài giây chần chừ có thể tước đi lối thoát duy nhất của bạn.\n\n5. KHÔNG hít thở trực tiếp khí khói: Phải cúi thấp người (khói độc luôn bốc lên cao), dùng khăn ướt, khẩu trang hoặc vạt áo che kín mũi miệng để lọc khí độc.'
+      },
+      {
+        heading: '3. Trách Nhiệm Thường Trực Của Đội Bảo Vệ Chuyên Nghiệp',
+        body: 'Tại mọi mục tiêu do Lâm Sơn Động quản lý, 100% chiến sĩ bảo vệ đều đạt chứng chỉ PCCC & Cứu nạn cứu hộ chính quy do Công an PCCC sát hạch. Đội ngũ an ninh kiểm tra áp lực van vòi nước, bình bọt và hệ thống đèn Exit chiếu sáng khẩn cấp định kỳ thứ Hai hàng tuần, đồng thời chủ trì diễn tập thoát nạn thực tế mỗi quý một lần.'
+      }
+    ]
   },
   {
     id: 'art-3',
@@ -561,7 +591,22 @@ export const RESEARCH_ARTICLES: ResearchArticle[] = [
     summary: 'Cập nhật Nghị định mới nhất về kinh doanh dịch vụ bảo vệ: Phạm vi được phép sử dụng công cụ hỗ trợ, bắt giữ người phạm tội quả tang.',
     readTime: '7 phút',
     author: 'Ban Pháp chế & Thanh tra Nghiệp vụ',
-    imageUrl: 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=600&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=800&q=80',
+    content: `Trong công tác bảo vệ mục tiêu hiện đại, việc nắm vững hành lang pháp lý là yếu tố sống còn bảo đảm nhân viên an ninh vừa hoàn thành xuất sắc nhiệm vụ bảo vệ tài sản, vừa tuyệt đối tuân thủ pháp luật, không vượt quá giới hạn phòng vệ chính đáng.\n\nCẩm nang pháp lý này phân tích rõ các quy định hiện hành theo Nghị định 96/2016/NĐ-CP và Luật Quản lý, sử dụng vũ khí, vật liệu nổ và công cụ hỗ trợ áp dụng cho lực lượng bảo vệ chuyên nghiệp.`,
+    sections: [
+      {
+        heading: '1. Phạm Vi Quyền Hạn Hợp Pháp Của Nhân Viên Bảo Vệ',
+        body: 'Nhân viên bảo vệ có quyền kiểm tra giấy tờ, vé ra vào, đối chiếu lệnh công tác và kiểm tra phương tiện, hàng hóa ra vào mục tiêu theo đúng nội quy do doanh nghiệp ban hành.\n\nĐặc biệt, trong trường hợp phát hiện người có hành vi phạm tội quả tang (như trộm cắp, phá hoại tài sản, hành hung cố ý gây thương tích), nhân viên bảo vệ có toàn quyền tước vũ khí, khống chế, bắt giữ đối tượng và lập biên bản quả tang ngay tại chỗ, sau đó bàn giao ngay cho cơ quan Công an gần nhất theo Điều 111 Bộ luật Tố tụng Hình sự.'
+      },
+      {
+        heading: '2. Nguyên Tắc Quản Lý & Sử Dụng Công Cụ Hỗ Trợ',
+        body: 'Doanh nghiệp kinh doanh dịch vụ bảo vệ chỉ được phép trang bị và sử dụng công cụ hỗ trợ (như dùi cui cao su, gậy điện, khóa số 8, bình xịt hơi cay) khi đã được Phòng Cảnh sát QLHC về TTXH cấp Giấy phép sử dụng hợp lệ.\n\nNhân viên bảo vệ chỉ được sử dụng công cụ hỗ trợ trong các tình huống thực sự cần thiết nhằm ngăn chặn hành vi bạo lực hung hãn, phòng vệ chính đáng khi bản thân hoặc mục tiêu bị tấn công đe dọa trực tiếp đến tính mạng. Tuyệt đối nghiêm cấm lạm dụng công cụ hỗ trợ để xâm phạm thân thể, danh dự của công dân.'
+      },
+      {
+        heading: '3. Chuẩn Hóa Pháp Lý Tại Lâm Sơn Động Security',
+        body: 'Tại Lâm Sơn Động, 100% vệ sĩ và cán bộ chỉ huy đều trải qua khóa đào tạo pháp luật chuyên sâu, nắm vững ranh giới giữa phòng vệ chính đáng và vượt quá giới hạn phòng vệ. Mỗi mục tiêu đều được trang bị sổ quản lý công cụ hỗ trợ có dấu niêm phong và quy trình phối hợp khẩn cấp với lực lượng Công an phường/xã trên địa bàn.'
+      }
+    ]
   },
 ];
 
@@ -574,7 +619,23 @@ export const NEWS_EVENTS: NewsItem[] = [
     summary: 'Hơn 300 cán bộ, chỉ huy và vệ sĩ tiêu biểu toàn quốc tranh tài quyền thuật, đối kháng thực chiến, kỹ thuật khống chế vũ khí và bắn súng ứng dụng.',
     imageUrl: '/images/hero-2.jpg',
     isFeatured: true,
-    content: 'Hơn 300 cán bộ, chỉ huy mục tiêu và chiến sĩ vệ sĩ tiêu biểu đến từ các chi nhánh Hà Nội, TP.HCM, Đà Nẵng và Hải Phòng đã quy tụ tại Trung tâm Huấn luyện Nghiệp vụ Lâm Sơn Động để tham gia Hội thao Võ thuật & Kỹ năng Đặc nhiệm 2026.\n\nNỘI DUNG THI ĐẤU & DIỄN TẬP CHUYÊN SÂU:\n1. Đối kháng thực chiến không vũ trang và kỹ thuật vô hiệu hóa đối tượng quá khích.\n2. Phối hợp đội hình lá chắn bảo vệ mục tiêu VIP khi bị áp sát bất ngờ.\n3. Thao tác tháo lắp, sử dụng công cụ hỗ trợ và bắn súng ứng dụng chuẩn quy định Bộ Công An.\n4. Kỹ năng sơ cấp cứu chấn thương và vận chuyển nạn nhân khỏi vùng nguy hiểm.\n\nBan Lãnh Đạo công ty đã trao cờ thi đua và khen thưởng cho 12 tập thể, 25 cá nhân đạt thành tích xuất sắc, khẳng định chất lượng nhân sự tinh nhuệ hàng đầu thị trường an ninh Việt Nam.',
+    author: 'Ban Huấn Luyện & Tác Chiến Đặc Nhiệm',
+    readTime: '6 phút đọc',
+    content: 'Nhằm không ngừng tôi luyện bản lĩnh người vệ sĩ và sát hạch chất lượng nghiệp vụ thực chiến trên toàn quốc, sáng ngày 18/09/2026, Lâm Sơn Động Security đã long trọng khai mạc "Hội Thao Võ Thuật & Kỹ Năng Đặc Nhiệm Toàn Quốc 2026". Hội thao quy tụ hơn 300 gương mặt xuất sắc đại diện cho lực lượng an ninh tại hơn 20 tỉnh thành, mang đến những màn tranh tài nảy lửa, khẳng định sức mạnh kỷ luật và tinh thần thượng võ kiên cường của toàn thể chiến sĩ.',
+    sections: [
+      {
+        heading: '1. Khởi Tranh Quyền Thuật Cổ Truyền & Thực Chiến Đối Kháng',
+        body: 'Phần thi quyền thuật và đối kháng thực chiến không vũ trang diễn ra sôi nổi ngay từ vòng mở màn. Kế thừa tinh hoa võ thuật cổ truyền Lâm Sơn Động kết hợp cùng các thế võ cận chiến hiện đại, các chiến sĩ đã thể hiện khả năng di chuyển linh hoạt, né đòn chuẩn xác và tung ra những đòn khóa triệt hạ đối phương nhanh chóng trong phạm vi hẹp. Đây là kỹ năng cốt lõi giúp nhân viên bảo vệ xử lý êm thấm các tình huống gây rối trật tự công cộng mà không gây nguy hiểm quá mức đến tính mạng.'
+      },
+      {
+        heading: '2. Diễn Tập Phương Án Lá Chắn Bảo Vệ VIP & Hộ Tống Khẩn Cấp',
+        body: 'Tình huống giả định đưa ra là đoàn xe hộ tống lãnh đạo cấp cao bị nhóm đối tượng quá khích chặn đầu và tấn công bất ngờ bằng hung khí nguy hiểm. Đội hình đặc nhiệm Lâm Sơn Động đã nhanh chóng triển khai đội hình "lá chắn sống" kim cương khép kín, vừa che chắn toàn diện cho yếu nhân, vừa chủ động dùng công cụ hỗ trợ vô hiệu hóa đối tượng cầm đầu và mở lối thoát hiểm đưa VIP lên xe bọc thép rời khỏi hiện trường an toàn chỉ trong 45 giây.'
+      },
+      {
+        heading: '3. Kiểm Tra Kỹ Năng Sơ Cấp Cứu Y Tế & Khen Thưởng Thi Đua',
+        body: 'Bên cạnh sức mạnh cơ bắp và võ thuật, hội thao còn đánh giá khắt khe kỹ năng sơ cấp cứu chấn thương, hồi sức tim phổi CPR và kỹ thuật cầm máu nhanh trước khi lực lượng 115 tiếp cận. Kết thúc ngày thi đấu, Ban Giám Đốc đã biểu dương và trao thưởng cho các tập thể đạt thành tích vượt trội, tiếp thêm động lực để toàn thể nhân viên nỗ lực cống hiến vì sự bình yên của quý khách hàng.'
+      }
+    ]
   },
   {
     id: 'news-5',
@@ -583,7 +644,23 @@ export const NEWS_EVENTS: NewsItem[] = [
     category: 'Công nghệ an ninh',
     summary: 'Chuyển giao và chuẩn hóa hệ thống quản lý ca trực số hóa, kết hợp camera AI cảnh báo hành vi đột nhập thời gian thực cho đội ngũ chỉ huy KCN.',
     imageUrl: '/images/hero-1.jpg',
-    content: 'Nhằm đáp ứng yêu cầu an ninh ngày càng khắt khe của các tập đoàn công nghệ và nhà máy FDI quy mô lớn, Lâm Sơn Động Security đã triển khai khóa tập huấn chuyên sâu về "Ứng dụng Trí tuệ Nhân tạo & Số hóa Tuần tra GPS".\n\nCÁC CÔNG NGHỆ ÁP DỤNG TRỌNG TÂM:\n- Hệ thống tuần tra Smart Patrol: Xác thực vị trí tuần tra bằng định vị vệ tinh GPS và thẻ chip RFID tại các góc khuất.\n- Trung tâm điều hành SOC 24/7: Kết nối trực tiếp với camera AI nhận diện biển số xe và phân tích hành vi đáng ngờ xung quanh hàng rào bảo vệ.\n- Báo cáo ca trực điện tử: Toàn bộ nhật ký ra vào, xuất nhập hàng hóa được đồng bộ hóa tức thì lên máy chủ an toàn, giúp đối tác kiểm soát minh bạch 24/7.',
+    author: 'Trung Tâm R&D & Chuyển Đổi Số An Ninh',
+    readTime: '5 phút đọc',
+    content: 'Cuộc cách mạng công nghiệp 4.0 đang thay đổi căn bản cách thức vận hành an ninh trên thế giới. Nhận thức rõ xu thế đó, Lâm Sơn Động Security đã tổ chức chương trình tập huấn chuyển giao toàn diện công nghệ AI và hệ thống tuần tra định vị vệ tinh Smart Patrol cho toàn bộ đội ngũ Đội trưởng và Chỉ huy mục tiêu KCN.',
+    sections: [
+      {
+        heading: '1. Xóa Bỏ Hoàn Toàn Điểm Mù Ca Trực Bằng GPS & Thẻ Chip RFID',
+        body: 'Hệ thống Smart Patrol do Lâm Sơn Động triển khai tích hợp định vị vệ tinh GPS kết hợp quét mã chip RFID gắn cố định tại các góc khuất, trạm biến áp và hàng rào xa nhất của nhà máy. Nhân viên tuần tra bắt buộc phải có mặt tại tọa độ thực tế để kích hoạt xác nhận ca trực. Nếu phát sinh độ trễ hoặc bỏ sót điểm, máy chủ trung tâm sẽ lập tức phát cảnh báo về máy tính của Đội trưởng mục tiêu và ứng dụng di động của khách hàng, đảm bảo tính minh bạch 100% không thể làm giả.'
+      },
+      {
+        heading: '2. Tích Hợp Camera AI Cảnh Báo Sớm Tại Trung Tâm SOC 24/7',
+        body: 'Khóa đào tạo hướng dẫn chuyên sâu cho nhân viên kỹ thuật vận hành hệ thống camera AI nhận diện biển số xe container, phát hiện người leo trèo hàng rào ảo và đo nhiệt độ cảnh báo cháy nổ tại các kho hóa chất. Hệ thống tự động khoanh vùng mục tiêu khả nghi và truyền hình ảnh thời gian thực đến bộ đàm của tổ tuần tra gần nhất trong vòng dưới 10 giây.'
+      },
+      {
+        heading: '3. Tối Ưu Hóa Ngân Sách An Ninh Cho Doanh Nghiệp',
+        body: 'Sự kết hợp giữa công nghệ cao và con người kỷ luật giúp các nhà máy tiết kiệm từ 20% đến 35% chi phí quân số bảo vệ mà vẫn nâng cao hiệu quả kiểm soát an ninh gấp nhiều lần, mang lại sự an tâm tuyệt đối cho các tập đoàn FDI.'
+      }
+    ]
   },
   {
     id: 'news-6',
@@ -592,7 +669,23 @@ export const NEWS_EVENTS: NewsItem[] = [
     category: 'Chiến công nghiệp vụ',
     summary: 'Ban Giám Đốc Lâm Sơn Động trực tiếp trao thưởng nóng cho kíp trực ca đêm đã kịp thời phát hiện và khống chế nhóm đột nhập kho vật tư công nghệ cao.',
     imageUrl: '/images/service-factory.jpg',
-    content: 'Vào lúc 02h15 rạng sáng ngày 25/08/2026, trong quá trình tuần tra hàng rào vành đai tại Nhà máy sản xuất linh kiện vi mạch KCN VSIP, tổ tuần tra cơ động Lâm Sơn Động phát hiện 3 đối tượng cắt hàng rào thép gai định đột nhập kho thành phẩm.\n\nDIỄN BIẾN XỬ LÝ NHANH CHÓNG:\n- Kíp trực lập tức kích hoạt còi báo động nội bộ và chốt chặn các lối thoát hiểm.\n- Với nghiệp vụ võ thuật thực chiến điêu luyện, 4 chiến sĩ bảo vệ đã nhanh chóng khống chế thành công 2 đối tượng, bảo toàn 100% lô hàng linh kiện điện tử trị giá hơn 2.8 tỷ đồng.\n- Bàn giao đối tượng cùng tang vật cho Công an địa phương lập hồ sơ khởi tố.\n\nSáng ngày 28/08, Ban Giám Đốc Công ty và đại diện Ban Quản Lý KCN đã tổ chức lễ biểu dương và thưởng nóng 30 triệu đồng cho tập thể kíp trực ca đêm.',
+    author: 'Ban Thanh Tra & An Ninh Mục Tiêu',
+    readTime: '6 phút đọc',
+    content: 'Rạng sáng ngày 25/08/2026, kíp trực tuần tra cơ động Lâm Sơn Động tại Nhà máy sản xuất linh kiện vi mạch KCN VSIP đã lập chiến công xuất sắc: mưu trí, dũng cảm phát hiện và tóm gọn nhóm đối tượng đột nhập có vũ khí, bảo toàn 100% kho hàng trị giá gần 3 tỷ đồng cho doanh nghiệp.',
+    sections: [
+      {
+        heading: '1. Khoảnh Khắc Phát Hiện Vết Cắt Hàng Rào Trong Đêm Tối',
+        body: 'Vào lúc 02h15 rạng sáng, trong khi thực hiện chuyến tuần tra định kỳ theo lộ trình Smart Patrol, chiến sĩ bảo vệ phát hiện hàng rào thép gai tại góc phía Tây nhà xưởng có dấu hiệu bị kìm cộng lực cắt đứt. Nhận định đối tượng đã lọt vào bên trong khuôn viên, kíp trực lập tức giữ bí mật, không hô hoán đánh động mà nhẹ nhàng kích hoạt mã báo động khẩn cấp qua bộ đàm về phòng chỉ huy trung tâm.'
+      },
+      {
+        heading: '2. Chốt Chặn Vòng Vây & Khống Chế Đối Tượng Quả Tang',
+        body: 'Chỉ sau 2 phút, 4 chiến sĩ thuộc Đội Phản Ứng Nhanh cơ động đã có mặt, khép chặt các lối thoát hiểm xung quanh kho vật tư. Phát hiện bị bao vây, 2 đối tượng hung hãn rút dao găm chống trả quyết liệt hòng tẩu thoát. Bằng các thế võ khống chế cổ tay và quật ngã điêu luyện của môn phái Lâm Sơn Động, các chiến sĩ đã nhanh chóng tước vũ khí, quật ngã và khóa chặt đối tượng xuống đất an toàn, thu giữ toàn bộ tang vật gồm 6 thùng linh kiện điện tử nguyên đai nguyên kiện.'
+      },
+      {
+        heading: '3. Biểu Dương Khen Thưởng & Bài Học Về Tinh Thần Cảnh Giác',
+        body: 'Sáng ngày 28/08, đại diện Ban Giám Đốc Công ty và Ban Quản Lý KCN đã đến tận mục tiêu trao giấy khen và thưởng nóng 30 triệu đồng cho kíp trực. Tinh thần trách nhiệm, quả cảm và phản ứng nhanh nhạy của các chiến sĩ là minh chứng hùng hồn cho cam kết bảo vệ an toàn tài sản tuyệt đối của Lâm Sơn Động.'
+      }
+    ]
   },
   {
     id: 'news-1',
@@ -601,7 +694,23 @@ export const NEWS_EVENTS: NewsItem[] = [
     category: 'Huấn luyện & Đào tạo',
     summary: 'Chương trình chuẩn hóa tác phong quân ngũ, văn hóa ứng xử văn minh và kỹ năng xử lý tình huống khẩn cấp cho hơn 800 cán bộ, nhân viên bảo vệ.',
     imageUrl: '/images/training.jpg',
-    content: 'Nhằm nâng cao chất lượng dịch vụ hướng tới tiêu chuẩn quốc tế, Ban Đào Tạo & Huấn Luyện Lâm Sơn Động đã tổ chức đợt sát hạch và bồi dưỡng nghiệp vụ định kỳ cho toàn thể nhân sự các chi nhánh.\n\nCÁC CHUYÊN ĐỀ CHÍNH:\n1. Văn hóa giao tiếp, đón tiếp khách hàng và quy tắc ứng xử lịch thiệp tại các tòa nhà cao ốc, TTTM.\n2. Kỹ năng nhận diện và xử lý xung đột, hòa giải mâu thuẫn văn minh tại mục tiêu cố định.\n3. Kiểm tra thể lực, võ thuật phòng vệ và kỹ năng sử dụng công cụ hỗ trợ theo đúng quy định pháp luật.\n4. Thực hành ghi chép sổ nhật ký ca trực số hóa và báo cáo ca trực an ninh thời gian thực.',
+    author: 'Ban Đào Tạo & Phát Triển Nguồn Nhân Lực',
+    readTime: '5 phút đọc',
+    content: 'Một dịch vụ an ninh đẳng cấp không chỉ dừng lại ở sự an toàn mà còn nằm ở sự tôn trọng và hình ảnh chuyên nghiệp đại diện cho chính khách hàng. Trong tháng 8/2026, Lâm Sơn Động đã tổ chức đợt đào tạo quy mô lớn về "Văn Hóa Giao Tiếp Chuẩn Mực & Kỹ Năng Nghiệp Vụ Chuẩn 5 Sao" cho hơn 800 cán bộ, nhân viên.',
+    sections: [
+      {
+        heading: '1. Văn Hóa Chào Đón & Tác Phong Ngoại Giao Tại Sảnh',
+        body: 'Nhân viên an ninh tại các cao ốc văn phòng, trung tâm thương mại và khách sạn cao cấp là người đầu tiên tiếp xúc với đối tác, cư dân và khách hàng. Chương trình đào tạo chuẩn hóa từng nụ cười, cử chỉ cúi chào 15 độ lịch thiệp, giọng nói nhã nhặn, cách hướng dẫn khách đỗ xe và hỗ trợ người khuyết tật, người già chu đáo, mang đến cảm giác an tâm và thiện cảm ngay từ ánh nhìn đầu tiên.'
+      },
+      {
+        heading: '2. Nghệ Thuật Hóa Giải Xung Đột & Xử Lý Tình Huống Văn Minh',
+        body: 'Khóa học cung cấp các bài tập tình huống thực tế về việc giải quyết khiếu nại, xử lý các trường hợp khách hàng nóng giận hoặc mất bình tĩnh tại quầy giao dịch. Nhân viên được huấn luyện phương pháp lắng nghe tích cực, hạ nhiệt căng thẳng bằng lời nói hòa nhã, kiên quyết nhưng mềm mỏng theo đúng chuẩn mực văn hóa ứng xử hiện đại.'
+      },
+      {
+        heading: '3. Giữ Vững Kỷ Luật Thép Song Hành Cùng Sự Tận Tâm',
+        body: 'Tại Lâm Sơn Động, tác phong quân sự nghiêm trang luôn song hành cùng thái độ phục vụ tận tâm. Khóa đào tạo kết thúc với kỳ sát hạch nghiêm ngặt, 100% học viên đạt tiêu chuẩn mới được phân công về lại các mục tiêu trọng điểm.'
+      }
+    ]
   },
   {
     id: 'news-7',
@@ -610,7 +719,23 @@ export const NEWS_EVENTS: NewsItem[] = [
     category: 'Hợp tác đối tác',
     summary: 'Ký kết hợp đồng bảo vệ 24/7 và triển khai phương án kiểm soát luồng khách tham quan, phương án PCCC hiện đại tại hệ thống đại siêu thị toàn quốc.',
     imageUrl: '/images/service-office.jpg',
-    content: 'Lâm Sơn Động Security chính thức ký kết thỏa thuận hợp tác an ninh chiến lược dài hạn giai đoạn 2026 - 2028 với chuỗi trung tâm thương mại cao cấp với tổng diện tích mặt sàn quản lý trên 150.000m².\n\nPHẠM VI TRIỂN KHAI TOÀN DIỆN:\n1. Bố trí hơn 180 nhân sự bảo vệ tác phong chuẩn mực, giao tiếp lịch thiệp tại các sảnh chính, cửa ra vào và bãi đỗ xe thông minh.\n2. Lực lượng cơ động bí mật kiểm soát chống gian lận, trộm cắp hàng hóa tại các gian hàng bán lẻ.\n3. Thành lập Đội PCCC cơ sở thường trực 24/24, diễn tập kịch bản thoát hiểm quy mô lớn định kỳ hàng quý.\n4. Cam kết bồi thường 100% tài sản và đảm bảo môi trường mua sắm văn minh, an toàn tuyệt đối cho hàng triệu lượt khách hàng mỗi năm.',
+    author: 'Ban Phát Triển Khách Hàng Doanh Nghiệp',
+    readTime: '6 phút đọc',
+    content: 'Lâm Sơn Động Security chính thức ký kết thỏa thuận hợp tác an ninh chiến lược dài hạn giai đoạn 2026 - 2028 với chuỗi trung tâm thương mại cao cấp với tổng diện tích mặt sàn quản lý trên 150.000m².',
+    sections: [
+      {
+        heading: '1. Quy Mô Triển Khai & Bố Trí Nhân Sự Tinh Nhuệ',
+        body: 'Theo thỏa thuận, Lâm Sơn Động bố trí hơn 180 nhân sự bảo vệ tác phong chuẩn mực, giao tiếp lịch thiệp tại các sảnh chính, cửa ra vào và hệ thống bãi đỗ xe thông minh. Lực lượng thường trực duy trì kiểm soát luồng người mua sắm, ngăn ngừa tình trạng trộm cắp móc túi và hướng dẫn khách hàng tận tình.'
+      },
+      {
+        heading: '2. Phương Án Cơ Động Bí Mật & Kiểm Soát Gian Lận',
+        body: 'Bên cạnh lực lượng mặc quân phục đứng chốt công khai, Lâm Sơn Động còn bố trí các trinh sát an ninh mặc thường phục tuần tra bí mật tại các gian hàng bán lẻ có hàng hóa giá trị cao, kịp thời phát hiện và ngăn chặn các hành vi gian lận mã vạch hay tuồn hàng ra ngoài.'
+      },
+      {
+        heading: '3. Thường Trực Đội PCCC Cơ Sở & Cam Kết Bồi Thường 100%',
+        body: 'Thành lập tổ PCCC cơ sở túc trực 24/24, phối hợp định kỳ diễn tập thoát hiểm giả định cho hàng nghìn lượt khách mua sắm. Bản hợp đồng đi kèm cam kết bồi thường 100% tài sản có bảo hiểm trách nhiệm pháp lý vững chắc.'
+      }
+    ]
   },
   {
     id: 'news-2',
@@ -619,7 +744,23 @@ export const NEWS_EVENTS: NewsItem[] = [
     category: 'Cộng Đồng',
     summary: 'Cán bộ và nhân viên Lâm Sơn Động trao tặng 500 suất quà, học bổng và trang thiết bị sưởi ấm cho các em học sinh có hoàn cảnh khó khăn.',
     imageUrl: '/images/charity.jpg',
-    content: 'Phát huy tinh thần "Tương thân tương ái" và trách nhiệm xã hội của doanh nghiệp, Ban Chấp Hành Công Đoàn Lâm Sơn Động Security đã tổ chức hành trình "Áo Ấm Vùng Cao" tại các điểm trường khó khăn.\n\nHOẠT ĐỘNG Ý NGHĨA:\n- Trao tặng 500 áo khoác ấm, cặp sách và đồ dùng học tập cho học sinh tiểu học.\n- Hỗ trợ xây dựng 2 phòng học kiên cố và hệ thống lọc nước sạch sinh hoạt.\n- Trao 30 suất học bổng vượt khó học giỏi cho các em học sinh nghèo hiếu học.\n- Hoạt động là nét đẹp văn hóa doanh nghiệp được Lâm Sơn Động duy trì thường niên suốt 15 năm qua.',
+    author: 'Ban Chấp Hành Công Đoàn Lâm Sơn Động',
+    readTime: '4 phút đọc',
+    content: 'Phát huy tinh thần "Tương thân tương ái" và trách nhiệm xã hội của doanh nghiệp, Ban Chấp Hành Công Đoàn Lâm Sơn Động Security đã tổ chức hành trình "Áo Ấm Vùng Cao" tại các điểm trường khó khăn.',
+    sections: [
+      {
+        heading: '1. Chuyến Xe Yêu Thương Vượt Đèo Lên Điểm Trường Xa',
+        body: 'Đoàn thiện nguyện đã vượt hàng trăm cây số đường đèo quanh co để mang hơn 500 áo khoác ấm, cặp sách, ủng đi mưa và dụng cụ học tập đến tận tay các em học sinh dân tộc thiểu số tại các bản vùng cao còn nhiều thiếu thốn.'
+      },
+      {
+        heading: '2. Hỗ Trợ Xây Dựng Cơ Sở Vật Chất Thiết Yếu',
+        body: 'Công đoàn công ty đã trích quỹ tài trợ sửa chữa 2 phòng học bán trú kiên cố và lắp đặt hệ thống máy lọc nước sạch tinh khiết, giúp các thầy cô và học sinh yên tâm sinh hoạt và học tập trong mùa đông giá rét.'
+      },
+      {
+        heading: '3. Nét Đẹp Văn Hóa Doanh Nghiệp Gắn Liền Với Cộng Đồng',
+        body: 'Đây là hoạt động thường niên được Lâm Sơn Động duy trì bền bỉ suốt hơn 15 năm qua, khẳng định triết lý phát triển bền vững song hành cùng trách nhiệm chia sẻ với xã hội.'
+      }
+    ]
   },
   {
     id: 'news-3',
@@ -628,7 +769,23 @@ export const NEWS_EVENTS: NewsItem[] = [
     category: 'Hợp tác đối tác',
     summary: 'Lâm Sơn Động phối hợp cùng Cảnh sát PCCC TP. Hà Nội triển khai diễn tập quy mô lớn với kịch bản sơ tán 2.000 người tại tổ hợp nhà máy FDI.',
     imageUrl: '/images/hero-3.jpg',
-    content: 'Sáng ngày 05/08, Lâm Sơn Động Security cùng Phòng Cảnh sát PCCC & CNCH đã tổ chức buổi diễn tập phương án chữa cháy và cứu nạn cứu hộ thường niên tại KCN Nội Bài.\n\nDIỄN BIẾN PHƯƠNG ÁN DIỄN TẬP:\n1. Tình huống giả định: Chập cháy khu vực xưởng sơn tầng 2 phát sinh nhiều khói độc.\n2. Lực lượng PCCC cơ sở Lâm Sơn Động phát hiện sau 15 giây, kích hoạt chuông báo động toàn khu vực và hướng dẫn thoát nạn cho hơn 2.000 công nhân.\n3. Triển khai 6 lăng chữa cháy vách tường, cô lập nguồn nhiệt ngăn cháy lan vào kho nguyên liệu.\n4. Phối hợp nhịp nhàng cùng 4 xe cứu hỏa chuyên dụng dập tắt hoàn toàn đám cháy sau 12 phút, bảo đảm an toàn tuyệt đối về người và tài sản.',
+    author: 'Ban Nghiệp Vụ & An Toàn Lao Động',
+    readTime: '5 phút đọc',
+    content: 'Sáng ngày 05/08, Lâm Sơn Động Security cùng Phòng Cảnh sát PCCC & CNCH đã tổ chức buổi diễn tập phương án chữa cháy và cứu nạn cứu hộ thường niên tại KCN Nội Bài với sự tham gia của hơn 2.000 cán bộ công nhân viên.',
+    sections: [
+      {
+        heading: '1. Kịch Bản Diễn Tập Tình Huống Giả Định Phức Tạp',
+        body: 'Tình huống giả định xảy ra sự cố chập điện tại xưởng sơn tầng 2, sinh ra đám cháy lớn kèm theo nhiều khói độc lan nhanh sang kho hóa chất kế cận. Nguy cơ cháy lan và gây ngạt khí cho hàng trăm công nhân đang làm việc đòi hỏi phản ứng cực kỳ chuẩn xác.'
+      },
+      {
+        heading: '2. Lực Lượng Cơ Sở Lâm Sơn Động Phản Ứng Sau 15 Giây',
+        body: 'Ngay khi chuông báo cháy reo, đội PCCC cơ sở Lâm Sơn Động đã có mặt tại hiện trường chỉ sau 15 giây. Lực lượng chia làm 3 mũi giáp công: mũi 1 hướng dẫn sơ tán an toàn 2.000 công nhân theo lối thoát hiểm; mũi 2 ngắt điện cục bộ và dùng 6 lăng chữa cháy vách tường khoanh vùng ngọn lửa; mũi 3 phối hợp cùng lực lượng chuyên nghiệp đón 4 xe cứu hỏa tiếp cận dập tắt hoàn toàn đám cháy sau 12 phút.'
+      },
+      {
+        heading: '3. Nâng Cao Ý Thức Tự Vệ Cho Người Lao Động',
+        body: 'Buổi diễn tập thành công rực rỡ, được Cảnh sát PCCC biểu dương đánh giá loại Xuất sắc, củng cố thêm niềm tin tuyệt đối của Ban Lãnh Đạo nhà máy FDI vào năng lực phòng cháy chữa cháy của Lâm Sơn Động.'
+      }
+    ]
   },
   {
     id: 'news-8',
@@ -637,7 +794,23 @@ export const NEWS_EVENTS: NewsItem[] = [
     category: 'Bảo vệ sự kiện',
     summary: 'Huy động 250 vệ sĩ đặc nhiệm lập hàng rào an ninh đa lớp, kiểm soát vé điện tử và đảm bảo an toàn tuyệt đối cho các nghệ sĩ quốc tế.',
     imageUrl: '/images/service-vip.jpg',
-    content: 'Tối ngày 02/08, đêm đại nhạc hội giao lưu văn hóa quốc tế với sự tham gia của hơn 25.000 khán giả trẻ và nhiều nghệ sĩ nổi tiếng trong nước và quốc tế đã diễn ra thành công tốt đẹp tại Hà Nội.\n\nKẾ HOẠCH TRIỂN KHAI AN NINH BẢO VỆ:\n1. Phân luồng khán giả đa tầng với 12 cổng từ an ninh và hệ thống quét vé QR code tốc độ cao.\n2. Thiết lập hành lang an ninh bảo vệ yếu nhân từ sân bay đến khách sạn và khu vực hậu trường sân khấu.\n3. Biệt đội cơ động phản ứng nhanh xử lý tức thời 3 trường hợp chen lấn, hỗ trợ sơ cấp cứu kịp thời cho 5 khán giả say nắng.\n4. Đảm bảo an ninh trật tự và an toàn tuyệt đối cho người và tài sản xuyên suốt 6 giờ diễn ra chương trình, nhận được sự đánh giá cao từ Ban Tổ Chức.',
+    author: 'Ban Chỉ Huy An Ninh Sự Kiện',
+    readTime: '5 phút đọc',
+    content: 'Tối ngày 02/08, đêm đại nhạc hội giao lưu văn hóa quốc tế với sự tham gia của hơn 25.000 khán giả trẻ và nhiều nghệ sĩ nổi tiếng trong nước và quốc tế đã diễn ra thành công tốt đẹp tại Hà Nội.',
+    sections: [
+      {
+        heading: '1. Phân Luồng Khán Giả Đa Tầng & Kiểm Soát Cổng Từ',
+        body: 'Lực lượng an ninh thiết lập 12 cổng từ an ninh và hệ thống quét vé QR code tốc độ cao, ngăn chặn 100% chất cấm, pháo sáng và vật sắc nhọn vào bên trong khán đài, giữ luồng di chuyển thông suốt không xảy ra chen lấn.'
+      },
+      {
+        heading: '2. Hành Lang Bảo Vệ Yếu Nhân & Hậu Trường Sân Khấu',
+        body: 'Bố trí 40 vệ sĩ ưu tú hộ tống xe nghệ sĩ từ khách sạn đến sân khấu, lập vành đai bảo vệ nghiêm ngặt khu vực hậu trường VIP, bảo đảm sự riêng tư và an toàn tuyệt đối cho các ngôi sao biểu diễn.'
+      },
+      {
+        heading: '3. Phản Ứng Nhanh & Kết Thúc Sự Kiện Bình An',
+        body: 'Biệt đội cơ động phản ứng nhanh kịp thời hỗ trợ y tế cho 5 khán giả ngất xỉu vì say nắng và giải tán êm thấm 3 nhóm xô đẩy. Đảm bảo an ninh trật tự hoàn hảo suốt 6 tiếng liên tục đến khi khán giả ra về an toàn.'
+      }
+    ]
   },
 ];
 

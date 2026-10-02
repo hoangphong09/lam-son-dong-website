@@ -79,6 +79,9 @@ export const FeaturedServices: React.FC<FeaturedServicesProps> = ({ onSelectServ
                     alt={`Dịch vụ an ninh: ${service.title} - Lâm Sơn Động`}
                     loading="lazy"
                     decoding="async"
+                    width={600}
+                    height={350}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     onError={(e) => {
                       (e.currentTarget as HTMLImageElement).src = '/images/service-factory.jpg';
                     }}

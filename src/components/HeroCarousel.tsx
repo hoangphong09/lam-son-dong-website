@@ -20,15 +20,30 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Preload all slide images into memory immediately to eliminate lazy-load pop/flicker
+  // Helper to optimize external hero image URLs for crisp retina display without excessive file size
+  const getOptimizedHeroImageUrl = (url: string) => {
+    if (!url) return '/images/hero-1.jpg';
+    if (url.includes('images.unsplash.com')) {
+      const cleanUrl = url.split('?')[0];
+      return `${cleanUrl}?auto=format&fit=crop&w=1920&q=85`;
+    }
+    return url;
+  };
+
+  // Progressive next-slide preloader: Only preloads the upcoming slide during browser idle time
+  // This avoids blocking LCP (Largest Contentful Paint) and saving bandwidth on initial page load
   useEffect(() => {
-    activeSlides.forEach((slide) => {
-      if (slide.imageUrl) {
+    if (activeSlides.length <= 1) return;
+    const nextIdx = (currentIndex + 1) % activeSlides.length;
+    const nextSlide = activeSlides[nextIdx];
+    if (nextSlide?.imageUrl) {
+      const timer = setTimeout(() => {
         const img = new Image();
-        img.src = slide.imageUrl;
-      }
-    });
-  }, [activeSlides]);
+        img.src = getOptimizedHeroImageUrl(nextSlide.imageUrl);
+      }, 1200);
+      return () => clearTimeout(timer);
+    }
+  }, [currentIndex, activeSlides]);
 
   // Next / Previous slide handlers
   const handlePrev = useCallback(() => {
@@ -134,11 +149,14 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
             {/* Background Image Container */}
             <div className="absolute inset-0 z-0 overflow-hidden">
               <img
-                src={slide.imageUrl}
+                src={getOptimizedHeroImageUrl(slide.imageUrl)}
                 alt={`Lâm Sơn Động Security - ${slide.title}`}
-                loading="eager"
+                loading={index === 0 ? 'eager' : 'lazy'}
                 decoding="async"
-                fetchPriority={index === 0 ? 'high' : 'auto'}
+                fetchPriority={index === 0 ? 'high' : 'low'}
+                width={1920}
+                height={1080}
+                sizes="100vw"
                 onError={(e) => {
                   (e.currentTarget as HTMLImageElement).src = '/images/hero-1.jpg';
                 }}

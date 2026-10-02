@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CaseStudy } from '../../types';
-import { X, Save, Image as ImageIcon } from 'lucide-react';
+import { X, Save } from 'lucide-react';
+import { PostImageUploader } from './PostImageUploader';
 
 interface CaseStudyModalProps {
   isOpen: boolean;
@@ -191,54 +192,16 @@ export const CaseStudyModal: React.FC<CaseStudyModalProps> = ({
             </div>
           </div>
 
-          {/* Image URL */}
+          {/* Image Uploader & Media Selector */}
           <div>
             <label className="block text-xs sm:text-sm font-mono uppercase tracking-wider text-slate-800 font-bold mb-2">
-              URL Hình Ảnh Dự Án
+              Hình Ảnh Dự Án (Case Study Image) <span className="text-red-500">*</span>
             </label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                placeholder="https://..."
-                className="flex-1 px-4 py-3 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 text-xs sm:text-sm font-mono focus:bg-white focus:outline-hidden focus:border-amber-600 focus:ring-2 focus:ring-amber-500/30 transition-all"
-              />
-            </div>
-            {/* Quick sample pickers */}
-            <div className="flex flex-wrap items-center gap-2 mt-3">
-              <span className="text-xs text-slate-600 font-mono font-bold flex items-center gap-1.5">
-                <ImageIcon className="w-3.5 h-3.5 text-amber-600" /> Ảnh mẫu:
-              </span>
-              {SAMPLE_CASE_IMAGES.map((img, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => setImageUrl(img.url)}
-                  className={`text-xs font-mono px-2.5 py-1 border rounded-md transition-all cursor-pointer ${
-                    imageUrl === img.url
-                      ? 'bg-[#c5a059] text-slate-950 border-[#c5a059] font-bold shadow-2xs'
-                      : 'bg-slate-100 border-slate-200 text-slate-700 hover:text-slate-950 hover:border-slate-400'
-                  }`}
-                >
-                  {img.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Image Preview */}
-            {imageUrl && (
-              <div className="mt-4 relative h-36 sm:h-44 w-full bg-slate-900 border border-slate-200 overflow-hidden flex items-center justify-center rounded-xl shadow-xs">
-                <img
-                  src={imageUrl}
-                  alt="Xem trước hình ảnh"
-                  className="w-full h-full object-cover brightness-95"
-                  onError={(e) => {
-                    (e.target as HTMLElement).style.display = 'none';
-                  }}
-                />
-              </div>
-            )}
+            <PostImageUploader
+              currentImageUrl={imageUrl}
+              onImageChange={(url) => setImageUrl(url)}
+              onUploadStateChange={(uploading) => setIsSubmitting(uploading)}
+            />
           </div>
 
           {/* Challenge */}

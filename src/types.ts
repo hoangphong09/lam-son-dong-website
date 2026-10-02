@@ -97,6 +97,11 @@ export interface ResearchArticle {
   readTime: string;
   author: string;
   imageUrl: string;
+  content?: string;
+  sections?: {
+    heading: string;
+    body: string;
+  }[];
 }
 
 export interface NewsItem {
@@ -108,6 +113,12 @@ export interface NewsItem {
   imageUrl: string;
   isFeatured?: boolean;
   content?: string;
+  author?: string;
+  readTime?: string;
+  sections?: {
+    heading: string;
+    body: string;
+  }[];
 }
 
 export interface ClientPartner {
@@ -185,5 +196,38 @@ export interface BreakingNewsItem {
   link?: string;
   is_active: boolean;
   display_order: number;
+  created_at?: string;
+}
+
+export interface RecruitmentPosition {
+  id: string | number;
+  title: string;
+  slug: string;
+  badge?: string;
+  salary_range: string;
+  quantity?: string;
+  location: string;
+  work_type?: string;
+  description: string;
+  requirements?: string;
+  benefits?: string;
+  deadline?: string;
+  is_active?: boolean;
+  display_order?: number;
+  image_url?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface RecruitmentApplication {
+  id?: string | number;
+  full_name: string;
+  phone: string;
+  birth_year?: string;
+  position_applied: string;
+  experience?: string;
+  notes?: string;
+  resume_url?: string;
+  status?: 'new' | 'contacted' | 'interview_scheduled' | 'hired' | 'rejected';
   created_at?: string;
 }

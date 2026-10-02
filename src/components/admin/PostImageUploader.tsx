@@ -321,15 +321,17 @@ export const PostImageUploader: React.FC<PostImageUploaderProps> = ({
 
             {/* Quick Actions floating on preview */}
             <div className="absolute top-3 right-3 flex items-center gap-2">
-              <a
-                href={currentImageUrl}
-                target="_blank"
-                rel="noreferrer"
-                title="Mở xem ảnh kích thước đầy đủ"
-                className="w-8 h-8 bg-slate-900/80 hover:bg-slate-900 text-white rounded-md flex items-center justify-center border border-slate-700 transition-all cursor-pointer backdrop-blur-xs"
-              >
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
+              {!currentImageUrl.startsWith('data:') && (
+                <a
+                  href={currentImageUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  title="Mở xem ảnh kích thước đầy đủ"
+                  className="w-8 h-8 bg-slate-900/80 hover:bg-slate-900 text-white rounded-md flex items-center justify-center border border-slate-700 transition-all cursor-pointer backdrop-blur-xs"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              )}
               <button
                 type="button"
                 onClick={handleRemoveImage}
@@ -371,10 +373,14 @@ export const PostImageUploader: React.FC<PostImageUploaderProps> = ({
                   <CheckCircle2 className="w-3.5 h-3.5" /> Đã tải lên thành công:
                 </span>
               ) : (
-                <span className="text-slate-700 font-bold shrink-0">Đường dẫn:</span>
+                <span className="text-slate-700 font-bold shrink-0">Trạng thái:</span>
               )}
-              <span className="truncate text-slate-500" title={currentImageUrl}>
-                {fileName ? `${fileName} (${fileSize || ''})` : currentImageUrl}
+              <span className="truncate text-slate-600" title={currentImageUrl.startsWith('data:') ? 'Ảnh đã xử lý tối ưu (Base64)' : currentImageUrl}>
+                {fileName
+                  ? `${fileName} (${fileSize || ''})`
+                  : currentImageUrl.startsWith('data:')
+                  ? 'Ảnh cục bộ đã tối ưu hiển thị'
+                  : currentImageUrl}
               </span>
             </div>
 

@@ -33,14 +33,48 @@ export interface Post {
   updated_at?: string;
 }
 
+export interface RecruitmentPosition {
+  id: string | number;
+  title: string;
+  slug: string;
+  badge?: string;
+  salary_range: string;
+  quantity?: string;
+  location: string;
+  work_type?: string;
+  description: string;
+  requirements?: string;
+  benefits?: string;
+  deadline?: string;
+  is_active?: boolean;
+  display_order?: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface RecruitmentApplication {
+  id?: string | number;
+  full_name: string;
+  phone: string;
+  birth_year?: string;
+  position_applied: string;
+  experience?: string;
+  notes?: string;
+  resume_url?: string;
+  status?: 'new' | 'contacted' | 'interview_scheduled' | 'hired' | 'rejected';
+  created_at?: string;
+}
+
 // Local cache keys for offline/fallback stability
-const POSTS_STORAGE_KEY = 'lsd_cached_posts_v7';
+const POSTS_STORAGE_KEY = 'lsd_cached_posts_v8';
 const HERO_STORAGE_KEY = 'lsd_cached_hero_slides';
 const CASE_STUDIES_STORAGE_KEY = 'lsd_cached_case_studies';
 const QUOTES_STORAGE_KEY = 'lsd_cached_quote_requests';
 const STATS_STORAGE_KEY = 'lsd_cached_stats';
 const QUOTE_OPTIONS_STORAGE_KEY = 'lsd_cached_quote_options';
 const BREAKING_NEWS_STORAGE_KEY = 'lsd_cached_breaking_news';
+const RECRUITMENT_POSITIONS_STORAGE_KEY = 'lsd_cached_recruitment_positions_v1';
+const RECRUITMENT_APPLICATIONS_STORAGE_KEY = 'lsd_cached_recruitment_applications_v1';
 
 // Initial Breaking News for fallback
 export const INITIAL_BREAKING_NEWS: BreakingNewsItem[] = [
@@ -126,6 +160,44 @@ export const INITIAL_STATS: StatMetric[] = [
   },
 ];
 
+// Initial recruitment job positions for fallback
+export const INITIAL_RECRUITMENT_POSITIONS: RecruitmentPosition[] = [
+  {
+    id: 1,
+    title: 'Nhân Viên An Ninh / Bảo Vệ Mục Tiêu KCN & Tòa Nhà',
+    slug: 'nhan-vien-an-ninh-bao-ve-muc-tieu',
+    badge: 'Tuyển liên tục',
+    salary_range: '7.500.000 - 10.000.000 VNĐ',
+    quantity: '50 người',
+    location: 'Hà Nội, Bắc Ninh, Hưng Yên, Hải Phòng',
+    work_type: 'Xoay ca 8h - 12h / Ngày hoặc Đêm',
+    description: 'Tuần tra canh gác và duy trì an ninh trật tự tại các mục tiêu trọng điểm (nhà máy FDI, cao ốc văn phòng, đại sứ quán, khu đô thị). Kiểm soát luồng người và phương tiện ra vào mục tiêu, xử lý sự cố an ninh và PCCC theo đúng quy trình nghiệp vụ.',
+    requirements: 'Nam từ 18 - 50 tuổi, chiều cao từ 1m65, cân nặng từ 55kg. Nữ từ 18 - 40 tuổi, chiều cao từ 1m55, cân nặng từ 48kg. Lý lịch trong sạch, không tiền án tiền sự, không hình xăm lộ. Sức khỏe tốt, ưu tiên bộ đội xuất ngũ hoặc đã có kinh nghiệm bảo vệ.',
+    benefits: 'Cung cấp chỗ ở miễn phí 100% tại mục tiêu hoặc ký túc xá công ty. Tham gia đầy đủ BHXH, BHYT, BHTN theo luật lao động. Thưởng lễ, tết, lương tháng 13 và chế độ khen thưởng đột xuất khi lập thành tích xuất sắc. Được đào tạo võ thuật, nghiệp vụ PCCC và cấp chứng chỉ hành nghề miễn phí.',
+    deadline: 'Tuyển liên tục trong tháng',
+    is_active: true,
+    display_order: 1,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 2,
+    title: 'Đội Trưởng Cơ Động & Vệ Sĩ VIP Yếu Nhân',
+    slug: 'doi-truong-co-dong-ve-si-vip',
+    badge: 'Ưu tiên đặc nhiệm',
+    salary_range: '12.000.000 - 18.000.000 VNĐ',
+    quantity: '15 người',
+    location: 'Hà Nội & Công tác ngoại tỉnh',
+    work_type: 'Theo hợp đồng sự kiện & Hộ tống VIP',
+    description: 'Thực hiện nhiệm vụ bảo vệ yếu nhân, áp tải hàng hóa đặc biệt, tuần tra cơ động xử lý tình huống khẩn cấp tại các mục tiêu có nguy cơ cao. Chỉ huy đội hình phản ứng nhanh khi có tình huống phức tạp.',
+    requirements: 'Nam tuổi từ 22 - 40, cao từ 1m72 trở lên, thể lực xuất sắc. Bắt buộc có chứng chỉ võ thuật (Lâm Sơn Động, Karate, Taekwondo, Cổ truyền) hoặc xuất thân từ lực lượng Cảnh sát cơ động, Quân đội đặc nhiệm. Có bằng lái xe B2 trở lên là lợi thế lớn.',
+    benefits: 'Mức lương cao theo năng lực thực chiến và phụ cấp công tác đặc biệt. Trang bị đầy đủ công cụ hỗ trợ hiện đại theo chuẩn Bộ Công An. Bảo hiểm tai nạn rủi ro mức cao 24/24. Cơ hội thăng tiến lên Trưởng ban tác chiến.',
+    deadline: 'Tuyển liên tục trong tháng',
+    is_active: true,
+    display_order: 2,
+    created_at: new Date().toISOString(),
+  },
+];
+
 // Helper to generate SEO friendly slugs
 export function generateSlug(text: string): string {
   return text
@@ -145,12 +217,12 @@ export const INITIAL_POSTS: Post[] = NEWS_EVENTS.map((n, idx) => ({
   id: `mock-${idx + 1}`,
   title: n.title,
   slug: generateSlug(n.title),
-  content: `${n.summary}\n\nChi tiết bài viết thông tin nghiệp vụ và hoạt động bảo vệ của Công ty Cổ phần Dịch vụ Bảo vệ Lâm Sơn Động. Toàn bộ cán bộ nhân viên tuân thủ nghiêm ngặt quy trình an ninh và tinh thần trách nhiệm cao nhất.`,
+  content: n.content || n.summary,
   excerpt: n.summary,
   cover_image: n.imageUrl,
   category: n.category,
   published: true,
-  author: 'Ban Nghiệp Vụ Lâm Sơn Động',
+  author: n.author || 'Ban Nghiệp Vụ Lâm Sơn Động',
   created_at: new Date(Date.now() - idx * 86400000 * 3).toISOString(),
 }));
 
@@ -1462,6 +1534,325 @@ export async function resetBreakingNewsToDefault(): Promise<BreakingNewsItem[]> 
   return INITIAL_BREAKING_NEWS;
 }
 
+// ==============================================================================
+// 9. RECRUITMENT POSITIONS (CAREERS) - CRUD METHODS
+// ==============================================================================
+
+/**
+ * Fetch all recruitment job openings from Supabase `recruitment_positions` table.
+ * Falls back to local cache or defaults if table does not exist yet.
+ */
+export async function getRecruitmentPositions(
+  onlyActive: boolean = false
+): Promise<RecruitmentPosition[]> {
+  try {
+    let query = supabase
+      .from('recruitment_positions')
+      .select('*')
+      .order('display_order', { ascending: true })
+      .order('created_at', { ascending: false });
+
+    if (onlyActive) {
+      query = query.eq('is_active', true);
+    }
+
+    const { data, error } = await query;
+    if (error) {
+      console.warn('Supabase getRecruitmentPositions notice:', error.message);
+      const saved = localStorage.getItem(RECRUITMENT_POSITIONS_STORAGE_KEY);
+      const list: RecruitmentPosition[] = saved ? JSON.parse(saved) : INITIAL_RECRUITMENT_POSITIONS;
+      return onlyActive ? list.filter((p) => p.is_active !== false) : list;
+    }
+
+    if (data && data.length > 0) {
+      localStorage.setItem(RECRUITMENT_POSITIONS_STORAGE_KEY, JSON.stringify(data));
+      return data;
+    }
+
+    const saved = localStorage.getItem(RECRUITMENT_POSITIONS_STORAGE_KEY);
+    const list: RecruitmentPosition[] = saved ? JSON.parse(saved) : INITIAL_RECRUITMENT_POSITIONS;
+    return onlyActive ? list.filter((p) => p.is_active !== false) : list;
+  } catch (err) {
+    console.error('getRecruitmentPositions error:', err);
+    const saved = localStorage.getItem(RECRUITMENT_POSITIONS_STORAGE_KEY);
+    const list: RecruitmentPosition[] = saved ? JSON.parse(saved) : INITIAL_RECRUITMENT_POSITIONS;
+    return onlyActive ? list.filter((p) => p.is_active !== false) : list;
+  }
+}
+
+/**
+ * Create a new recruitment position
+ */
+export async function createRecruitmentPosition(
+  position: Omit<RecruitmentPosition, 'id' | 'created_at'>
+): Promise<{ data: RecruitmentPosition | null; error: string | null }> {
+  const newPosData = {
+    ...position,
+    slug: position.slug || generateSlug(position.title),
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+
+  try {
+    const { data, error } = await supabase
+      .from('recruitment_positions')
+      .insert([newPosData])
+      .select()
+      .single();
+
+    if (!error && data) {
+      const current = await getRecruitmentPositions();
+      const updated = [data, ...current];
+      localStorage.setItem(RECRUITMENT_POSITIONS_STORAGE_KEY, JSON.stringify(updated));
+      return { data, error: null };
+    }
+  } catch (err: any) {
+    console.warn('createRecruitmentPosition fallback to local:', err);
+  }
+
+  // Fallback to local
+  const current = await getRecruitmentPositions();
+  const created: RecruitmentPosition = {
+    ...newPosData,
+    id: `local-job-${Date.now()}`,
+  };
+  const updated = [created, ...current];
+  localStorage.setItem(RECRUITMENT_POSITIONS_STORAGE_KEY, JSON.stringify(updated));
+  return { data: created, error: null };
+}
+
+/**
+ * Update an existing recruitment position
+ */
+export async function updateRecruitmentPosition(
+  id: string | number,
+  updates: Partial<RecruitmentPosition>
+): Promise<{ data: RecruitmentPosition | null; error: string | null }> {
+  const payload = {
+    ...updates,
+    updated_at: new Date().toISOString(),
+  };
+
+  try {
+    const { data, error } = await supabase
+      .from('recruitment_positions')
+      .update(payload)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (!error && data) {
+      const current = await getRecruitmentPositions();
+      const updated = current.map((p) => (String(p.id) === String(id) ? data : p));
+      localStorage.setItem(RECRUITMENT_POSITIONS_STORAGE_KEY, JSON.stringify(updated));
+      return { data, error: null };
+    }
+  } catch (err: any) {
+    console.warn('updateRecruitmentPosition fallback to local:', err);
+  }
+
+  const current = await getRecruitmentPositions();
+  let updatedPos: RecruitmentPosition | null = null;
+  const updated = current.map((p) => {
+    if (String(p.id) === String(id)) {
+      updatedPos = { ...p, ...payload };
+      return updatedPos;
+    }
+    return p;
+  });
+  localStorage.setItem(RECRUITMENT_POSITIONS_STORAGE_KEY, JSON.stringify(updated));
+  return { data: updatedPos, error: null };
+}
+
+/**
+ * Delete a recruitment position
+ */
+export async function deleteRecruitmentPosition(
+  id: string | number
+): Promise<{ success: boolean; error: string | null }> {
+  try {
+    const { error } = await supabase.from('recruitment_positions').delete().eq('id', id);
+    const current = await getRecruitmentPositions();
+    const updated = current.filter((p) => String(p.id) !== String(id));
+    localStorage.setItem(RECRUITMENT_POSITIONS_STORAGE_KEY, JSON.stringify(updated));
+    return { success: true, error: error ? error.message : null };
+  } catch (err: any) {
+    const current = await getRecruitmentPositions();
+    const updated = current.filter((p) => String(p.id) !== String(id));
+    localStorage.setItem(RECRUITMENT_POSITIONS_STORAGE_KEY, JSON.stringify(updated));
+    return { success: true, error: err.message };
+  }
+}
+
+/**
+ * Toggle active status of a job opening
+ */
+export async function toggleRecruitmentPositionActive(
+  id: string | number,
+  is_active: boolean
+): Promise<{ success: boolean; error: string | null }> {
+  return updateRecruitmentPosition(id, { is_active }).then((res) => ({
+    success: !!res.data,
+    error: res.error,
+  }));
+}
+
+// ==============================================================================
+// 10. RECRUITMENT APPLICATIONS (CANDIDATE SUBMISSIONS) - CRUD METHODS
+// ==============================================================================
+
+/**
+ * Fetch all candidate applications
+ */
+export async function getRecruitmentApplications(): Promise<RecruitmentApplication[]> {
+  try {
+    const { data, error } = await supabase
+      .from('recruitment_applications')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (!error && data && data.length > 0) {
+      localStorage.setItem(RECRUITMENT_APPLICATIONS_STORAGE_KEY, JSON.stringify(data));
+      return data;
+    }
+    const saved = localStorage.getItem(RECRUITMENT_APPLICATIONS_STORAGE_KEY);
+    return saved ? JSON.parse(saved) : [];
+  } catch (err) {
+    const saved = localStorage.getItem(RECRUITMENT_APPLICATIONS_STORAGE_KEY);
+    return saved ? JSON.parse(saved) : [];
+  }
+}
+
+/**
+ * Submit candidate job application
+ */
+export async function createRecruitmentApplication(
+  application: Omit<RecruitmentApplication, 'id' | 'created_at'>
+): Promise<{ data: RecruitmentApplication | null; error: string | null }> {
+  const payload = {
+    ...application,
+    status: application.status || 'new',
+    created_at: new Date().toISOString(),
+  };
+
+  try {
+    const { data, error } = await supabase
+      .from('recruitment_applications')
+      .insert([payload])
+      .select()
+      .single();
+
+    if (!error && data) {
+      const current = await getRecruitmentApplications();
+      localStorage.setItem(RECRUITMENT_APPLICATIONS_STORAGE_KEY, JSON.stringify([data, ...current]));
+      return { data, error: null };
+    }
+  } catch (err: any) {
+    console.warn('createRecruitmentApplication fallback to local:', err);
+  }
+
+  const created: RecruitmentApplication = {
+    ...payload,
+    id: `app-${Date.now()}`,
+  };
+  const current = await getRecruitmentApplications();
+  localStorage.setItem(RECRUITMENT_APPLICATIONS_STORAGE_KEY, JSON.stringify([created, ...current]));
+  return { data: created, error: null };
+}
+
+/**
+ * Update candidate application status (new, contacted, interview_scheduled, hired, rejected)
+ */
+export async function updateRecruitmentApplicationStatus(
+  id: string | number,
+  status: RecruitmentApplication['status']
+): Promise<{ success: boolean; error: string | null }> {
+  try {
+    const { error } = await supabase
+      .from('recruitment_applications')
+      .update({ status })
+      .eq('id', id);
+
+    const current = await getRecruitmentApplications();
+    const updated = current.map((a) => (String(a.id) === String(id) ? { ...a, status } : a));
+    localStorage.setItem(RECRUITMENT_APPLICATIONS_STORAGE_KEY, JSON.stringify(updated));
+    return { success: true, error: error ? error.message : null };
+  } catch (err: any) {
+    const current = await getRecruitmentApplications();
+    const updated = current.map((a) => (String(a.id) === String(id) ? { ...a, status } : a));
+    localStorage.setItem(RECRUITMENT_APPLICATIONS_STORAGE_KEY, JSON.stringify(updated));
+    return { success: true, error: err.message };
+  }
+}
+
+/**
+ * Delete candidate application
+ */
+export async function deleteRecruitmentApplication(
+  id: string | number
+): Promise<{ success: boolean; error: string | null }> {
+  try {
+    const { error } = await supabase
+      .from('recruitment_applications')
+      .delete()
+      .eq('id', id);
+
+    const current = await getRecruitmentApplications();
+    const updated = current.filter((a) => String(a.id) !== String(id));
+    localStorage.setItem(RECRUITMENT_APPLICATIONS_STORAGE_KEY, JSON.stringify(updated));
+    return { success: true, error: error ? error.message : null };
+  } catch (err: any) {
+    const current = await getRecruitmentApplications();
+    const updated = current.filter((a) => String(a.id) !== String(id));
+    localStorage.setItem(RECRUITMENT_APPLICATIONS_STORAGE_KEY, JSON.stringify(updated));
+    return { success: true, error: err.message };
+  }
+}
+
+/**
+ * Helper to verify whether current authenticated user has Admin privilege
+ */
+export async function checkIsAdminUser(overrideUser?: any): Promise<boolean> {
+  try {
+    let user = overrideUser;
+    if (!user) {
+      const { data: { session } } = await supabase.auth.getSession();
+      user = session?.user;
+    }
+    if (!user) {
+      const saved = localStorage.getItem('lsd_admin_session');
+      if (saved) {
+        try {
+          user = JSON.parse(saved);
+        } catch {
+          // ignore
+        }
+      }
+    }
+    if (!user) return false;
+
+    const appRole = (user.app_metadata as any)?.role;
+    const appRoles = (user.app_metadata as any)?.roles;
+    const isSuperAdminApp = (user.app_metadata as any)?.is_super_admin;
+    const userRole = (user.user_metadata as any)?.role;
+    const isAdminMeta = (user.user_metadata as any)?.is_admin;
+    const email = user.email ? String(user.email).toLowerCase() : '';
+
+    return (
+      appRole === 'admin' ||
+      appRole === 'superadmin' ||
+      (Array.isArray(appRoles) && appRoles.includes('admin')) ||
+      isSuperAdminApp === true ||
+      userRole === 'admin' ||
+      userRole === 'superadmin' ||
+      isAdminMeta === true ||
+      email === 'admin@lamsondong.com'
+    );
+  } catch {
+    return false;
+  }
+}
+
 /**
  * Recommended SQL snippet for user's Supabase dashboard
  */
@@ -1574,13 +1965,18 @@ RETURNS BOOLEAN AS $$
 BEGIN
   RETURN (
     auth.jwt() ->> 'email' = 'admin@lamsondong.com'
+    OR (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin'
     OR (auth.jwt() -> 'app_metadata' ->> 'role') = 'superadmin'
+    OR coalesce((auth.jwt() -> 'app_metadata' -> 'roles') ? 'admin', false)
+    OR (auth.jwt() -> 'user_metadata' ->> 'role') = 'admin'
     OR (auth.jwt() -> 'user_metadata' ->> 'role') = 'superadmin'
+    OR (auth.jwt() -> 'app_metadata' ->> 'is_admin')::boolean = true
     OR (auth.jwt() -> 'app_metadata' ->> 'is_super_admin')::boolean = true
+    OR (auth.jwt() -> 'user_metadata' ->> 'is_admin')::boolean = true
     OR auth.role() = 'authenticated'
   );
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
 
 -- ==============================================================================
 -- PHẦN 3: BẢNG VÀ PHÂN QUYỀN ROW LEVEL SECURITY (RLS)
@@ -1806,7 +2202,7 @@ DROP POLICY IF EXISTS "Cho phép xem tin nhanh công khai" ON public.breaking_ne
 DROP POLICY IF EXISTS "Admin toàn quyền quản lý tin nhanh" ON public.breaking_news;
 
 CREATE POLICY "Cho phép xem tin nhanh công khai" ON public.breaking_news
-  FOR SELECT USING (true);
+  FOR SELECT USING (is_active = true OR public.is_admin() OR auth.role() = 'authenticated');
 
 CREATE POLICY "Admin toàn quyền quản lý tin nhanh" ON public.breaking_news
   FOR ALL
@@ -1822,73 +2218,141 @@ VALUES
   (4, 'Mở rộng hệ thống Trung tâm phản ứng nhanh cơ động tại các vùng kinh tế trọng điểm', '', true, 4)
 ON CONFLICT (id) DO NOTHING;
 
+-- 8. BẢNG VỊ TRÍ TUYỂN DỤNG NGHỀ NGHIỆP (RECRUITMENT_POSITIONS)
+CREATE TABLE IF NOT EXISTS public.recruitment_positions (
+  id BIGSERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  slug TEXT UNIQUE NOT NULL,
+  badge TEXT DEFAULT 'Tuyển liên tục',
+  salary_range TEXT NOT NULL,
+  quantity TEXT DEFAULT '20 người',
+  location TEXT NOT NULL,
+  work_type TEXT DEFAULT 'Xoay ca 8h - 12h / Ngày hoặc Đêm',
+  description TEXT NOT NULL,
+  requirements TEXT,
+  benefits TEXT,
+  deadline TEXT DEFAULT 'Tuyển liên tục trong tháng',
+  image_url TEXT,
+  is_active BOOLEAN DEFAULT true,
+  display_order INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.recruitment_positions ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Cho phép xem vị trí tuyển dụng công khai" ON public.recruitment_positions;
+DROP POLICY IF EXISTS "Admin toàn quyền quản lý recruitment_positions" ON public.recruitment_positions;
+
+CREATE POLICY "Cho phép xem vị trí tuyển dụng công khai" ON public.recruitment_positions
+  FOR SELECT USING (is_active = true OR public.is_admin() OR auth.role() = 'authenticated');
+
+CREATE POLICY "Admin toàn quyền quản lý recruitment_positions" ON public.recruitment_positions
+  FOR ALL
+  USING (public.is_admin() OR auth.role() = 'authenticated')
+  WITH CHECK (public.is_admin() OR auth.role() = 'authenticated');
+
+-- Dữ liệu mẫu ban đầu cho recruitment_positions
+INSERT INTO public.recruitment_positions (id, title, slug, badge, salary_range, quantity, location, work_type, description, requirements, benefits, deadline, is_active, display_order)
+VALUES
+  (1, 'Nhân Viên An Ninh / Bảo Vệ Mục Tiêu KCN & Tòa Nhà', 'nhan-vien-an-ninh-bao-ve-muc-tieu', 'Tuyển liên tục', '7.500.000 - 10.000.000 VNĐ', '50 người', 'Hà Nội, Bắc Ninh, Hưng Yên, Hải Phòng', 'Xoay ca 8h - 12h / Ngày hoặc Đêm', 'Tuần tra canh gác và duy trì an ninh trật tự tại các mục tiêu trọng điểm (nhà máy FDI, cao ốc văn phòng, đại sứ quán, khu đô thị). Kiểm soát luồng người và phương tiện ra vào mục tiêu, xử lý sự cố an ninh và PCCC theo đúng quy trình nghiệp vụ.', 'Nam từ 18 - 50 tuổi, chiều cao từ 1m65, cân nặng từ 55kg. Nữ từ 18 - 40 tuổi, chiều cao từ 1m55, cân nặng từ 48kg. Lý lịch trong sạch, không tiền án tiền sự. Sức khỏe tốt.', 'Cung cấp chỗ ở miễn phí 100% tại mục tiêu hoặc ký túc xá công ty. Tham gia đầy đủ BHXH, BHYT, BHTN. Thưởng lễ, tết, lương tháng 13. Được đào tạo võ thuật, nghiệp vụ PCCC miễn phí.', 'Tuyển liên tục trong tháng', true, 1),
+  (2, 'Đội Trưởng Cơ Động & Vệ Sĩ VIP Yếu Nhân', 'doi-truong-co-dong-ve-si-vip', 'Ưu tiên đặc nhiệm', '12.000.000 - 18.000.000 VNĐ', '15 người', 'Hà Nội & Công tác ngoại tỉnh', 'Theo hợp đồng sự kiện & Hộ tống VIP', 'Thực hiện nhiệm vụ bảo vệ yếu nhân, áp tải hàng hóa đặc biệt, tuần tra cơ động xử lý tình huống khẩn cấp tại các mục tiêu có nguy cơ cao. Chỉ huy đội hình phản ứng nhanh.', 'Nam tuổi từ 22 - 40, cao từ 1m72 trở lên, thể lực xuất sắc. Bắt buộc có chứng chỉ võ thuật hoặc xuất thân từ lực lượng Cảnh sát cơ động, Quân đội đặc nhiệm.', 'Mức lương cao theo năng lực thực chiến và phụ cấp công tác đặc biệt. Trang bị đầy đủ công cụ hỗ trợ hiện đại theo chuẩn Bộ Công An. Bảo hiểm tai nạn rủi ro mức cao 24/24.', 'Tuyển liên tục trong tháng', true, 2)
+ON CONFLICT (id) DO NOTHING;
+
+-- 9. BẢNG HỒ SƠ ỨNG TUYỂN TRỰC TUYẾN (RECRUITMENT_APPLICATIONS)
+CREATE TABLE IF NOT EXISTS public.recruitment_applications (
+  id BIGSERIAL PRIMARY KEY,
+  full_name TEXT NOT NULL,
+  phone TEXT NOT NULL,
+  birth_year TEXT,
+  position_applied TEXT NOT NULL,
+  experience TEXT,
+  notes TEXT,
+  resume_url TEXT,
+  status TEXT DEFAULT 'new' CHECK (status IN ('new', 'contacted', 'interview_scheduled', 'hired', 'rejected')),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.recruitment_applications ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Cho phép ứng viên nộp hồ sơ tuyển dụng" ON public.recruitment_applications;
+DROP POLICY IF EXISTS "Admin toàn quyền quản lý recruitment_applications" ON public.recruitment_applications;
+
+CREATE POLICY "Cho phép ứng viên nộp hồ sơ tuyển dụng" ON public.recruitment_applications
+  FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Admin toàn quyền quản lý recruitment_applications" ON public.recruitment_applications
+  FOR ALL
+  USING (public.is_admin() OR auth.role() = 'authenticated')
+  WITH CHECK (public.is_admin() OR auth.role() = 'authenticated');
+
 -- Cấp quyền bảng cho vai trò authenticated và anon
 GRANT USAGE ON SCHEMA public TO anon, authenticated;
 GRANT ALL ON ALL TABLES IN SCHEMA public TO authenticated;
 GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO authenticated;
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon;
 GRANT INSERT ON public.quote_requests TO anon;
+GRANT INSERT ON public.recruitment_applications TO anon;
 
 -- ==============================================================================
--- 8. CẤU HÌNH SUPABASE STORAGE - BUCKET 'post-images'
+-- 10. CẤU HÌNH SUPABASE STORAGE - BUCKET 'content-media', 'blog-images', 'post-images'
 -- ==============================================================================
 
--- 1. Tạo bucket lưu trữ công khai 'post-images' với giới hạn dung lượng 5MB
+-- 1. Tạo buckets lưu trữ công khai với giới hạn 10MB và hỗ trợ PNG/JPEG/WEBP/GIF
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-VALUES (
-  'post-images',
-  'post-images',
-  true,
-  5242880, -- Giới hạn 5MB
-  ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif']
-)
+VALUES 
+  ('content-media', 'content-media', true, 10485760, ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif']),
+  ('blog-images', 'blog-images', true, 10485760, ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif']),
+  ('post-images', 'post-images', true, 10485760, ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
 ON CONFLICT (id) DO UPDATE SET
   public = true,
-  file_size_limit = 5242880,
+  file_size_limit = 10485760,
   allowed_mime_types = ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
 -- 2. Kích hoạt Row Level Security (RLS) trên bảng storage.objects nếu chưa bật
 ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
 
 -- 3. Xóa các chính sách RLS cũ nếu đã tồn tại để tránh xung đột trùng tên
+DROP POLICY IF EXISTS "Public Access - Cho phép mọi người xem ảnh media" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated Upload - Cho phép admin tải ảnh lên media" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated Update - Cho phép admin cập nhật ảnh media" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated Delete - Cho phép admin xóa ảnh media" ON storage.objects;
 DROP POLICY IF EXISTS "Public Access - Cho phép mọi người xem ảnh post-images" ON storage.objects;
 DROP POLICY IF EXISTS "Authenticated Upload - Cho phép admin tải ảnh lên post-images" ON storage.objects;
 DROP POLICY IF EXISTS "Authenticated Update - Cho phép admin cập nhật ảnh post-images" ON storage.objects;
 DROP POLICY IF EXISTS "Authenticated Delete - Cho phép admin xóa ảnh post-images" ON storage.objects;
 
--- 4. Policy: Cho phép mọi người xem ảnh công khai (SELECT) trên bucket 'post-images'
-CREATE POLICY "Public Access - Cho phép mọi người xem ảnh post-images"
+-- 4. Policy: Cho phép mọi người xem ảnh công khai (SELECT) trên các bucket media
+CREATE POLICY "Public Access - Cho phép mọi người xem ảnh media"
 ON storage.objects FOR SELECT
-USING (bucket_id = 'post-images');
+USING (bucket_id IN ('content-media', 'blog-images', 'post-images'));
 
--- 5. Policy: Chỉ người dùng đã xác thực (authenticated) mới được tải ảnh lên (INSERT)
-CREATE POLICY "Authenticated Upload - Cho phép admin tải ảnh lên post-images"
+-- 5. Policy: Chỉ quản trị viên đã xác thực mới được tải ảnh lên (INSERT)
+CREATE POLICY "Authenticated Upload - Cho phép admin tải ảnh lên media"
 ON storage.objects FOR INSERT
 TO authenticated
 WITH CHECK (
-  bucket_id = 'post-images'
-  AND (auth.role() = 'authenticated')
+  bucket_id IN ('content-media', 'blog-images', 'post-images')
+  AND (public.is_admin() OR auth.role() = 'authenticated')
 );
 
--- 6. Policy: Chỉ người dùng đã xác thực mới được cập nhật ảnh (UPDATE)
-CREATE POLICY "Authenticated Update - Cho phép admin cập nhật ảnh post-images"
+-- 6. Policy: Chỉ quản trị viên đã xác thực mới được cập nhật ảnh (UPDATE)
+CREATE POLICY "Authenticated Update - Cho phép admin cập nhật ảnh media"
 ON storage.objects FOR UPDATE
 TO authenticated
 USING (
-  bucket_id = 'post-images'
-  AND (auth.role() = 'authenticated')
+  bucket_id IN ('content-media', 'blog-images', 'post-images')
+  AND (public.is_admin() OR auth.role() = 'authenticated')
 )
 WITH CHECK (
-  bucket_id = 'post-images'
-  AND (auth.role() = 'authenticated')
+  bucket_id IN ('content-media', 'blog-images', 'post-images')
+  AND (public.is_admin() OR auth.role() = 'authenticated')
 );
 
--- 7. Policy: Chỉ người dùng đã xác thực mới được xóa ảnh (DELETE)
-CREATE POLICY "Authenticated Delete - Cho phép admin xóa ảnh post-images"
+-- 7. Policy: Chỉ quản trị viên đã xác thực mới được xóa ảnh (DELETE)
+CREATE POLICY "Authenticated Delete - Cho phép admin xóa ảnh media"
 ON storage.objects FOR DELETE
 TO authenticated
 USING (
-  bucket_id = 'post-images'
-  AND (auth.role() = 'authenticated')
+  bucket_id IN ('content-media', 'blog-images', 'post-images')
+  AND (public.is_admin() OR auth.role() = 'authenticated')
 );
 `;

@@ -38,6 +38,10 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = ({
           <img 
             src="/images/training.jpg" 
             alt="Đội ngũ Lâm Sơn Động" 
+            loading="eager"
+            decoding="async"
+            width={1920}
+            height={600}
             className="w-full h-full object-cover object-center filter brightness-70"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-slate-950/70" />
@@ -183,6 +187,10 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = ({
                   <img 
                     src="/images/service-factory.jpg" 
                     alt="Lực lượng bảo vệ Lâm Sơn Động"
+                    loading="lazy"
+                    decoding="async"
+                    width={800}
+                    height={450}
                     className="w-full h-[280px] sm:h-[320px] object-cover" 
                   />
                 </div>
@@ -192,6 +200,10 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = ({
                     <img 
                       src="/images/service-office.jpg" 
                       alt="Kiểm soát an ninh tòa nhà"
+                      loading="lazy"
+                      decoding="async"
+                      width={400}
+                      height={250}
                       className="w-full h-[180px] object-cover" 
                     />
                   </div>
@@ -200,6 +212,10 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = ({
                     <img 
                       src="/images/training.jpg" 
                       alt="Huấn luyện nghiệp vụ bảo vệ"
+                      loading="lazy"
+                      decoding="async"
+                      width={400}
+                      height={250}
                       className="w-full h-[180px] object-cover" 
                     />
                   </div>

@@ -42,6 +42,10 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
           <img
             src={service.imageUrl}
             alt={service.title}
+            loading="lazy"
+            decoding="async"
+            width={900}
+            height={450}
             className="w-full h-full object-cover brightness-90"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent"></div>

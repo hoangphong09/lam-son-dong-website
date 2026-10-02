@@ -11,16 +11,26 @@ interface EventsAndNewsProps {
 
 export const EventsAndNews: React.FC<EventsAndNewsProps> = ({ onSelectNews, posts }) => {
   const newsItems: NewsItem[] = posts && posts.length > 0
-    ? posts.filter(p => p.published !== false).map(p => ({
-        id: String(p.id),
-        title: p.title,
-        date: p.created_at ? new Date(p.created_at).toLocaleDateString('vi-VN') : '2026',
-        category: p.category || 'Tin tức',
-        summary: p.excerpt || p.content.slice(0, 150) + '...',
-        content: p.content,
-        imageUrl: p.cover_image || '/images/training.jpg',
-        isFeatured: true,
-      }))
+    ? posts.filter(p => p.published !== false).map(p => {
+        const matched = NEWS_EVENTS.find(n => 
+          n.title.toLowerCase().trim() === p.title.toLowerCase().trim() ||
+          n.id === p.id ||
+          p.title.toLowerCase().includes(n.title.toLowerCase().slice(0, 20))
+        );
+        return {
+          id: String(p.id),
+          title: p.title,
+          date: p.created_at ? new Date(p.created_at).toLocaleDateString('vi-VN') : (matched?.date || '2026'),
+          category: p.category || matched?.category || 'Sự Kiện & Tin Tức',
+          summary: p.excerpt || matched?.summary || (p.content ? p.content.slice(0, 150) + '...' : ''),
+          content: (p.content && p.content.length > 250) ? p.content : (matched?.content || p.content),
+          imageUrl: p.cover_image || matched?.imageUrl || '/images/training.jpg',
+          isFeatured: true,
+          author: p.author || matched?.author || 'Ban Chỉ Huy Lâm Sơn Động',
+          readTime: matched?.readTime || '5 phút đọc',
+          sections: matched?.sections || [],
+        };
+      })
     : NEWS_EVENTS;
 
   // Only take the 4 newest articles
@@ -47,7 +57,8 @@ export const EventsAndNews: React.FC<EventsAndNewsProps> = ({ onSelectNews, post
           {featuredNews && (
             <div 
               id="featured-news-card"
-              className="lg:col-span-7 bg-white border border-slate-200 hover:border-amber-500 rounded-2xl transition-all flex flex-col justify-between group overflow-hidden shadow-xs hover:shadow-md"
+              onClick={() => onSelectNews(featuredNews)}
+              className="lg:col-span-7 bg-white border border-slate-200 hover:border-amber-500 rounded-2xl transition-all duration-300 ease-out flex flex-col justify-between group overflow-hidden shadow-xs hover:shadow-xl hover:scale-105 cursor-pointer"
             >
               <div>
                 <div className="relative h-64 sm:h-76 lg:h-[300px] overflow-hidden bg-slate-100">
@@ -56,6 +67,9 @@ export const EventsAndNews: React.FC<EventsAndNewsProps> = ({ onSelectNews, post
                     alt={`Tin tức an ninh: ${featuredNews.title} - Lâm Sơn Động`}
                     loading="lazy"
                     decoding="async"
+                    width={800}
+                    height={450}
+                    sizes="(max-width: 1024px) 100vw, 58vw"
                     onError={(e) => {
                       (e.currentTarget as HTMLImageElement).src = '/images/training.jpg';
                     }}
@@ -83,7 +97,11 @@ export const EventsAndNews: React.FC<EventsAndNewsProps> = ({ onSelectNews, post
 
               <div className="p-6 sm:p-8 pt-0">
                 <button
-                  onClick={() => onSelectNews(featuredNews)}
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSelectNews(featuredNews);
+                  }}
                   className="py-2.5 px-6 bg-[#c5a059] hover:bg-[#b8860b] text-slate-950 font-black text-[10px] uppercase tracking-widest transition-all flex items-center gap-2 rounded-lg shadow-xs hover:shadow cursor-pointer"
                 >
                   <span>Đọc bài viết</span>
@@ -99,7 +117,8 @@ export const EventsAndNews: React.FC<EventsAndNewsProps> = ({ onSelectNews, post
               <div
                 key={item.id}
                 id={`side-news-${item.id}`}
-                className="bg-white border border-slate-200 hover:border-amber-500 rounded-2xl transition-all p-4 sm:p-5 flex flex-col justify-between group shadow-xs hover:shadow-md flex-1"
+                onClick={() => onSelectNews(item)}
+                className="bg-white border border-slate-200 hover:border-amber-500 rounded-2xl transition-all duration-300 ease-out p-4 sm:p-5 flex flex-col justify-between group shadow-xs hover:shadow-xl hover:scale-105 flex-1 cursor-pointer"
               >
                 <div className="flex flex-col sm:flex-row gap-4 items-center sm:items-start">
                   <div className="w-full sm:w-32 h-28 sm:h-24 shrink-0 overflow-hidden bg-slate-100 border border-slate-200 rounded-xl">
@@ -108,6 +127,8 @@ export const EventsAndNews: React.FC<EventsAndNewsProps> = ({ onSelectNews, post
                       alt={`Tin sự kiện: ${item.title} - Lâm Sơn Động`}
                       loading="lazy"
                       decoding="async"
+                      width={320}
+                      height={200}
                       onError={(e) => {
                         (e.currentTarget as HTMLImageElement).src = '/images/training.jpg';
                       }}
@@ -134,7 +155,11 @@ export const EventsAndNews: React.FC<EventsAndNewsProps> = ({ onSelectNews, post
 
                 <div className="mt-3 pt-2.5 border-t border-slate-100 flex justify-end">
                   <button
-                    onClick={() => onSelectNews(item)}
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onSelectNews(item);
+                    }}
                     className="text-[10px] font-black uppercase tracking-widest text-amber-800 hover:text-amber-950 flex items-center gap-1 transition-colors cursor-pointer"
                   >
                     <span>Đọc thêm</span>

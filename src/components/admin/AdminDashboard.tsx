@@ -27,6 +27,17 @@ import {
   deleteBreakingNews,
   toggleBreakingNewsActive,
   resetBreakingNewsToDefault,
+  RecruitmentPosition,
+  RecruitmentApplication,
+  getRecruitmentPositions,
+  createRecruitmentPosition,
+  updateRecruitmentPosition,
+  deleteRecruitmentPosition,
+  toggleRecruitmentPositionActive,
+  getRecruitmentApplications,
+  updateRecruitmentApplicationStatus,
+  deleteRecruitmentApplication,
+  SUPABASE_SETUP_SQL,
 } from '../../lib/supabase';
 import { HeroSlide, QuoteRequest, StatMetric, QuoteOption, QuoteOptionCategory, BreakingNewsItem } from '../../types';
 import { PostModal } from './PostModal';
@@ -34,6 +45,7 @@ import { HeroSlideModal } from './HeroSlideModal';
 import { StatModal } from './StatModal';
 import { QuoteOptionModal } from './QuoteOptionModal';
 import { BreakingNewsModal } from './BreakingNewsModal';
+import { RecruitmentPositionModal } from './RecruitmentPositionModal';
 import {
   Shield,
   FileText,
@@ -76,6 +88,8 @@ import {
   Link2,
   ChevronUp,
   ChevronDown,
+  Users,
+  MapPin,
 } from 'lucide-react';
 
 interface AdminDashboardProps {
@@ -96,7 +110,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   onBreakingNewsUpdated,
 }) => {
   // Navigation tabs for business management
-  type AdminTab = 'quotes' | 'posts' | 'hero' | 'breaking-news' | 'stats' | 'quote-settings';
+  type AdminTab = 'quotes' | 'posts' | 'hero' | 'breaking-news' | 'stats' | 'quote-settings' | 'recruitment' | 'sql-setup';
 
   const getInitialTab = (): AdminTab => {
     const path = window.location.pathname;
@@ -105,6 +119,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     if (path === '/admin/hero' || hash === '#admin/hero' || hash.includes('tab=hero')) return 'hero';
     if (path === '/admin/breaking-news' || hash === '#admin/breaking-news' || hash.includes('tab=breaking-news')) return 'breaking-news';
     if (path === '/admin/stats' || hash === '#admin/stats' || hash.includes('tab=stats')) return 'stats';
+    if (path === '/admin/recruitment' || hash === '#admin/recruitment' || hash.includes('tab=recruitment')) return 'recruitment';
+    if (path === '/admin/sql-setup' || hash === '#admin/sql-setup' || hash.includes('tab=sql-setup')) return 'sql-setup';
     if (path === '/admin/quote-settings' || path === '/admin/pricing' || hash.includes('tab=quote-settings') || hash.includes('tab=pricing')) return 'quote-settings';
     return 'quotes';
   };
@@ -119,6 +135,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       window.history.replaceState(null, '', '#admin/quote-settings');
     } else if (tab === 'breaking-news') {
       window.history.replaceState(null, '', '#admin/breaking-news');
+    } else if (tab === 'recruitment') {
+      window.history.replaceState(null, '', '#admin/recruitment');
+    } else if (tab === 'sql-setup') {
+      window.history.replaceState(null, '', '#admin/sql-setup');
     } else {
       window.history.replaceState(null, '', `#admin/${tab}`);
     }
@@ -179,6 +199,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [editingSlide, setEditingSlide] = useState<HeroSlide | null>(null);
   const [isHeroModalOpen, setIsHeroModalOpen] = useState(false);
 
+  // Recruitment CMS state (TUYỂN DỤNG & ỨNG VIÊN)
+  const [recruitmentPositions, setRecruitmentPositions] = useState<RecruitmentPosition[]>([]);
+  const [recruitmentApplications, setRecruitmentApplications] = useState<RecruitmentApplication[]>([]);
+  const [isLoadingRecruitment, setIsLoadingRecruitment] = useState(true);
+  const [recruitmentSubTab, setRecruitmentSubTab] = useState<'positions' | 'applications'>('positions');
+  const [editingPosition, setEditingPosition] = useState<RecruitmentPosition | null>(null);
+  const [isPositionModalOpen, setIsPositionModalOpen] = useState(false);
+  const [deletingPositionId, setDeletingPositionId] = useState<string | number | null>(null);
+  const [deletingApplicationId, setDeletingApplicationId] = useState<string | number | null>(null);
+  const [recruitmentNotice, setRecruitmentNotice] = useState<string | null>(null);
+  const [recruitmentSearchTerm, setRecruitmentSearchTerm] = useState('');
+  const [applicationStatusFilter, setApplicationStatusFilter] = useState<'all' | 'new' | 'contacted' | 'interview_scheduled' | 'hired' | 'rejected'>('all');
+  const [copiedSql, setCopiedSql] = useState(false);
+
   // Listen to hash changes
   useEffect(() => {
     const handleHashChange = () => {
@@ -186,6 +220,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       if (hash === '#admin/stats') setActiveTab('stats');
       else if (hash === '#admin/quote-requests' || hash === '#admin/quotes') setActiveTab('quotes');
       else if (hash === '#admin/quote-settings' || hash === '#admin/quote-options' || hash === '#admin/pricing') setActiveTab('quote-settings');
+      else if (hash === '#admin/recruitment') setActiveTab('recruitment');
+      else if (hash === '#admin/sql-setup') setActiveTab('sql-setup');
       else if (hash === '#admin/breaking-news') setActiveTab('breaking-news');
       else if (hash === '#admin/posts') setActiveTab('posts');
       else if (hash === '#admin/hero') setActiveTab('hero');
@@ -281,6 +317,25 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     }
   };
 
+  // Fetch Recruitment CMS Data
+  const loadRecruitmentData = async () => {
+    setIsLoadingRecruitment(true);
+    setRecruitmentNotice(null);
+    try {
+      const [positions, apps] = await Promise.all([
+        getRecruitmentPositions(false),
+        getRecruitmentApplications(),
+      ]);
+      setRecruitmentPositions(positions || []);
+      setRecruitmentApplications(apps || []);
+    } catch (err: any) {
+      console.error(err);
+      setRecruitmentNotice('Không thể tải dữ liệu tuyển dụng. Vui lòng thử lại.');
+    } finally {
+      setIsLoadingRecruitment(false);
+    }
+  };
+
   useEffect(() => {
     loadStats();
     loadQuoteRequests();
@@ -288,7 +343,82 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     loadBreakingNews();
     loadPosts();
     loadHeroSlides();
+    loadRecruitmentData();
   }, []);
+
+  // RECRUITMENT HANDLERS
+  const handleSavePosition = async (positionData: Partial<RecruitmentPosition>) => {
+    try {
+      if (editingPosition?.id) {
+        const res = await updateRecruitmentPosition(editingPosition.id, positionData);
+        if (res.error) return { success: false, error: res.error };
+      } else {
+        const res = await createRecruitmentPosition(positionData as any);
+        if (res.error) return { success: false, error: res.error };
+      }
+      await loadRecruitmentData();
+      setIsPositionModalOpen(false);
+      setEditingPosition(null);
+      setRecruitmentNotice('Lưu vị trí tuyển dụng thành công!');
+      setTimeout(() => setRecruitmentNotice(null), 3000);
+      return { success: true };
+    } catch (err: any) {
+      return { success: false, error: err.message || 'Lỗi lưu vị trí tuyển dụng' };
+    }
+  };
+
+  const handleTogglePosition = async (id: string | number, currentActive: boolean) => {
+    try {
+      await toggleRecruitmentPositionActive(id, !currentActive);
+      await loadRecruitmentData();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeletePosition = async (id: string | number) => {
+    if (!confirm('Bạn có chắc chắn muốn xóa vị trí tuyển dụng này?')) return;
+    setDeletingPositionId(id);
+    try {
+      await deleteRecruitmentPosition(id);
+      await loadRecruitmentData();
+      setRecruitmentNotice('Đã xóa vị trí tuyển dụng.');
+      setTimeout(() => setRecruitmentNotice(null), 3000);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setDeletingPositionId(null);
+    }
+  };
+
+  const handleUpdateApplicationStatus = async (
+    id: string | number,
+    status: RecruitmentApplication['status']
+  ) => {
+    try {
+      await updateRecruitmentApplicationStatus(id, status);
+      await loadRecruitmentData();
+      setRecruitmentNotice('Đã cập nhật trạng thái hồ sơ ứng viên.');
+      setTimeout(() => setRecruitmentNotice(null), 2500);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteApplication = async (id: string | number) => {
+    if (!confirm('Bạn có chắc chắn muốn xóa hồ sơ ứng viên này?')) return;
+    setDeletingApplicationId(id);
+    try {
+      await deleteRecruitmentApplication(id);
+      await loadRecruitmentData();
+      setRecruitmentNotice('Đã xóa hồ sơ ứng viên.');
+      setTimeout(() => setRecruitmentNotice(null), 2500);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setDeletingApplicationId(null);
+    }
+  };
 
   // BREAKING NEWS HANDLERS
   const handleSaveBreakingNews = async (newsData: Partial<BreakingNewsItem>) => {
@@ -476,20 +606,38 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   // POST HANDLERS
   const handleSavePost = async (postData: Partial<Post>) => {
-    if (editingPost && editingPost.id) {
-      await updatePost(editingPost.id, postData);
-    } else {
-      await createPost(postData as any);
+    try {
+      if (editingPost && editingPost.id) {
+        const res = await updatePost(editingPost.id, postData);
+        if (res.error) throw new Error(res.error);
+      } else {
+        const res = await createPost(postData as any);
+        if (res.error) throw new Error(res.error);
+      }
+      await loadPosts();
+      setEditingPost(null);
+      setPostNotice('Đã lưu bài viết thành công vào hệ thống!');
+      setTimeout(() => setPostNotice(null), 3500);
+    } catch (err: any) {
+      console.error('Lỗi khi lưu bài viết:', err);
+      setPostNotice(`Lỗi lưu bài viết: ${err.message || 'Lỗi thao tác'}`);
+      throw err;
     }
-    await loadPosts();
-    setEditingPost(null);
   };
 
   const handleConfirmDeletePost = async () => {
     if (!deletingPostId) return;
-    await deletePost(deletingPostId);
-    setDeletingPostId(null);
-    await loadPosts();
+    try {
+      const res = await deletePost(deletingPostId);
+      if (res.error) throw new Error(res.error);
+      setDeletingPostId(null);
+      await loadPosts();
+      setPostNotice('Đã xóa bài viết thành công khỏi cơ sở dữ liệu.');
+      setTimeout(() => setPostNotice(null), 3500);
+    } catch (err: any) {
+      console.error('Lỗi khi xóa bài viết:', err);
+      setPostNotice(`Lỗi xóa bài viết: ${err.message || 'Lỗi kết nối'}`);
+    }
   };
 
   // HERO SLIDE HANDLERS
@@ -724,6 +872,40 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <span className="text-[11px] text-slate-500 bg-slate-200/80 px-1.5 py-0.2 rounded-full font-normal">
               {quoteOptions.length}
             </span>
+          </button>
+
+          {/* TAB 7: TUYỂN DỤNG & ỨNG VIÊN (CAREERS CMS) */}
+          <button
+            onClick={() => switchTab('recruitment')}
+            className={`py-2 px-3.5 rounded-lg font-semibold flex items-center gap-2 transition-all shrink-0 cursor-pointer ${
+              activeTab === 'recruitment'
+                ? 'bg-amber-100/90 text-amber-950 border border-amber-300'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            }`}
+          >
+            <span>Tuyển Dụng & Hồ Sơ</span>
+            {recruitmentApplications.filter((a) => a.status === 'new').length > 0 ? (
+              <span className="text-[10px] bg-red-600 text-white font-bold px-2 py-0.5 rounded-full animate-pulse">
+                {recruitmentApplications.filter((a) => a.status === 'new').length} hồ sơ mới
+              </span>
+            ) : (
+              <span className="text-[11px] text-slate-500 bg-slate-200/80 px-1.5 py-0.2 rounded-full font-normal">
+                {recruitmentPositions.length} vị trí
+              </span>
+            )}
+          </button>
+
+          {/* TAB 8: PHÂN QUYỀN RLS & STORAGE SQL */}
+          <button
+            onClick={() => switchTab('sql-setup')}
+            className={`py-2 px-3.5 rounded-lg font-semibold flex items-center gap-2 transition-all shrink-0 cursor-pointer ${
+              activeTab === 'sql-setup'
+                ? 'bg-amber-100/90 text-amber-950 border border-amber-300'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            }`}
+          >
+            <Database className="w-3.5 h-3.5 text-amber-700" />
+            <span>RLS & Storage SQL</span>
           </button>
         </div>
       </header>
@@ -2073,6 +2255,402 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================= */}
+        {/* TAB 7: TUYỂN DỤNG & HỒ SƠ ỨNG VIÊN (CAREERS CMS)           */}
+        {/* ========================================================= */}
+        {activeTab === 'recruitment' && (
+          <div className="space-y-6 animate-fadeIn">
+            {/* Top Toolbar */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 border border-slate-200 rounded-xl shadow-xs">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <h2 className="text-base sm:text-lg font-bold text-slate-900 font-['Plus_Jakarta_Sans']">
+                    Quản Lý Tuyển Dụng & Hồ Sơ Ứng Viên
+                  </h2>
+                  <span className="text-[10px] font-mono font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded border border-amber-300">
+                    CAREERS CMS
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500">
+                  Đăng tin tuyển dụng nhân viên an ninh, quản lý lịch phỏng vấn và duyệt hồ sơ ứng viên trực tuyến
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2.5">
+                <button
+                  onClick={loadRecruitmentData}
+                  className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-700 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                  title="Tải lại dữ liệu tuyển dụng"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isLoadingRecruitment ? 'animate-spin text-amber-700' : ''}`} />
+                  <span>Làm mới</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setEditingPosition(null);
+                    setIsPositionModalOpen(true);
+                  }}
+                  className="px-4 py-2 bg-[#c5a059] hover:bg-[#b8860b] text-slate-950 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Thêm Vị Trí Mới</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Notice Alert */}
+            {recruitmentNotice && (
+              <div className="p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded-xl flex items-center gap-2 animate-fadeIn">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>{recruitmentNotice}</span>
+              </div>
+            )}
+
+            {/* Sub-tab Switcher: Positions vs Applications */}
+            <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
+              <button
+                onClick={() => setRecruitmentSubTab('positions')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold font-mono uppercase tracking-wider flex items-center gap-2 transition-all cursor-pointer ${
+                  recruitmentSubTab === 'positions'
+                    ? 'bg-slate-900 text-white shadow-xs'
+                    : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                }`}
+              >
+                <Briefcase className="w-3.5 h-3.5 text-amber-400" />
+                <span>Vị Trí Đang Tuyển ({recruitmentPositions.length})</span>
+              </button>
+
+              <button
+                onClick={() => setRecruitmentSubTab('applications')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold font-mono uppercase tracking-wider flex items-center gap-2 transition-all cursor-pointer ${
+                  recruitmentSubTab === 'applications'
+                    ? 'bg-slate-900 text-white shadow-xs'
+                    : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                }`}
+              >
+                <Users className="w-3.5 h-3.5 text-amber-400" />
+                <span>Hồ Sơ Ứng Viên ({recruitmentApplications.length})</span>
+                {recruitmentApplications.filter((a) => a.status === 'new').length > 0 && (
+                  <span className="bg-red-600 text-white text-[10px] px-1.5 py-0.2 rounded-full font-bold">
+                    {recruitmentApplications.filter((a) => a.status === 'new').length} mới
+                  </span>
+                )}
+              </button>
+            </div>
+
+            {/* SUB-TAB 1: JOB POSITIONS */}
+            {recruitmentSubTab === 'positions' && (
+              <div className="space-y-4">
+                {isLoadingRecruitment ? (
+                  <div className="p-12 text-center text-slate-400 text-xs">
+                    <RefreshCw className="w-6 h-6 animate-spin text-amber-700 mx-auto mb-2" />
+                    Đang tải dữ liệu vị trí tuyển dụng...
+                  </div>
+                ) : recruitmentPositions.length === 0 ? (
+                  <div className="bg-white p-12 text-center rounded-xl border border-slate-200 text-slate-500 text-xs space-y-3">
+                    <Briefcase className="w-8 h-8 text-slate-400 mx-auto" />
+                    <p>Chưa có vị trí tuyển dụng nào trong hệ thống.</p>
+                    <button
+                      onClick={() => {
+                        setEditingPosition(null);
+                        setIsPositionModalOpen(true);
+                      }}
+                      className="px-4 py-2 bg-[#c5a059] text-slate-950 font-bold rounded-lg text-xs uppercase"
+                    >
+                      Tạo vị trí đầu tiên
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {recruitmentPositions.map((pos) => (
+                      <div
+                        key={pos.id}
+                        className={`bg-white border rounded-2xl p-5 sm:p-6 flex flex-col justify-between transition-all shadow-xs ${
+                          pos.is_active !== false
+                            ? 'border-slate-200 hover:border-amber-400'
+                            : 'border-slate-200 bg-slate-50/60 opacity-75'
+                        }`}
+                      >
+                        <div className="space-y-3">
+                          <div className="flex items-start justify-between gap-2">
+                            <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2.5 py-0.5 rounded bg-amber-100 border border-amber-300 text-amber-900">
+                              {pos.badge || 'Tuyển liên tục'}
+                            </span>
+                            <span
+                              className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold uppercase ${
+                                pos.is_active !== false
+                                  ? 'bg-emerald-100 text-emerald-800'
+                                  : 'bg-slate-200 text-slate-600'
+                              }`}
+                            >
+                              {pos.is_active !== false ? 'Đang mở tuyển' : 'Tạm dừng'}
+                            </span>
+                          </div>
+
+                          <h3 className="font-bold text-slate-950 text-base leading-snug">
+                            {pos.title}
+                          </h3>
+
+                          {pos.image_url && (
+                            <div className="h-28 w-full rounded-xl overflow-hidden bg-slate-100 border border-slate-200 relative group">
+                              <img
+                                src={pos.image_url}
+                                alt={pos.title}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              />
+                              <div className="absolute top-2 left-2 bg-slate-900/80 backdrop-blur-xs text-[10px] font-mono text-white px-2 py-0.5 rounded">
+                                Banner tuyển dụng
+                              </div>
+                            </div>
+                          )}
+
+                          <div className="space-y-1.5 text-xs text-slate-600 font-mono">
+                            <div className="flex items-center gap-1.5 text-amber-900 font-bold">
+                              <DollarSign className="w-3.5 h-3.5 text-amber-700" />
+                              <span>{pos.salary_range}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <MapPin className="w-3.5 h-3.5 text-slate-500" />
+                              <span>{pos.location}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <Clock className="w-3.5 h-3.5 text-slate-500" />
+                              <span>{pos.work_type || 'Theo ca'}</span>
+                            </div>
+                          </div>
+
+                          <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
+                            {pos.description}
+                          </p>
+                        </div>
+
+                        <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between">
+                          <label className="inline-flex items-center gap-1.5 cursor-pointer text-xs font-mono text-slate-700 select-none">
+                            <input
+                              type="checkbox"
+                              checked={pos.is_active !== false}
+                              onChange={() => handleTogglePosition(pos.id, pos.is_active !== false)}
+                              className="w-4 h-4 text-amber-600 rounded border-slate-300"
+                            />
+                            <span>{pos.is_active !== false ? 'Bật hiển thị' : 'Đang ẩn'}</span>
+                          </label>
+
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              onClick={() => {
+                                setEditingPosition(pos);
+                                setIsPositionModalOpen(true);
+                              }}
+                              className="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 rounded-lg text-xs font-semibold flex items-center gap-1 cursor-pointer"
+                            >
+                              <Edit2 className="w-3 h-3" />
+                              <span>Sửa</span>
+                            </button>
+                            <button
+                              onClick={() => handleDeletePosition(pos.id)}
+                              disabled={deletingPositionId === pos.id}
+                              className="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-lg text-xs cursor-pointer disabled:opacity-50"
+                              title="Xóa vị trí"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* SUB-TAB 2: CANDIDATE APPLICATIONS */}
+            {recruitmentSubTab === 'applications' && (
+              <div className="space-y-4">
+                {/* Filter bar */}
+                <div className="bg-white p-4 border border-slate-200 rounded-xl flex flex-wrap items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-2">
+                    <Filter className="w-4 h-4 text-slate-500" />
+                    <span className="font-bold text-slate-700">Trạng thái:</span>
+                    <select
+                      value={applicationStatusFilter}
+                      onChange={(e) => setApplicationStatusFilter(e.target.value as any)}
+                      className="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono font-medium text-slate-800"
+                    >
+                      <option value="all">Tất cả ({recruitmentApplications.length})</option>
+                      <option value="new">Mới nhận ({recruitmentApplications.filter((a) => a.status === 'new').length})</option>
+                      <option value="contacted">Đã liên hệ</option>
+                      <option value="interview_scheduled">Hẹn phỏng vấn</option>
+                      <option value="hired">Đã tuyển dụng</option>
+                      <option value="rejected">Từ chối</option>
+                    </select>
+                  </div>
+
+                  <div className="text-xs text-slate-500 font-mono">
+                    Tổng cộng: <strong>{recruitmentApplications.length}</strong> hồ sơ ứng tuyển
+                  </div>
+                </div>
+
+                {isLoadingRecruitment ? (
+                  <div className="p-12 text-center text-slate-400 text-xs">
+                    <RefreshCw className="w-6 h-6 animate-spin text-amber-700 mx-auto mb-2" />
+                    Đang tải danh sách ứng viên...
+                  </div>
+                ) : recruitmentApplications.length === 0 ? (
+                  <div className="bg-white p-12 text-center rounded-xl border border-slate-200 text-slate-500 text-xs">
+                    Chưa có hồ sơ ứng viên nào được nộp trực tuyến.
+                  </div>
+                ) : (
+                  <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs">
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-xs">
+                        <thead className="bg-slate-50 border-b border-slate-200 text-slate-700 uppercase font-mono tracking-wider font-bold">
+                          <tr>
+                            <th className="p-3.5">Họ và Tên</th>
+                            <th className="p-3.5">Điện thoại</th>
+                            <th className="p-3.5">Vị trí ứng tuyển</th>
+                            <th className="p-3.5">Năm sinh / Kinh nghiệm</th>
+                            <th className="p-3.5">Trạng thái</th>
+                            <th className="p-3.5">Ngày nộp</th>
+                            <th className="p-3.5 text-right">Tác vụ</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                          {recruitmentApplications
+                            .filter((app) => applicationStatusFilter === 'all' || app.status === applicationStatusFilter)
+                            .map((app) => (
+                              <tr key={app.id} className="hover:bg-slate-50/70 transition-colors">
+                                <td className="p-3.5 font-bold text-slate-900">
+                                  {app.full_name}
+                                </td>
+                                <td className="p-3.5 font-mono">
+                                  <a href={`tel:${app.phone}`} className="text-amber-800 hover:underline font-bold">
+                                    {app.phone}
+                                  </a>
+                                </td>
+                                <td className="p-3.5 text-slate-800 font-medium">
+                                  {app.position_applied}
+                                </td>
+                                <td className="p-3.5 text-slate-600">
+                                  <div>Năm sinh: {app.birth_year || 'Chưa rõ'}</div>
+                                  <div className="text-[11px] text-slate-500">{app.experience || app.notes || 'Không có ghi chú'}</div>
+                                </td>
+                                <td className="p-3.5">
+                                  <select
+                                    value={app.status || 'new'}
+                                    onChange={(e) => handleUpdateApplicationStatus(app.id!, e.target.value as any)}
+                                    className={`px-2 py-1 rounded text-xs font-mono font-bold border ${
+                                      app.status === 'new'
+                                        ? 'bg-red-50 text-red-700 border-red-200'
+                                        : app.status === 'interview_scheduled'
+                                        ? 'bg-amber-50 text-amber-800 border-amber-300'
+                                        : app.status === 'hired'
+                                        ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                                        : 'bg-slate-100 text-slate-700 border-slate-200'
+                                    }`}
+                                  >
+                                    <option value="new">Mới nhận</option>
+                                    <option value="contacted">Đã liên hệ</option>
+                                    <option value="interview_scheduled">Hẹn phỏng vấn</option>
+                                    <option value="hired">Đã tuyển dụng</option>
+                                    <option value="rejected">Từ chối</option>
+                                  </select>
+                                </td>
+                                <td className="p-3.5 text-slate-500 font-mono text-[11px]">
+                                  {app.created_at ? new Date(app.created_at).toLocaleDateString('vi-VN') : '2026'}
+                                </td>
+                                <td className="p-3.5 text-right">
+                                  <button
+                                    onClick={() => handleDeleteApplication(app.id!)}
+                                    disabled={deletingApplicationId === app.id}
+                                    className="p-1.5 text-red-600 hover:bg-red-50 rounded border border-transparent hover:border-red-200 cursor-pointer disabled:opacity-50"
+                                    title="Xóa hồ sơ"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ========================================================= */}
+        {/* TAB 8: PHÂN QUYỀN RLS & STORAGE SQL SETUP                  */}
+        {/* ========================================================= */}
+        {activeTab === 'sql-setup' && (
+          <div className="space-y-6 animate-fadeIn">
+            {/* Header Box */}
+            <div className="bg-white p-6 border border-slate-200 rounded-2xl shadow-xs space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <Database className="w-5 h-5 text-amber-700" />
+                    <h2 className="text-lg font-bold text-slate-900 font-['Plus_Jakarta_Sans'] uppercase">
+                      Cấu Hình Phân Quyền Admin (RLS) & Supabase Storage
+                    </h2>
+                  </div>
+                  <p className="text-xs text-slate-600 leading-relaxed max-w-3xl">
+                    Đoạn script SQL này thiết lập toàn diện các chính sách Row Level Security (RLS) và Storage Buckets (<code>content-media</code> & <code>post-images</code>) để bảo vệ toàn bộ dữ liệu dự án.
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => {
+                    const sql = (document.getElementById('cms-sql-code') as HTMLTextAreaElement)?.value;
+                    if (sql && navigator.clipboard) {
+                      navigator.clipboard.writeText(sql);
+                      setCopiedSql(true);
+                      setTimeout(() => setCopiedSql(false), 2500);
+                    }
+                  }}
+                  className="px-5 py-2.5 bg-[#c5a059] hover:bg-[#b8860b] text-slate-950 font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs flex items-center gap-2 cursor-pointer self-start sm:self-auto shrink-0"
+                >
+                  <Copy className="w-4 h-4" />
+                  <span>{copiedSql ? 'Đã Sao Chép SQL!' : 'Sao Chép Toàn Bộ SQL'}</span>
+                </button>
+              </div>
+
+              {/* Steps Guide */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2 border-t border-slate-100 text-xs">
+                <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
+                  <span className="font-mono font-bold text-amber-800">BƯỚC 1:</span>
+                  <p className="text-slate-600">Đăng nhập tài khoản Supabase Dashboard và mở dự án của bạn.</p>
+                </div>
+                <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
+                  <span className="font-mono font-bold text-amber-800">BƯỚC 2:</span>
+                  <p className="text-slate-600">Chọn menu <strong>SQL Editor</strong> ở thanh bên trái và tạo câu truy vấn mới.</p>
+                </div>
+                <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
+                  <span className="font-mono font-bold text-amber-800">BƯỚC 3:</span>
+                  <p className="text-slate-600">Dán toàn bộ mã bên dưới và bấm nút <strong>RUN</strong> để áp dụng ngay.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* SQL Code Box */}
+            <div className="bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden shadow-lg">
+              <div className="p-3.5 bg-slate-900 border-b border-slate-800 flex items-center justify-between text-xs text-slate-400 font-mono">
+                <span>supabase-cms-setup.sql (PostgreSQL)</span>
+                <span className="text-emerald-400">RLS Policies + Storage Buckets</span>
+              </div>
+              <textarea
+                id="cms-sql-code"
+                readOnly
+                rows={18}
+                value={SUPABASE_SETUP_SQL}
+                className="w-full p-4 bg-slate-950 text-amber-200/90 font-mono text-xs focus:outline-none resize-none leading-relaxed"
+              />
             </div>
           </div>
         )}

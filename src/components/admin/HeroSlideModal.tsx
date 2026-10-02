@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { HeroSlide } from '../../types';
-import { X, Save, Image as ImageIcon, Sparkles } from 'lucide-react';
+import { X, Save, Sparkles } from 'lucide-react';
+import { PostImageUploader } from './PostImageUploader';
 
 interface HeroSlideModalProps {
   isOpen: boolean;
@@ -152,55 +153,16 @@ export const HeroSlideModal: React.FC<HeroSlideModalProps> = ({
             />
           </div>
 
-          {/* Image URL */}
+          {/* Image Uploader & Media Selector */}
           <div>
             <label className="block text-xs sm:text-sm font-mono uppercase tracking-wider text-slate-800 font-bold mb-2">
-              URL Hình nền Banner (Background Image)
+              Hình nền Banner (Background Image) <span className="text-red-500">*</span>
             </label>
-            <input
-              type="url"
-              required
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="https://..."
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-300 focus:border-amber-600 focus:bg-white text-slate-900 text-xs sm:text-sm font-mono focus:outline-hidden transition-all rounded-lg"
+            <PostImageUploader
+              currentImageUrl={imageUrl}
+              onImageChange={(url) => setImageUrl(url)}
+              onUploadStateChange={(uploading) => setIsSubmitting(uploading)}
             />
-
-            {/* Quick Presets */}
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <span className="text-xs text-slate-600 font-mono font-bold flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-amber-600" /> Ảnh mẫu:
-              </span>
-              {SAMPLE_HERO_BG.map((bg, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => setImageUrl(bg.url)}
-                  className={`text-xs font-mono px-2.5 py-1 border rounded-md transition-all cursor-pointer ${
-                    imageUrl === bg.url
-                      ? 'bg-[#c5a059] text-slate-950 border-[#c5a059] font-bold shadow-2xs'
-                      : 'bg-slate-100 border-slate-200 text-slate-700 hover:text-slate-950 hover:border-slate-400'
-                  }`}
-                >
-                  {bg.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Preview Banner */}
-            {imageUrl && (
-              <div className="mt-4 relative h-40 sm:h-48 w-full bg-slate-900 border border-slate-200 overflow-hidden flex items-center justify-center rounded-xl shadow-xs">
-                <img
-                  src={imageUrl}
-                  alt="Xem trước banner"
-                  className="w-full h-full object-cover brightness-90"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-5 flex flex-col justify-end">
-                  <span className="text-[10px] font-mono text-amber-300 font-bold uppercase tracking-wider">{tag || 'TAG'}</span>
-                  <p className="text-sm sm:text-base font-bold text-white uppercase truncate">{title || 'Tiêu đề'}</p>
-                </div>
-              </div>
-            )}
           </div>
 
           {/* CTA Buttons */}

@@ -19,6 +19,8 @@ import { ServiceDetailModal } from './components/ServiceDetailModal';
 import { SolutionDetailModal } from './components/SolutionDetailModal';
 import { SearchModal } from './components/SearchModal';
 import { RecruitmentModal } from './components/RecruitmentModal';
+import { ArticleDetailModal } from './components/ArticleDetailModal';
+import { NewsDetailModal } from './components/NewsDetailModal';
 import { AboutUsPage } from './components/AboutUsPage';
 import { RecruitmentPage } from './components/RecruitmentPage';
 import { ScrollReveal } from './components/ScrollReveal';
@@ -28,7 +30,7 @@ import { AdminDashboard } from './components/admin/AdminDashboard';
 import { FEATURED_SERVICES } from './data/mockData';
 import { ServiceItem, CaseStudy, ResearchArticle, NewsItem, Certification, HeroSlide, StatMetric, BreakingNewsItem } from './types';
 import { supabase, getPosts, getHeroSlides, getCaseStudies, getStats, getBreakingNews, Post } from './lib/supabase';
-import { X, Calendar, User } from 'lucide-react';
+import { X, Calendar, User, Clock, PhoneCall, ArrowRight } from 'lucide-react';
 
 export default function App() {
   // Admin route & session states
@@ -62,15 +64,26 @@ export default function App() {
     categoryName: string;
   } | null>(null);
   
+  // Article Detail Modal (for Research Library)
+  const [selectedArticle, setSelectedArticle] = useState<ResearchArticle | null>(null);
+  
+  // News Detail Modal (for Events & News)
+  const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
+
   // Generic Info Dialog Modal (for Case Study, News, Research, Cert)
   const [infoModalData, setInfoModalData] = useState<{
     title: string;
     category?: string;
     date?: string;
     author?: string;
+    readTime?: string;
     content: string;
     imageUrl?: string;
     bullets?: string[];
+    sections?: {
+      heading: string;
+      body: string;
+    }[];
   } | null>(null);
 
   // Form prefills
@@ -225,24 +238,11 @@ export default function App() {
   };
 
   const handleSelectArticle = (art: ResearchArticle) => {
-    setInfoModalData({
-      title: art.title,
-      category: `Thư Viện Nghiệp Vụ / ${art.category}`,
-      date: art.date,
-      author: art.author,
-      content: `${art.summary}\n\nTÀI LIỆU HƯỚNG DẪN CHI TIẾT:\n1. Phân loại các nhóm nguy cơ an ninh mục tiêu doanh nghiệp.\n2. Thiết lập quy trình kiểm soát người & phương tiện chuẩn ISO 9001:2015.\n3. Tiêu chuẩn trang thiết bị PCCC và diễn tập sơ tán khẩn cấp định kỳ.\n4. Trách nhiệm bồi thường và chính sách cam kết an toàn tài sản.`,
-      imageUrl: art.imageUrl
-    });
+    setSelectedArticle(art);
   };
 
   const handleSelectNews = (news: NewsItem) => {
-    setInfoModalData({
-      title: news.title,
-      category: `Sự Kiện & Tin Tức / ${news.category}`,
-      date: news.date,
-      content: news.content || `${news.summary}\n\nNỘI DUNG CHI TIẾT SỰ KIỆN:\nBan Lãnh Đạo Lâm Sơn Động Security cùng toàn thể cán bộ nghiệp vụ và lực lượng vệ sĩ đã tổ chức thành công chương trình huấn luyện định kỳ, nâng cao thể lực, võ thuật ứng dụng và nghiệp vụ PCCC chuyên sâu. Chúng tôi cam kết không ngừng nâng cao chất lượng dịch vụ vì sự an toàn tuyệt đối của quý đối tác.`,
-      imageUrl: news.imageUrl
-    });
+    setSelectedNews(news);
   };
 
   const handleSelectCert = (cert: Certification) => {
@@ -478,14 +478,34 @@ export default function App() {
         onClose={() => setIsRecruitmentModalOpen(false)}
       />
 
+      {/* Article Detail Modal (Research Library) */}
+      <ArticleDetailModal
+        article={selectedArticle}
+        onClose={() => setSelectedArticle(null)}
+        onOpenConsultation={() => {
+          setSelectedArticle(null);
+          setIsQuoteModalOpen(true);
+        }}
+      />
+
+      {/* News Detail Modal (Events & News Section) */}
+      <NewsDetailModal
+        news={selectedNews}
+        onClose={() => setSelectedNews(null)}
+        onOpenConsultation={() => {
+          setSelectedNews(null);
+          setIsQuoteModalOpen(true);
+        }}
+      />
+
       {/* Generic Info Detail Dialog */}
       {infoModalData && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-900/65 backdrop-blur-xs animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 lg:p-6 bg-slate-950/70 backdrop-blur-xs animate-in fade-in duration-200"
           onClick={() => setInfoModalData(null)}
         >
           <div 
-            className="bg-white border border-slate-200 w-full max-w-2xl max-h-[92vh] flex flex-col shadow-2xl text-slate-900 rounded-2xl overflow-hidden relative"
+            className="bg-white border border-slate-200 w-[95vw] md:w-[85vw] lg:w-[75vw] max-w-5xl h-[90vh] md:h-[80vh] lg:h-[75vh] flex flex-col shadow-2xl text-slate-900 rounded-2xl overflow-hidden relative"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -497,25 +517,43 @@ export default function App() {
             </button>
 
             {infoModalData.imageUrl && (
-              <div className="h-56 sm:h-72 overflow-hidden bg-slate-900 border-b border-slate-200 shrink-0">
+              <div className="h-56 sm:h-72 lg:h-80 overflow-hidden bg-slate-900 border-b border-slate-200 shrink-0">
                 <img
                   src={infoModalData.imageUrl}
                   alt={infoModalData.title}
+                  loading="lazy"
+                  decoding="async"
+                  width={900}
+                  height={450}
                   className="w-full h-full object-cover"
                 />
               </div>
             )}
 
-            <div className="p-6 sm:p-8 space-y-5 overflow-y-auto flex-1">
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-950 leading-[1.3] uppercase tracking-wide sm:tracking-wider font-['Plus_Jakarta_Sans',sans-serif]">
+            <div className="p-6 sm:p-8 lg:p-10 space-y-6 overflow-y-auto flex-1 text-slate-800">
+              {infoModalData.category && (
+                <div className="mb-2">
+                  <span className="px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider text-amber-900 bg-amber-100/80 border border-amber-200 text-[10px] font-mono">
+                    {infoModalData.category}
+                  </span>
+                </div>
+              )}
+
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-slate-950 leading-[1.3] uppercase tracking-wide sm:tracking-wider font-['Plus_Jakarta_Sans',sans-serif]">
                 {infoModalData.title}
-              </h3>
+              </h2>
 
               <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-xs sm:text-sm font-mono text-slate-500 pb-3 border-b border-slate-200">
                 {infoModalData.date && (
                   <span className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-amber-700 shrink-0" />
                     {infoModalData.date}
+                  </span>
+                )}
+                {infoModalData.readTime && (
+                  <span className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-amber-700 shrink-0" />
+                    {infoModalData.readTime}
                   </span>
                 )}
                 {infoModalData.author && (
@@ -526,15 +564,31 @@ export default function App() {
                 )}
               </div>
 
-              <div className="text-sm sm:text-base text-slate-700 font-normal leading-relaxed whitespace-pre-line">
+              <div className="text-xs sm:text-sm md:text-base text-slate-700 font-normal leading-relaxed whitespace-pre-line space-y-4">
                 {infoModalData.content}
               </div>
 
+              {/* Render Structured Sections if available */}
+              {infoModalData.sections && infoModalData.sections.length > 0 && (
+                <div className="space-y-6 pt-3 border-t border-slate-100">
+                  {infoModalData.sections.map((sec, idx) => (
+                    <section key={idx} className="space-y-2">
+                      <h3 className="text-base sm:text-lg font-bold text-slate-950 tracking-tight font-['Plus_Jakarta_Sans',sans-serif]">
+                        {sec.heading}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal whitespace-pre-line">
+                        {sec.body}
+                      </p>
+                    </section>
+                  ))}
+                </div>
+              )}
+
               {infoModalData.bullets && infoModalData.bullets.length > 0 && (
-                <div className="p-4 sm:p-5 bg-slate-50 border border-slate-200 rounded-xl space-y-2.5 text-xs sm:text-sm font-normal">
+                <div className="p-5 sm:p-6 bg-slate-50 border border-slate-200 rounded-2xl space-y-2.5 text-xs sm:text-sm font-normal">
                   {infoModalData.bullets.map((b, i) => (
                     <div key={i} className="flex items-start gap-2.5 text-slate-700 leading-relaxed">
-                      <span className="text-amber-700 font-mono font-bold text-sm shrink-0">—</span>
+                      <span className="text-[#c5a059] font-bold shrink-0">—</span>
                       <span>{b}</span>
                     </div>
                   ))}
@@ -542,13 +596,36 @@ export default function App() {
               )}
             </div>
 
-            <div className="p-4 sm:p-5 border-t border-slate-200 bg-slate-50/90 flex justify-end shrink-0">
-              <button
-                onClick={() => setInfoModalData(null)}
-                className="h-10 sm:h-11 px-6 bg-gradient-to-r from-[#c5a059] to-[#b8860b] hover:from-[#d4af37] hover:to-[#c5a059] text-slate-950 font-bold text-xs sm:text-sm uppercase tracking-wider transition-all rounded-xl shadow-xs hover:shadow-sm cursor-pointer hover:-translate-y-0.5 active:translate-y-0"
-              >
-                Đóng
-              </button>
+            <div className="p-4 sm:p-5 border-t border-slate-200 bg-slate-50/90 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+              <div className="flex items-center gap-2 text-xs text-slate-500">
+                <span className="hidden sm:inline">Tư vấn trực tiếp 24/7:</span>
+                <a
+                  href="tel:0339269524"
+                  className="font-bold text-amber-900 hover:underline flex items-center gap-1.5 font-mono"
+                >
+                  <PhoneCall className="w-3.5 h-3.5 text-amber-700" />
+                  0339.269.524
+                </a>
+              </div>
+
+              <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+                <button
+                  onClick={() => setInfoModalData(null)}
+                  className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer"
+                >
+                  Đóng
+                </button>
+                <button
+                  onClick={() => {
+                    setInfoModalData(null);
+                    setIsQuoteModalOpen(true);
+                  }}
+                  className="px-5 py-2.5 bg-[#c5a059] hover:bg-[#b8860b] text-slate-950 font-bold text-xs uppercase tracking-wider rounded-xl shadow-xs hover:shadow transition-all cursor-pointer flex items-center gap-1.5"
+                >
+                  <span>Liên Hệ Tư Vấn</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
           </div>
         </div>

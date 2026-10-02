@@ -21,6 +21,10 @@ export const RecruitmentPage: React.FC<RecruitmentPageProps> = ({
           <img 
             src="/images/training.jpg" 
             alt="Lực lượng tuyển dụng Lâm Sơn Động" 
+            loading="eager"
+            decoding="async"
+            width={1920}
+            height={600}
             className="w-full h-full object-cover object-center filter brightness-70"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/90 to-slate-950/70" />
@@ -338,6 +342,10 @@ export const RecruitmentPage: React.FC<RecruitmentPageProps> = ({
               <img 
                 src="/images/training.jpg" 
                 alt="Đào tạo nhân sự Lâm Sơn Động" 
+                loading="lazy"
+                decoding="async"
+                width={600}
+                height={350}
                 className="w-full h-[260px] object-cover"
               />
               <div className="p-4 bg-white">

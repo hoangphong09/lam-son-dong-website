@@ -43,6 +43,10 @@ export const CaseStudiesSection: React.FC<CaseStudiesSectionProps> = ({
                   <img
                     src={cs.imageUrl}
                     alt={cs.title}
+                    loading="lazy"
+                    decoding="async"
+                    width={500}
+                    height={280}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     onError={(e) => {
                       (e.target as HTMLElement).style.display = 'none';

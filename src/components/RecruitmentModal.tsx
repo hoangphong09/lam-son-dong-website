@@ -15,6 +15,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { sendRecruitmentNotification } from '../lib/emailService';
+import { createRecruitmentApplication } from '../lib/supabase';
 
 interface RecruitmentModalProps {
   isOpen: boolean;
@@ -115,6 +116,7 @@ export const RecruitmentModal: React.FC<RecruitmentModalProps> = ({ isOpen, onCl
     
     setIsSubmitting(true);
     try {
+      // 1. Send email notification
       await sendRecruitmentNotification({
         fullName: formData.fullName.trim(),
         phone: formData.phone.trim(),
@@ -123,6 +125,17 @@ export const RecruitmentModal: React.FC<RecruitmentModalProps> = ({ isOpen, onCl
         location: formData.location,
         experience: formData.experience.trim() || undefined,
       });
+
+      // 2. Persist to Supabase recruitment_applications database table
+      await createRecruitmentApplication({
+        full_name: formData.fullName.trim(),
+        phone: formData.phone.trim(),
+        birth_year: formData.birthYear.trim(),
+        position_applied: formData.desiredPosition,
+        experience: formData.experience.trim() || undefined,
+        notes: `Khu vực mong muốn: ${formData.location}`,
+      });
+
       setIsSubmitted(true);
     } catch (err) {
       console.warn('Lỗi khi gửi hồ sơ tuyển dụng:', err);

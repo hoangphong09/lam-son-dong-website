@@ -8,41 +8,48 @@ interface KeyStatsFootprintProps {
 }
 
 const AnimatedCounter: React.FC<{ value: string; isVisible: boolean }> = ({ value, isVisible }) => {
-  const [displayValue, setDisplayValue] = useState<string>(isVisible ? value : '0');
+  const [displayValue, setDisplayValue] = useState<string>('0');
   const numericTarget = parseFloat(value.replace(/,/g, ''));
   const isNumeric = !isNaN(numericTarget);
   const decimals = value.includes('.') ? value.split('.')[1].length : 0;
 
   useEffect(() => {
-    if (!isVisible) return;
+    if (!isVisible) {
+      setDisplayValue('0');
+      return;
+    }
+
     if (!isNumeric) {
       setDisplayValue(value);
       return;
     }
 
     let startTimestamp: number | null = null;
-    const duration = 1800; // 1.8s smooth duration
+    const duration = 2000; // 2 seconds smooth, premium counting animation
+    let animFrame: number;
 
     const step = (timestamp: number) => {
       if (!startTimestamp) startTimestamp = timestamp;
       const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-      const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      
+      // Quartic ease-out: brisk start, buttery smooth deceleration
+      const easeProgress = 1 - Math.pow(1 - progress, 4);
       const current = easeProgress * numericTarget;
 
       if (decimals > 0) {
         setDisplayValue(current.toFixed(decimals));
       } else {
-        setDisplayValue(Math.floor(current).toLocaleString('en-US'));
+        setDisplayValue(Math.round(current).toLocaleString('en-US'));
       }
 
       if (progress < 1) {
-        requestAnimationFrame(step);
+        animFrame = requestAnimationFrame(step);
       } else {
         setDisplayValue(value);
       }
     };
 
-    const animFrame = requestAnimationFrame(step);
+    animFrame = requestAnimationFrame(step);
     return () => cancelAnimationFrame(animFrame);
   }, [isVisible, numericTarget, isNumeric, decimals, value]);
 
@@ -212,15 +219,17 @@ const ENTERPRISE_PARTNERS: EnterprisePartner[] = [
 ];
 
 export const KeyStatsFootprint: React.FC<KeyStatsFootprintProps> = ({ stats: propStats }) => {
-  const [stats, setStats] = useState<StatMetric[]>(propStats || []);
-  const [loading, setLoading] = useState(!propStats || propStats.length === 0);
+  const [stats, setStats] = useState<StatMetric[]>(
+    propStats && propStats.length > 0 ? propStats : INITIAL_STATS
+  );
+  const [loading, setLoading] = useState(false);
   const [hasTriggered, setHasTriggered] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const metricsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (propStats && propStats.length > 0) {
       setStats(propStats);
-      setLoading(false);
       return;
     }
 
@@ -228,16 +237,11 @@ export const KeyStatsFootprint: React.FC<KeyStatsFootprintProps> = ({ stats: pro
     const fetchStats = async () => {
       try {
         const data = await getStats();
-        if (isMounted) {
+        if (isMounted && data && data.length > 0) {
           setStats(data);
-          setLoading(false);
         }
       } catch (err) {
         console.warn('Failed to load dynamic stats:', err);
-        if (isMounted) {
-          setStats(INITIAL_STATS);
-          setLoading(false);
-        }
       }
     };
 
@@ -250,6 +254,9 @@ export const KeyStatsFootprint: React.FC<KeyStatsFootprintProps> = ({ stats: pro
   // Scroll-triggered Intersection Observer for counter
   useEffect(() => {
     if (typeof window === 'undefined') return;
+
+    const targetNode = metricsRef.current || sectionRef.current;
+    if (!targetNode) return;
 
     if (!('IntersectionObserver' in window)) {
       setHasTriggered(true);
@@ -266,16 +273,14 @@ export const KeyStatsFootprint: React.FC<KeyStatsFootprintProps> = ({ stats: pro
       },
       {
         threshold: 0.15,
-        rootMargin: '0px 0px -40px 0px',
+        rootMargin: '0px 0px -20px 0px',
       }
     );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
+    observer.observe(targetNode);
 
     return () => observer.disconnect();
-  }, []);
+  }, [stats]);
 
   // Filter active stats and sort by display_order
   const activeStats = (stats && stats.length > 0 ? stats : INITIAL_STATS)
@@ -317,7 +322,7 @@ export const KeyStatsFootprint: React.FC<KeyStatsFootprintProps> = ({ stats: pro
           {/* ======================================================================= */}
           {/* ROW 1: KEY PERFORMANCE METRICS                                          */}
           {/* ======================================================================= */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-12">
+          <div ref={metricsRef} className="grid grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-12">
             {loading && activeStats.length === 0 ? (
               Array.from({ length: 4 }).map((_, idx) => (
                 <div key={idx} className="flex flex-col items-center animate-pulse space-y-3 text-center">
@@ -340,12 +345,12 @@ export const KeyStatsFootprint: React.FC<KeyStatsFootprintProps> = ({ stats: pro
                     </div>
 
                     {/* Bold High-Contrast Metric Value */}
-                    <div className="flex items-baseline justify-center font-['Plus_Jakarta_Sans',sans-serif] tracking-tight">
+                    <div className="inline-flex items-center justify-center font-['Plus_Jakarta_Sans',sans-serif] tracking-tight">
                       <span className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-950 tracking-tight leading-none group-hover:text-slate-800 transition-colors">
                         <AnimatedCounter value={stat.numeric_value} isVisible={hasTriggered} />
                       </span>
                       {unit && (
-                        <span className="ml-1 text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#c5a059]">
+                        <span className="ml-1 text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#c5a059] leading-none self-center flex items-center justify-center">
                           {unit}
                         </span>
                       )}
