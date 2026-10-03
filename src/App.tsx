@@ -153,11 +153,6 @@ export default function App() {
     };
   }, []);
 
-  const openAdminView = () => {
-    window.location.hash = '#admin';
-    setIsAdminView(true);
-  };
-
   const closeAdminView = () => {
     window.location.hash = '';
     window.history.pushState(null, '', '/');
@@ -428,7 +423,6 @@ export default function App() {
         }}
         onOpenQuote={() => setIsQuoteModalOpen(true)}
         onOpenRecruitment={() => setIsRecruitmentModalOpen(true)}
-        onOpenAdmin={openAdminView}
         onNavigateToAbout={navigateToAbout}
         onNavigateToRecruitment={navigateToRecruitment}
       />

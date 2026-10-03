@@ -14,7 +14,6 @@ import { FOOTER_DATA } from '../data/mockData';
 interface FooterProps {
   onScrollToSection: (sectionId: string) => void;
   onOpenQuote: () => void;
-  onOpenAdmin?: () => void;
   onOpenRecruitment?: () => void;
   onNavigateToAbout?: () => void;
   onNavigateToRecruitment?: () => void;
@@ -23,7 +22,6 @@ interface FooterProps {
 export const Footer: React.FC<FooterProps> = ({ 
   onScrollToSection, 
   onOpenQuote, 
-  onOpenAdmin, 
   onOpenRecruitment,
   onNavigateToAbout,
   onNavigateToRecruitment
@@ -374,14 +372,6 @@ export const Footer: React.FC<FooterProps> = ({
             >
               Điều khoản sử dụng
             </button>
-            {onOpenAdmin && (
-              <button
-                onClick={onOpenAdmin}
-                className="text-slate-500 hover:text-slate-300 transition-colors cursor-pointer text-[11px]"
-              >
-                Quản trị
-              </button>
-            )}
           </div>
         </div>
       </div>
