@@ -21,7 +21,7 @@ export const RecruitmentSection: React.FC<RecruitmentSectionProps> = ({
              ======================================================== */}
           <div className="lg:col-span-5 relative flex justify-center order-2 lg:order-1">
             <div className="relative w-full max-w-md rounded-2xl overflow-hidden shadow-lg border border-slate-200/90 group bg-slate-900">
-              {/* Photo of Lâm Sơn Động Security Personnel */}
+              {/* Photo of Lâm Sơn Động Personnel */}
               <img 
                 src="/images/training.jpg" 
                 alt="Đội ngũ nhân viên bảo vệ Lâm Sơn Động"

@@ -80,7 +80,7 @@ const RECRUITMENT_APPLICATIONS_STORAGE_KEY = 'lsd_cached_recruitment_application
 export const INITIAL_BREAKING_NEWS: BreakingNewsItem[] = [
   {
     id: 1,
-    title: 'Lâm Sơn Động Security vinh dự đón nhận Cúp Vàng "Thương hiệu Dịch vụ An ninh Uy tín Hàng đầu Việt Nam 2026"',
+    title: 'Lâm Sơn Động vinh dự đón nhận Cúp Vàng "Thương hiệu Dịch vụ An ninh Uy tín Hàng đầu Việt Nam 2026"',
     link: '',
     is_active: true,
     display_order: 1,
@@ -1857,7 +1857,7 @@ export async function checkIsAdminUser(overrideUser?: any): Promise<boolean> {
  * Recommended SQL snippet for user's Supabase dashboard
  */
 export const SUPABASE_SETUP_SQL = `-- ==============================================================================
--- CƠ SỞ DỮ LIỆU SUPABASE - LÂM SƠN ĐỘNG SECURITY
+-- CƠ SỞ DỮ LIỆU SUPABASE - LÂM SƠN ĐỘNG
 -- Bản quyền (c) 2026 Công Ty Bảo Vệ Lâm Sơn Động
 -- Mở SQL Editor trong Supabase Dashboard (https://supabase.com/dashboard) và nhấn RUN:
 -- ==============================================================================
@@ -2212,7 +2212,7 @@ CREATE POLICY "Admin toàn quyền quản lý tin nhanh" ON public.breaking_news
 -- Dữ liệu mẫu ban đầu cho breaking_news
 INSERT INTO public.breaking_news (id, title, link, is_active, display_order)
 VALUES
-  (1, 'Lâm Sơn Động Security vinh dự đón nhận Cúp Vàng "Thương hiệu Dịch vụ An ninh Uy tín Hàng đầu Việt Nam 2026"', '', true, 1),
+  (1, 'Lâm Sơn Động vinh dự đón nhận Cúp Vàng "Thương hiệu Dịch vụ An ninh Uy tín Hàng đầu Việt Nam 2026"', '', true, 1),
   (2, 'Triển khai thành công phương án bảo vệ an ninh trật tự Lễ hội Âm nhạc 20.000 khán giả', '', true, 2),
   (3, 'Bộ Công An chứng nhận đạt chuẩn 100% về Điều kiện An ninh Trật tự & Nghiệp vụ PCCC cứu nạn', '', true, 3),
   (4, 'Mở rộng hệ thống Trung tâm phản ứng nhanh cơ động tại các vùng kinh tế trọng điểm', '', true, 4)

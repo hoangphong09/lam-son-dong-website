@@ -47,7 +47,7 @@ export const EventsAndNews: React.FC<EventsAndNewsProps> = ({ onSelectNews, post
             Sự Kiện & Tin Tức
           </h2>
           <p className="mt-3.5 sm:mt-4 text-sm sm:text-base text-slate-600 font-normal leading-relaxed">
-            Cập nhật những hoạt động đào tạo, diễn tập võ thuật, sự kiện an ninh và tin tức mới nhất từ Lâm Sơn Động Security.
+            Cập nhật những hoạt động đào tạo, diễn tập võ thuật, sự kiện an ninh và tin tức mới nhất từ Lâm Sơn Động.
           </p>
         </div>
 

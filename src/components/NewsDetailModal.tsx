@@ -132,7 +132,7 @@ export const NewsDetailModal: React.FC<NewsDetailModalProps> = ({
               <span>Giá Trị Thực Tiễn & Tinh Thần Lâm Sơn Động</span>
             </div>
             <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
-              Mỗi sự kiện huấn luyện, chiến công nghiệp vụ hay hoạt động hợp tác đều là minh chứng sống động cho tôn chỉ hoạt động của Lâm Sơn Động Security: Kỷ luật thép - Tác phong chuẩn mực - Trách nhiệm pháp lý vững chắc. Chúng tôi không ngừng nâng cao chuẩn mực an ninh nhằm mang lại sự an tâm tuyệt đối và bảo toàn trọn vẹn tài sản cho quý đối tác, quý doanh nghiệp.
+              Mỗi sự kiện huấn luyện, chiến công nghiệp vụ hay hoạt động hợp tác đều là minh chứng sống động cho tôn chỉ hoạt động của Lâm Sơn Động: Kỷ luật thép - Tác phong chuẩn mực - Trách nhiệm pháp lý vững chắc. Chúng tôi không ngừng nâng cao chuẩn mực an ninh nhằm mang lại sự an tâm tuyệt đối và bảo toàn trọn vẹn tài sản cho quý đối tác, quý doanh nghiệp.
             </p>
           </div>
         </div>

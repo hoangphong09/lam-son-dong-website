@@ -91,6 +91,14 @@ export const Footer: React.FC<FooterProps> = ({
                       Cẩm nang quản trị rủi ro
                     </button>
                   </li>
+                  <li>
+                    <button
+                      onClick={() => onScrollToSection('faq-section')}
+                      className="hover:text-[#e5be5a] transition-colors text-left cursor-pointer font-normal text-slate-400 hover:text-[#e5be5a]"
+                    >
+                      Câu hỏi thường gặp (FAQ)
+                    </button>
+                  </li>
                 </ul>
               </div>
 

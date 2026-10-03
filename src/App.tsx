@@ -21,6 +21,7 @@ import { SearchModal } from './components/SearchModal';
 import { RecruitmentModal } from './components/RecruitmentModal';
 import { ArticleDetailModal } from './components/ArticleDetailModal';
 import { NewsDetailModal } from './components/NewsDetailModal';
+import { FAQSection } from './components/FAQSection';
 import { AboutUsPage } from './components/AboutUsPage';
 import { RecruitmentPage } from './components/RecruitmentPage';
 import { ScrollReveal } from './components/ScrollReveal';
@@ -394,6 +395,14 @@ export default function App() {
           {/* 11. Security Library & PCCC Handbooks */}
           <ScrollReveal direction="up" duration={750}>
             <SecurityLibrarySection onSelectArticle={handleSelectArticle} />
+          </ScrollReveal>
+
+          {/* 11.5. Common Security FAQ Section */}
+          <ScrollReveal direction="up" duration={750}>
+            <FAQSection 
+              onOpenQuote={() => setIsQuoteModalOpen(true)}
+              onScrollToConsultation={() => scrollToSection('consultation-section')}
+            />
           </ScrollReveal>
 
           {/* 12. Events & News */}

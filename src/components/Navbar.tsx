@@ -495,7 +495,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               {/* Left Column: Brand Overview & Action Links */}
               <div className="lg:col-span-4 pr-0 lg:pr-8 border-b lg:border-b-0 lg:border-r border-slate-100 pb-6 lg:pb-0">
                 <span className="inline-block text-[10.5px] font-mono uppercase tracking-widest text-amber-900 font-bold bg-amber-50 border border-amber-200/80 px-2.5 py-1 rounded">
-                  LÂM SƠN ĐỘNG SECURITY
+                  LÂM SƠN ĐỘNG
                 </span>
                 
                 <h3 className="text-xl sm:text-[22px] font-extrabold text-slate-950 uppercase tracking-tight mt-3 font-['Plus_Jakarta_Sans',sans-serif] leading-tight">

@@ -121,7 +121,7 @@ export const SolutionDetailModal: React.FC<SolutionDetailModalProps> = ({
               2. Phương Án Kiến Trúc An Ninh Đa Tầng Của Lâm Sơn Động
             </h3>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
-              Nhằm giải quyết triệt để bài toán an toàn cho đối tác, Lâm Sơn Động Security áp dụng phương án bảo vệ đa tầng khép kín, phối hợp nhịp nhàng giữa con người tinh nhuệ và công nghệ giám sát hiện đại:
+              Nhằm giải quyết triệt để bài toán an toàn cho đối tác, Lâm Sơn Động áp dụng phương án bảo vệ đa tầng khép kín, phối hợp nhịp nhàng giữa con người tinh nhuệ và công nghệ giám sát hiện đại:
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

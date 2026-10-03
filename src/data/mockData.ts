@@ -45,7 +45,7 @@ export const HERO_SLIDES: HeroSlide[] = [
 ];
 
 export const BREAKING_NEWS = [
-  'Lâm Sơn Động Security vinh dự đón nhận Cúp Vàng "Thương hiệu Dịch vụ An ninh Uy tín Hàng đầu Việt Nam 2026"',
+  'Lâm Sơn Động vinh dự đón nhận Cúp Vàng "Thương hiệu Dịch vụ An ninh Uy tín Hàng đầu Việt Nam 2026"',
   'Triển khai thành công phương án bảo vệ an ninh trật tự Lễ hội Âm nhạc 200 khán giả',
   'Bộ Công An chứng nhận đạt chuẩn 100% về Điều kiện An ninh Trật tự & Nghiệp vụ PCCC cứu nạn',
   'Mở rộng hệ thống Trung tâm phản ứng nhanh cơ động tại các vùng kinh tế trọng điểm',
@@ -542,7 +542,7 @@ export const RESEARCH_ARTICLES: ResearchArticle[] = [
     readTime: '8 phút',
     author: 'Hội đồng Cố vấn An ninh Lâm Sơn Động',
     imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80',
-    content: `Trong bối cảnh làn sóng đầu tư FDI và chuỗi cung ứng toàn cầu dịch chuyển mạnh mẽ về Việt Nam năm 2026, vấn đề an ninh tài sản và bí mật công nghệ tại các khu công nghiệp trọng điểm đang đối diện với những thách thức chưa từng có. Không còn đơn thuần là nạn trộm cắp vặt, các doanh nghiệp sản xuất và logistics quy mô lớn hiện phải đối mặt với các đường dây gian lận có tổ chức, móc nối từ bên trong lẫn bên ngoài, gây thiệt hại hàng chục tỷ đồng mỗi năm.\n\nBáo cáo này được tổng hợp từ dữ liệu giám sát và xử lý thực tế tại hơn 100 nhà máy, cảng cạn và kho tổng trên toàn quốc do Lâm Sơn Động Security trực tiếp vận hành.`,
+    content: `Trong bối cảnh làn sóng đầu tư FDI và chuỗi cung ứng toàn cầu dịch chuyển mạnh mẽ về Việt Nam năm 2026, vấn đề an ninh tài sản và bí mật công nghệ tại các khu công nghiệp trọng điểm đang đối diện với những thách thức chưa từng có. Không còn đơn thuần là nạn trộm cắp vặt, các doanh nghiệp sản xuất và logistics quy mô lớn hiện phải đối mặt với các đường dây gian lận có tổ chức, móc nối từ bên trong lẫn bên ngoài, gây thiệt hại hàng chục tỷ đồng mỗi năm.\n\nBáo cáo này được tổng hợp từ dữ liệu giám sát và xử lý thực tế tại hơn 100 nhà máy, cảng cạn và kho tổng trên toàn quốc do Lâm Sơn Động trực tiếp vận hành.`,
     sections: [
       {
         heading: '1. Ba Lỗ Hổng Trọng Yếu Khiến Doanh Nghiệp Thất Thoát Tài Sản',
@@ -603,7 +603,7 @@ export const RESEARCH_ARTICLES: ResearchArticle[] = [
         body: 'Doanh nghiệp kinh doanh dịch vụ bảo vệ chỉ được phép trang bị và sử dụng công cụ hỗ trợ (như dùi cui cao su, gậy điện, khóa số 8, bình xịt hơi cay) khi đã được Phòng Cảnh sát QLHC về TTXH cấp Giấy phép sử dụng hợp lệ.\n\nNhân viên bảo vệ chỉ được sử dụng công cụ hỗ trợ trong các tình huống thực sự cần thiết nhằm ngăn chặn hành vi bạo lực hung hãn, phòng vệ chính đáng khi bản thân hoặc mục tiêu bị tấn công đe dọa trực tiếp đến tính mạng. Tuyệt đối nghiêm cấm lạm dụng công cụ hỗ trợ để xâm phạm thân thể, danh dự của công dân.'
       },
       {
-        heading: '3. Chuẩn Hóa Pháp Lý Tại Lâm Sơn Động Security',
+        heading: '3. Chuẩn Hóa Pháp Lý Tại Lâm Sơn Động',
         body: 'Tại Lâm Sơn Động, 100% vệ sĩ và cán bộ chỉ huy đều trải qua khóa đào tạo pháp luật chuyên sâu, nắm vững ranh giới giữa phòng vệ chính đáng và vượt quá giới hạn phòng vệ. Mỗi mục tiêu đều được trang bị sổ quản lý công cụ hỗ trợ có dấu niêm phong và quy trình phối hợp khẩn cấp với lực lượng Công an phường/xã trên địa bàn.'
       }
     ]
@@ -621,7 +621,7 @@ export const NEWS_EVENTS: NewsItem[] = [
     isFeatured: true,
     author: 'Ban Huấn Luyện & Tác Chiến Đặc Nhiệm',
     readTime: '6 phút đọc',
-    content: 'Nhằm không ngừng tôi luyện bản lĩnh người vệ sĩ và sát hạch chất lượng nghiệp vụ thực chiến trên toàn quốc, sáng ngày 18/09/2026, Lâm Sơn Động Security đã long trọng khai mạc "Hội Thao Võ Thuật & Kỹ Năng Đặc Nhiệm Toàn Quốc 2026". Hội thao quy tụ hơn 300 gương mặt xuất sắc đại diện cho lực lượng an ninh tại hơn 20 tỉnh thành, mang đến những màn tranh tài nảy lửa, khẳng định sức mạnh kỷ luật và tinh thần thượng võ kiên cường của toàn thể chiến sĩ.',
+    content: 'Nhằm không ngừng tôi luyện bản lĩnh người vệ sĩ và sát hạch chất lượng nghiệp vụ thực chiến trên toàn quốc, sáng ngày 18/09/2026, Lâm Sơn Động đã long trọng khai mạc "Hội Thao Võ Thuật & Kỹ Năng Đặc Nhiệm Toàn Quốc 2026". Hội thao quy tụ hơn 300 gương mặt xuất sắc đại diện cho lực lượng an ninh tại hơn 20 tỉnh thành, mang đến những màn tranh tài nảy lửa, khẳng định sức mạnh kỷ luật và tinh thần thượng võ kiên cường của toàn thể chiến sĩ.',
     sections: [
       {
         heading: '1. Khởi Tranh Quyền Thuật Cổ Truyền & Thực Chiến Đối Kháng',
@@ -646,7 +646,7 @@ export const NEWS_EVENTS: NewsItem[] = [
     imageUrl: '/images/hero-1.jpg',
     author: 'Trung Tâm R&D & Chuyển Đổi Số An Ninh',
     readTime: '5 phút đọc',
-    content: 'Cuộc cách mạng công nghiệp 4.0 đang thay đổi căn bản cách thức vận hành an ninh trên thế giới. Nhận thức rõ xu thế đó, Lâm Sơn Động Security đã tổ chức chương trình tập huấn chuyển giao toàn diện công nghệ AI và hệ thống tuần tra định vị vệ tinh Smart Patrol cho toàn bộ đội ngũ Đội trưởng và Chỉ huy mục tiêu KCN.',
+    content: 'Cuộc cách mạng công nghiệp 4.0 đang thay đổi căn bản cách thức vận hành an ninh trên thế giới. Nhận thức rõ xu thế đó, Lâm Sơn Động đã tổ chức chương trình tập huấn chuyển giao toàn diện công nghệ AI và hệ thống tuần tra định vị vệ tinh Smart Patrol cho toàn bộ đội ngũ Đội trưởng và Chỉ huy mục tiêu KCN.',
     sections: [
       {
         heading: '1. Xóa Bỏ Hoàn Toàn Điểm Mù Ca Trực Bằng GPS & Thẻ Chip RFID',
@@ -721,7 +721,7 @@ export const NEWS_EVENTS: NewsItem[] = [
     imageUrl: '/images/service-office.jpg',
     author: 'Ban Phát Triển Khách Hàng Doanh Nghiệp',
     readTime: '6 phút đọc',
-    content: 'Lâm Sơn Động Security chính thức ký kết thỏa thuận hợp tác an ninh chiến lược dài hạn giai đoạn 2026 - 2028 với chuỗi trung tâm thương mại cao cấp với tổng diện tích mặt sàn quản lý trên 150.000m².',
+    content: 'Lâm Sơn Động chính thức ký kết thỏa thuận hợp tác an ninh chiến lược dài hạn giai đoạn 2026 - 2028 với chuỗi trung tâm thương mại cao cấp với tổng diện tích mặt sàn quản lý trên 150.000m².',
     sections: [
       {
         heading: '1. Quy Mô Triển Khai & Bố Trí Nhân Sự Tinh Nhuệ',
@@ -746,7 +746,7 @@ export const NEWS_EVENTS: NewsItem[] = [
     imageUrl: '/images/charity.jpg',
     author: 'Ban Chấp Hành Công Đoàn Lâm Sơn Động',
     readTime: '4 phút đọc',
-    content: 'Phát huy tinh thần "Tương thân tương ái" và trách nhiệm xã hội của doanh nghiệp, Ban Chấp Hành Công Đoàn Lâm Sơn Động Security đã tổ chức hành trình "Áo Ấm Vùng Cao" tại các điểm trường khó khăn.',
+    content: 'Phát huy tinh thần "Tương thân tương ái" và trách nhiệm xã hội của doanh nghiệp, Ban Chấp Hành Công Đoàn Lâm Sơn Động đã tổ chức hành trình "Áo Ấm Vùng Cao" tại các điểm trường khó khăn.',
     sections: [
       {
         heading: '1. Chuyến Xe Yêu Thương Vượt Đèo Lên Điểm Trường Xa',
@@ -771,7 +771,7 @@ export const NEWS_EVENTS: NewsItem[] = [
     imageUrl: '/images/hero-3.jpg',
     author: 'Ban Nghiệp Vụ & An Toàn Lao Động',
     readTime: '5 phút đọc',
-    content: 'Sáng ngày 05/08, Lâm Sơn Động Security cùng Phòng Cảnh sát PCCC & CNCH đã tổ chức buổi diễn tập phương án chữa cháy và cứu nạn cứu hộ thường niên tại KCN Nội Bài với sự tham gia của hơn 2.000 cán bộ công nhân viên.',
+    content: 'Sáng ngày 05/08, Lâm Sơn Động cùng Phòng Cảnh sát PCCC & CNCH đã tổ chức buổi diễn tập phương án chữa cháy và cứu nạn cứu hộ thường niên tại KCN Nội Bài với sự tham gia của hơn 2.000 cán bộ công nhân viên.',
     sections: [
       {
         heading: '1. Kịch Bản Diễn Tập Tình Huống Giả Định Phức Tạp',

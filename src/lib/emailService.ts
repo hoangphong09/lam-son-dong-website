@@ -119,7 +119,7 @@ export async function sendQuoteNotification(data: QuoteEmailPayload): Promise<{ 
   const subject = `[LÂM SƠN ĐỘNG - BÁO GIÁ MỚI] ${data.clientName} - SĐT: ${data.phone}`;
 
   const fields: Record<string, any> = {
-    'Hệ thống': 'Lâm Sơn Động Security Web Portal',
+    'Hệ thống': 'Lâm Sơn Động Web Portal',
     'Loại yêu cầu': 'YÊU CẦU BÁO GIÁ & TƯ VẤN AN NINH MỤC TIÊU',
     'Nguồn gửi': sourceName,
     'Thời gian': new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }),
@@ -180,7 +180,7 @@ export async function sendRecruitmentNotification(data: RecruitmentEmailPayload)
   const subject = `[LÂM SƠN ĐỘNG - ỨNG VIÊN MỚI] ${data.fullName} - ${data.desiredPosition} - SĐT: ${data.phone}`;
 
   const fields: Record<string, any> = {
-    'Hệ thống': 'Lâm Sơn Động Security - Ban Tuyển Dụng',
+    'Hệ thống': 'Lâm Sơn Động - Ban Tuyển Dụng',
     'Loại yêu cầu': 'HỒ SƠ ĐĂNG KÝ ỨNG TUYỂN NHANH TRỰC TUYẾN',
     'Thời gian nộp đơn': new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }),
     'Họ và tên ứng viên': data.fullName,
@@ -218,7 +218,7 @@ export async function sendNewsletterNotification(data: NewsletterEmailPayload): 
   const subject = `[LÂM SƠN ĐỘNG - BẢN TIN] Khách hàng đăng ký nhận bản tin cảnh báo rủi ro: ${data.email}`;
 
   const fields: Record<string, any> = {
-    'Hệ thống': 'Lâm Sơn Động Security - Cảnh Báo An Ninh',
+    'Hệ thống': 'Lâm Sơn Động - Cảnh Báo An Ninh',
     'Loại yêu cầu': 'ĐĂNG KÝ NHẬN BẢN TIN CẢNH BÁO RỦI RO DOANH NGHIỆP',
     'Thời gian đăng ký': new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' }),
     'Email khách hàng': data.email,

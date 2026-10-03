@@ -155,7 +155,7 @@ export const BreakingNewsModal: React.FC<BreakingNewsModalProps> = ({
               rows={3}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="VD: Lâm Sơn Động Security vinh dự đón nhận Cúp Vàng Doanh Nghiệp An Ninh Tiêu Biểu..."
+              placeholder="VD: Lâm Sơn Động vinh dự đón nhận Cúp Vàng Doanh Nghiệp An Ninh Tiêu Biểu..."
               className="w-full px-4 py-3 bg-white border border-slate-300 rounded-lg text-sm sm:text-base text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-amber-500/30 focus:border-amber-600 font-sans leading-relaxed transition-all"
             />
             <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">

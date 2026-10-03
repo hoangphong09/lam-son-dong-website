@@ -141,7 +141,7 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({ initialData 
               />
               <div>
                 <div className="text-base sm:text-lg font-black tracking-wide text-slate-950 uppercase font-['Plus_Jakarta_Sans',sans-serif]">
-                  LÂM SƠN ĐỘNG SECURITY
+                  LÂM SƠN ĐỘNG
                 </div>
                 <div className="text-xs uppercase tracking-widest text-[#c5a059] font-bold mt-0.5">
                   DỊCH VỤ BẢO VỆ CHUYÊN NGHIỆP
@@ -392,7 +392,7 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({ initialData 
 
                   {/* Privacy Disclaimer */}
                   <p className="text-xs text-slate-500 font-normal leading-relaxed pt-1">
-                    Bằng cách gửi yêu cầu, bạn đồng ý cho phép Lâm Sơn Động Security xử lý thông tin để khảo sát và lập báo giá theo Chính sách Bảo mật Thông tin.
+                    Bằng cách gửi yêu cầu, bạn đồng ý cho phép Lâm Sơn Động xử lý thông tin để khảo sát và lập báo giá theo Chính sách Bảo mật Thông tin.
                   </p>
 
                   {/* Submit Button (Clean, No Icon) */}

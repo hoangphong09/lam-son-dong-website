@@ -128,7 +128,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
   return (
     <section 
       id="hero-section"
-      aria-label="Banner Giới Thiệu Lâm Sơn Động Security"
+      aria-label="Banner Giới Thiệu Lâm Sơn Động"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       className="relative bg-slate-950 text-white overflow-hidden min-h-[540px] sm:min-h-[600px] lg:min-h-[660px] flex items-center border-b border-slate-800 select-none"
@@ -150,7 +150,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
             <div className="absolute inset-0 z-0 overflow-hidden">
               <img
                 src={getOptimizedHeroImageUrl(slide.imageUrl)}
-                alt={`Lâm Sơn Động Security - ${slide.title}`}
+                alt={`Lâm Sơn Động - ${slide.title}`}
                 loading={index === 0 ? 'eager' : 'lazy'}
                 decoding="async"
                 fetchPriority={index === 0 ? 'high' : 'low'}
