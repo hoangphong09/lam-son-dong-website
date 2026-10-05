@@ -56,11 +56,6 @@ export const DEFAULT_NAV_ITEMS: NavItemConfig[] = [
     label: 'Tuyển Dụng',
     targetId: 'recruitment-section',
   },
-  {
-    id: 'profile',
-    label: 'Hồ sơ năng lực',
-    targetId: 'profile-static',
-  },
 ];
 
 interface NavbarProps {
@@ -212,14 +207,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       return;
     }
 
-    // 3. "Hồ sơ năng lực" (No action for now as requested)
-    if (item.id === 'profile') {
-      setMobileMenuOpen(false);
-      setActiveDropdown(null);
-      return;
-    }
-
-    // 4. If currently on a non-home page (About or Recruitment), navigate to Home first and then scroll
+    // 3. If currently on a non-home page (About or Recruitment), navigate to Home first and then scroll
     if (currentRoute !== 'home') {
       if (onNavigateToHome) {
         onNavigateToHome(item.targetId);
