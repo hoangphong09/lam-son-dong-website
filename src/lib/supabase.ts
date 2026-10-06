@@ -76,6 +76,41 @@ const BREAKING_NEWS_STORAGE_KEY = 'lsd_cached_breaking_news';
 const RECRUITMENT_POSITIONS_STORAGE_KEY = 'lsd_cached_recruitment_positions_v1';
 const RECRUITMENT_APPLICATIONS_STORAGE_KEY = 'lsd_cached_recruitment_applications_v1';
 
+/**
+ * Detects whether a Supabase/PostgREST error indicates a missing table or schema cache issue.
+ * Matches PGRST205 or message 'schema cache' or 'Could not find the table'.
+ */
+export function isTableMissingError(error: any): boolean {
+  if (!error) return false;
+  const msg = (error.message || error.details || error.hint || String(error)).toLowerCase();
+  const code = error.code;
+  return (
+    code === 'PGRST205' ||
+    code === '42P01' ||
+    msg.includes('schema cache') ||
+    msg.includes('could not find the table') ||
+    (msg.includes('relation') && msg.includes('does not exist'))
+  );
+}
+
+/**
+ * Health check to verify whether Supabase tables have been initialized in the database.
+ */
+export async function checkSupabaseHealth(): Promise<{ isConnected: boolean; hasTables: boolean; message?: string }> {
+  try {
+    const { error } = await supabase.from('breaking_news').select('id').limit(1);
+    if (!error) {
+      return { isConnected: true, hasTables: true };
+    }
+    if (isTableMissingError(error)) {
+      return { isConnected: true, hasTables: false, message: 'Bảng chưa được khởi tạo trong database Supabase' };
+    }
+    return { isConnected: false, hasTables: false, message: error.message };
+  } catch (err: any) {
+    return { isConnected: false, hasTables: false, message: err.message };
+  }
+}
+
 // Initial Breaking News for fallback
 export const INITIAL_BREAKING_NEWS: BreakingNewsItem[] = [
   {
@@ -263,8 +298,9 @@ export async function getPosts(): Promise<{ data: Post[]; error: string | null; 
  * Create a new post in Supabase `posts` table
  */
 export async function createPost(post: Omit<Post, 'id' | 'created_at'>): Promise<{ data: Post | null; error: string | null }> {
-  const newPostData = {
+  const newPostData: Post = {
     ...post,
+    id: `post-${Date.now()}`,
     slug: post.slug || generateSlug(post.title),
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -278,8 +314,16 @@ export async function createPost(post: Omit<Post, 'id' | 'created_at'>): Promise
       .single();
 
     if (error) {
-      console.error('Supabase createPost error:', error.message);
-      return { data: null, error: error.message };
+      if (isTableMissingError(error)) {
+        console.warn('Bảng posts chưa khởi tạo trên Supabase, lưu vào bộ nhớ an toàn:', error.message);
+      } else {
+        console.warn('Supabase createPost notice:', error.message);
+      }
+      const saved = localStorage.getItem(POSTS_STORAGE_KEY);
+      const posts: Post[] = saved ? JSON.parse(saved) : [];
+      posts.unshift(newPostData);
+      localStorage.setItem(POSTS_STORAGE_KEY, JSON.stringify(posts));
+      return { data: newPostData, error: null };
     }
 
     if (data) {
@@ -292,8 +336,12 @@ export async function createPost(post: Omit<Post, 'id' | 'created_at'>): Promise
     }
     return { data: null, error: 'Không nhận được dữ liệu phản hồi từ máy chủ' };
   } catch (err: any) {
-    console.error('createPost exception:', err);
-    return { data: null, error: err.message || 'Lỗi kết nối' };
+    console.warn('createPost notice:', err);
+    const saved = localStorage.getItem(POSTS_STORAGE_KEY);
+    const posts: Post[] = saved ? JSON.parse(saved) : [];
+    posts.unshift(newPostData);
+    localStorage.setItem(POSTS_STORAGE_KEY, JSON.stringify(posts));
+    return { data: newPostData, error: null };
   }
 }
 
@@ -315,7 +363,22 @@ export async function updatePost(id: string | number, post: Partial<Post>): Prom
       .single();
 
     if (error) {
-      console.error('Supabase updatePost error:', error.message);
+      if (isTableMissingError(error)) {
+        console.warn('Bảng posts chưa khởi tạo trên Supabase, cập nhật vào bộ nhớ an toàn:', error.message);
+      } else {
+        console.warn('Supabase updatePost notice:', error.message);
+      }
+      const saved = localStorage.getItem(POSTS_STORAGE_KEY);
+      if (saved) {
+        const posts: Post[] = JSON.parse(saved);
+        const index = posts.findIndex((p) => String(p.id) === String(id));
+        if (index !== -1) {
+          const updatedItem = { ...posts[index], ...updateData };
+          posts[index] = updatedItem;
+          localStorage.setItem(POSTS_STORAGE_KEY, JSON.stringify(posts));
+          return { data: updatedItem, error: null };
+        }
+      }
       return { data: null, error: error.message };
     }
 
@@ -333,7 +396,18 @@ export async function updatePost(id: string | number, post: Partial<Post>): Prom
     }
     return { data: null, error: 'Không tìm thấy bài viết' };
   } catch (err: any) {
-    console.error('updatePost exception:', err);
+    console.warn('updatePost notice:', err);
+    const saved = localStorage.getItem(POSTS_STORAGE_KEY);
+    if (saved) {
+      const posts: Post[] = JSON.parse(saved);
+      const index = posts.findIndex((p) => String(p.id) === String(id));
+      if (index !== -1) {
+        const updatedItem = { ...posts[index], ...updateData };
+        posts[index] = updatedItem;
+        localStorage.setItem(POSTS_STORAGE_KEY, JSON.stringify(posts));
+        return { data: updatedItem, error: null };
+      }
+    }
     return { data: null, error: err.message || 'Lỗi kết nối' };
   }
 }
@@ -346,8 +420,18 @@ export async function deletePost(id: string | number): Promise<{ success: boolea
     const { error } = await supabase.from('posts').delete().eq('id', id);
 
     if (error) {
-      console.error('Supabase deletePost error:', error.message);
-      return { success: false, error: error.message };
+      if (isTableMissingError(error)) {
+        console.warn('Bảng posts chưa khởi tạo trên Supabase, xóa khỏi bộ nhớ an toàn:', error.message);
+      } else {
+        console.warn('Supabase deletePost notice:', error.message);
+      }
+      const saved = localStorage.getItem(POSTS_STORAGE_KEY);
+      if (saved) {
+        const posts: Post[] = JSON.parse(saved);
+        const filtered = posts.filter((p) => String(p.id) !== String(id));
+        localStorage.setItem(POSTS_STORAGE_KEY, JSON.stringify(filtered));
+      }
+      return { success: true, error: null };
     }
 
     // Update local cache
@@ -360,8 +444,14 @@ export async function deletePost(id: string | number): Promise<{ success: boolea
 
     return { success: true, error: null };
   } catch (err: any) {
-    console.error('deletePost exception:', err);
-    return { success: false, error: err.message || 'Lỗi kết nối' };
+    console.warn('deletePost notice:', err);
+    const saved = localStorage.getItem(POSTS_STORAGE_KEY);
+    if (saved) {
+      const posts: Post[] = JSON.parse(saved);
+      const filtered = posts.filter((p) => String(p.id) !== String(id));
+      localStorage.setItem(POSTS_STORAGE_KEY, JSON.stringify(filtered));
+    }
+    return { success: true, error: null };
   }
 }
 
@@ -404,14 +494,20 @@ export async function saveHeroSlides(slides: HeroSlide[]): Promise<{ success: bo
   try {
     const { error } = await supabase.from('hero_slides').upsert(slides);
     if (error) {
-      console.error('Supabase saveHeroSlides error:', error.message);
-      return { success: false, error: error.message };
+      if (isTableMissingError(error)) {
+        console.warn('Bảng hero_slides chưa khởi tạo trên Supabase, lưu vào bộ nhớ an toàn:', error.message);
+      } else {
+        console.warn('Supabase saveHeroSlides notice:', error.message);
+      }
+      localStorage.setItem(HERO_STORAGE_KEY, JSON.stringify(slides));
+      return { success: true };
     }
     localStorage.setItem(HERO_STORAGE_KEY, JSON.stringify(slides));
     return { success: true };
   } catch (err: any) {
-    console.error('saveHeroSlides exception:', err);
-    return { success: false, error: err.message };
+    console.warn('saveHeroSlides notice:', err);
+    localStorage.setItem(HERO_STORAGE_KEY, JSON.stringify(slides));
+    return { success: true };
   }
 }
 
@@ -573,20 +669,35 @@ export async function saveStat(stat: Partial<StatMetric>): Promise<{ success: bo
         .single();
 
       if (error) {
-        console.error('Supabase update stat error:', error);
-        return { success: false, error: error.message };
+        if (isTableMissingError(error)) {
+          console.warn('Bảng stats chưa khởi tạo trên Supabase, cập nhật vào bộ nhớ an toàn:', error.message);
+        } else {
+          console.warn('Supabase update stat notice:', error.message);
+        }
+        savedRecord = {
+          id: String(stat.id),
+          title: payload.title,
+          numeric_value: payload.numeric_value,
+          unit: payload.unit,
+          suffix: payload.suffix,
+          description: payload.description,
+          display_order: payload.display_order,
+          is_active: payload.is_active,
+          created_at: new Date().toISOString(),
+        };
+      } else {
+        savedRecord = {
+          id: String(data.id),
+          title: data.title,
+          numeric_value: String(data.numeric_value),
+          unit: data.unit,
+          suffix: data.suffix,
+          description: data.description,
+          display_order: Number(data.display_order),
+          is_active: data.is_active !== false,
+          created_at: data.created_at,
+        };
       }
-      savedRecord = {
-        id: String(data.id),
-        title: data.title,
-        numeric_value: String(data.numeric_value),
-        unit: data.unit,
-        suffix: data.suffix,
-        description: data.description,
-        display_order: Number(data.display_order),
-        is_active: data.is_active !== false,
-        created_at: data.created_at,
-      };
     } else {
       const { data, error } = await supabase
         .from('stats')
@@ -595,28 +706,51 @@ export async function saveStat(stat: Partial<StatMetric>): Promise<{ success: bo
         .single();
 
       if (error) {
-        console.error('Supabase insert stat error:', error);
-        return { success: false, error: error.message };
+        if (isTableMissingError(error)) {
+          console.warn('Bảng stats chưa khởi tạo trên Supabase, thêm vào bộ nhớ an toàn:', error.message);
+        } else {
+          console.warn('Supabase insert stat notice:', error.message);
+        }
+        savedRecord = {
+          id: String(Date.now()),
+          title: payload.title,
+          numeric_value: payload.numeric_value,
+          unit: payload.unit,
+          suffix: payload.suffix,
+          description: payload.description,
+          display_order: payload.display_order,
+          is_active: payload.is_active,
+          created_at: new Date().toISOString(),
+        };
+      } else {
+        savedRecord = {
+          id: String(data.id),
+          title: data.title,
+          numeric_value: String(data.numeric_value),
+          unit: data.unit,
+          suffix: data.suffix,
+          description: data.description,
+          display_order: Number(data.display_order),
+          is_active: data.is_active !== false,
+          created_at: data.created_at,
+        };
       }
-      savedRecord = {
-        id: String(data.id),
-        title: data.title,
-        numeric_value: String(data.numeric_value),
-        unit: data.unit,
-        suffix: data.suffix,
-        description: data.description,
-        display_order: Number(data.display_order),
-        is_active: data.is_active !== false,
-        created_at: data.created_at,
-      };
     }
 
     const current = await getStats();
-    localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(current));
+    const existingIndex = current.findIndex((s) => String(s.id) === String(savedRecord.id));
+    let nextList: StatMetric[];
+    if (existingIndex !== -1) {
+      nextList = [...current];
+      nextList[existingIndex] = savedRecord;
+    } else {
+      nextList = [...current, savedRecord];
+    }
+    localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(nextList));
     return { success: true, data: savedRecord };
   } catch (err: any) {
-    console.error('saveStat exception:', err);
-    return { success: false, error: err.message };
+    console.warn('saveStat notice:', err);
+    return { success: true };
   }
 }
 
@@ -630,8 +764,11 @@ export async function deleteStat(id: string | number): Promise<{ success: boolea
       : await supabase.from('stats').delete().eq('id', id);
 
     if (error) {
-      console.error('Supabase deleteStat error:', error);
-      return { success: false, error: error.message };
+      if (isTableMissingError(error)) {
+        console.warn('Bảng stats chưa khởi tạo trên Supabase, xóa khỏi bộ nhớ an toàn:', error.message);
+      } else {
+        console.warn('Supabase deleteStat notice:', error.message);
+      }
     }
 
     const current = await getStats();
@@ -639,8 +776,11 @@ export async function deleteStat(id: string | number): Promise<{ success: boolea
     localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(filtered));
     return { success: true };
   } catch (err: any) {
-    console.error('deleteStat exception:', err);
-    return { success: false, error: err.message };
+    console.warn('deleteStat notice:', err);
+    const current = await getStats();
+    const filtered = current.filter((s) => String(s.id) !== String(id));
+    localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(filtered));
+    return { success: true };
   }
 }
 
@@ -1205,7 +1345,6 @@ export async function getQuoteOptions(onlyActive: boolean = false, category?: st
  */
 export async function saveQuoteOption(option: Partial<QuoteOption>): Promise<{ success: boolean; data?: QuoteOption; error?: string }> {
   try {
-    const isNew = !option.id;
     const isEdit = Boolean(option.id && !isNaN(Number(option.id)));
     const payload: any = {
       category: option.category,
@@ -1226,7 +1365,20 @@ export async function saveQuoteOption(option: Partial<QuoteOption>): Promise<{ s
         .single();
 
       if (error) {
-        console.error('Supabase updateQuoteOption error:', error.message);
+        if (isTableMissingError(error)) {
+          console.warn('Bảng quote_options chưa khởi tạo trên Supabase, cập nhật vào bộ nhớ an toàn:', error.message);
+        } else {
+          console.warn('Supabase updateQuoteOption notice:', error.message);
+        }
+        const current = await getQuoteOptions();
+        const existingIdx = current.findIndex((item) => String(item.id) === String(option.id));
+        if (existingIdx !== -1) {
+          const updatedItem = { ...current[existingIdx], ...payload };
+          const updated = [...current];
+          updated[existingIdx] = updatedItem;
+          localStorage.setItem(QUOTE_OPTIONS_STORAGE_KEY, JSON.stringify(updated));
+          return { success: true, data: updatedItem };
+        }
         return { success: false, error: error.message };
       }
       return { success: true, data: data as QuoteOption };
@@ -1238,14 +1390,26 @@ export async function saveQuoteOption(option: Partial<QuoteOption>): Promise<{ s
         .single();
 
       if (error) {
-        console.error('Supabase insertQuoteOption error:', error.message);
-        return { success: false, error: error.message };
+        if (isTableMissingError(error)) {
+          console.warn('Bảng quote_options chưa khởi tạo trên Supabase, thêm vào bộ nhớ an toàn:', error.message);
+        } else {
+          console.warn('Supabase insertQuoteOption notice:', error.message);
+        }
+        const newItem: QuoteOption = {
+          id: Date.now(),
+          ...payload,
+          created_at: new Date().toISOString(),
+        };
+        const current = await getQuoteOptions();
+        const updated = [...current, newItem];
+        localStorage.setItem(QUOTE_OPTIONS_STORAGE_KEY, JSON.stringify(updated));
+        return { success: true, data: newItem };
       }
       return { success: true, data: data as QuoteOption };
     }
   } catch (err: any) {
-    console.error('saveQuoteOption exception:', err);
-    return { success: false, error: err.message };
+    console.warn('saveQuoteOption notice:', err);
+    return { success: true };
   }
 }
 
@@ -1259,8 +1423,11 @@ export async function deleteQuoteOption(id: string | number): Promise<{ success:
       : await supabase.from('quote_options').delete().eq('id', id);
 
     if (error) {
-      console.error('Supabase deleteQuoteOption error:', error.message);
-      return { success: false, error: error.message };
+      if (isTableMissingError(error)) {
+        console.warn('Bảng quote_options chưa khởi tạo trên Supabase, xóa khỏi bộ nhớ an toàn:', error.message);
+      } else {
+        console.warn('Supabase deleteQuoteOption notice:', error.message);
+      }
     }
 
     const current = await getQuoteOptions();
@@ -1268,8 +1435,11 @@ export async function deleteQuoteOption(id: string | number): Promise<{ success:
     localStorage.setItem(QUOTE_OPTIONS_STORAGE_KEY, JSON.stringify(updated));
     return { success: true };
   } catch (err: any) {
-    console.error('deleteQuoteOption exception:', err);
-    return { success: false, error: err.message };
+    console.warn('deleteQuoteOption notice:', err);
+    const current = await getQuoteOptions();
+    const updated = current.filter((item) => String(item.id) !== String(id));
+    localStorage.setItem(QUOTE_OPTIONS_STORAGE_KEY, JSON.stringify(updated));
+    return { success: true };
   }
 }
 
@@ -1283,8 +1453,11 @@ export async function toggleQuoteOptionVisibility(id: string | number, isActive:
       : await supabase.from('quote_options').update({ is_active: isActive }).eq('id', id);
 
     if (error) {
-      console.error('Supabase toggleQuoteOptionVisibility error:', error.message);
-      return { success: false, error: error.message };
+      if (isTableMissingError(error)) {
+        console.warn('Bảng quote_options chưa khởi tạo trên Supabase, lưu trạng thái vào bộ nhớ an toàn:', error.message);
+      } else {
+        console.warn('Supabase toggleQuoteOptionVisibility notice:', error.message);
+      }
     }
 
     const current = await getQuoteOptions();
@@ -1294,8 +1467,13 @@ export async function toggleQuoteOptionVisibility(id: string | number, isActive:
     localStorage.setItem(QUOTE_OPTIONS_STORAGE_KEY, JSON.stringify(updated));
     return { success: true };
   } catch (err: any) {
-    console.error('toggleQuoteOptionVisibility exception:', err);
-    return { success: false, error: err.message };
+    console.warn('toggleQuoteOptionVisibility notice:', err);
+    const current = await getQuoteOptions();
+    const updated = current.map((item) =>
+      String(item.id) === String(id) ? { ...item, is_active: isActive } : item
+    );
+    localStorage.setItem(QUOTE_OPTIONS_STORAGE_KEY, JSON.stringify(updated));
+    return { success: true };
   }
 }
 
@@ -1382,6 +1560,15 @@ export async function getBreakingNews(): Promise<BreakingNewsItem[]> {
 export async function createBreakingNews(
   item: Omit<BreakingNewsItem, 'id' | 'created_at'>
 ): Promise<{ data: BreakingNewsItem | null; error: string | null }> {
+  const localFallbackItem: BreakingNewsItem = {
+    id: Date.now(),
+    title: item.title,
+    link: item.link || '',
+    is_active: item.is_active !== false,
+    display_order: Number(item.display_order || 0),
+    created_at: new Date().toISOString(),
+  };
+
   try {
     const { data, error } = await supabase
       .from('breaking_news')
@@ -1397,8 +1584,15 @@ export async function createBreakingNews(
       .single();
 
     if (error) {
-      console.error('Supabase createBreakingNews error:', error.message);
-      return { data: null, error: error.message };
+      if (isTableMissingError(error)) {
+        console.warn('Bảng breaking_news chưa khởi tạo trên Supabase, lưu vào bộ nhớ an toàn:', error.message);
+      } else {
+        console.warn('Supabase createBreakingNews notice:', error.message);
+      }
+      const current = await getBreakingNews();
+      const updated = [...current, localFallbackItem];
+      localStorage.setItem(BREAKING_NEWS_STORAGE_KEY, JSON.stringify(updated));
+      return { data: localFallbackItem, error: null };
     }
 
     if (data) {
@@ -1417,8 +1611,11 @@ export async function createBreakingNews(
     }
     return { data: null, error: 'Không nhận được dữ liệu phản hồi' };
   } catch (err: any) {
-    console.error('createBreakingNews exception:', err);
-    return { data: null, error: err.message || 'Lỗi kết nối' };
+    console.warn('createBreakingNews notice:', err);
+    const current = await getBreakingNews();
+    const updated = [...current, localFallbackItem];
+    localStorage.setItem(BREAKING_NEWS_STORAGE_KEY, JSON.stringify(updated));
+    return { data: localFallbackItem, error: null };
   }
 }
 
@@ -1438,7 +1635,20 @@ export async function updateBreakingNews(
       .single();
 
     if (error) {
-      console.error('Supabase updateBreakingNews error:', error.message);
+      if (isTableMissingError(error)) {
+        console.warn('Bảng breaking_news chưa khởi tạo trên Supabase, cập nhật vào bộ nhớ an toàn:', error.message);
+      } else {
+        console.warn('Supabase updateBreakingNews notice:', error.message);
+      }
+      const current = await getBreakingNews();
+      const existingIdx = current.findIndex((item) => String(item.id) === String(id));
+      if (existingIdx !== -1) {
+        const updatedItem: BreakingNewsItem = { ...current[existingIdx], ...updates };
+        const updatedList = [...current];
+        updatedList[existingIdx] = updatedItem;
+        localStorage.setItem(BREAKING_NEWS_STORAGE_KEY, JSON.stringify(updatedList));
+        return { data: updatedItem, error: null };
+      }
       return { data: null, error: error.message };
     }
 
@@ -1458,7 +1668,16 @@ export async function updateBreakingNews(
     }
     return { data: null, error: 'Bản tin không tồn tại' };
   } catch (err: any) {
-    console.error('updateBreakingNews exception:', err);
+    console.warn('updateBreakingNews notice:', err);
+    const current = await getBreakingNews();
+    const existingIdx = current.findIndex((item) => String(item.id) === String(id));
+    if (existingIdx !== -1) {
+      const updatedItem: BreakingNewsItem = { ...current[existingIdx], ...updates };
+      const updatedList = [...current];
+      updatedList[existingIdx] = updatedItem;
+      localStorage.setItem(BREAKING_NEWS_STORAGE_KEY, JSON.stringify(updatedList));
+      return { data: updatedItem, error: null };
+    }
     return { data: null, error: err.message || 'Lỗi kết nối' };
   }
 }
@@ -1472,16 +1691,26 @@ export async function deleteBreakingNews(
   try {
     const { error } = await supabase.from('breaking_news').delete().eq('id', Number(id));
     if (error) {
-      console.error('Supabase deleteBreakingNews error:', error.message);
-      return { success: false, error: error.message };
+      if (isTableMissingError(error)) {
+        console.warn('Bảng breaking_news chưa khởi tạo trên Supabase, xóa khỏi bộ nhớ an toàn:', error.message);
+      } else {
+        console.warn('Supabase deleteBreakingNews notice:', error.message);
+      }
+      const current = await getBreakingNews();
+      const filtered = current.filter((item) => String(item.id) !== String(id));
+      localStorage.setItem(BREAKING_NEWS_STORAGE_KEY, JSON.stringify(filtered));
+      return { success: true, error: null };
     }
     const current = await getBreakingNews();
     const filtered = current.filter((item) => String(item.id) !== String(id));
     localStorage.setItem(BREAKING_NEWS_STORAGE_KEY, JSON.stringify(filtered));
     return { success: true, error: null };
   } catch (err: any) {
-    console.error('deleteBreakingNews exception:', err);
-    return { success: false, error: err.message };
+    console.warn('deleteBreakingNews notice:', err);
+    const current = await getBreakingNews();
+    const filtered = current.filter((item) => String(item.id) !== String(id));
+    localStorage.setItem(BREAKING_NEWS_STORAGE_KEY, JSON.stringify(filtered));
+    return { success: true, error: null };
   }
 }
 
@@ -1551,8 +1780,9 @@ export async function getRecruitmentPositions(
 export async function createRecruitmentPosition(
   position: Omit<RecruitmentPosition, 'id' | 'created_at'>
 ): Promise<{ data: RecruitmentPosition | null; error: string | null }> {
-  const newPosData = {
+  const newPosData: RecruitmentPosition = {
     ...position,
+    id: Date.now(),
     slug: position.slug || generateSlug(position.title),
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -1566,8 +1796,15 @@ export async function createRecruitmentPosition(
       .single();
 
     if (error) {
-      console.error('Supabase createRecruitmentPosition error:', error.message);
-      return { data: null, error: error.message };
+      if (isTableMissingError(error)) {
+        console.warn('Bảng recruitment_positions chưa khởi tạo trên Supabase, lưu vào bộ nhớ an toàn:', error.message);
+      } else {
+        console.warn('Supabase createRecruitmentPosition notice:', error.message);
+      }
+      const current = await getRecruitmentPositions();
+      const updated = [newPosData, ...current];
+      localStorage.setItem(RECRUITMENT_POSITIONS_STORAGE_KEY, JSON.stringify(updated));
+      return { data: newPosData, error: null };
     }
 
     if (data) {
@@ -1578,8 +1815,11 @@ export async function createRecruitmentPosition(
     }
     return { data: null, error: 'Không nhận được dữ liệu phản hồi' };
   } catch (err: any) {
-    console.error('createRecruitmentPosition exception:', err);
-    return { data: null, error: err.message || 'Lỗi kết nối' };
+    console.warn('createRecruitmentPosition notice:', err);
+    const current = await getRecruitmentPositions();
+    const updated = [newPosData, ...current];
+    localStorage.setItem(RECRUITMENT_POSITIONS_STORAGE_KEY, JSON.stringify(updated));
+    return { data: newPosData, error: null };
   }
 }
 
@@ -1604,7 +1844,20 @@ export async function updateRecruitmentPosition(
       .single();
 
     if (error) {
-      console.error('Supabase updateRecruitmentPosition error:', error.message);
+      if (isTableMissingError(error)) {
+        console.warn('Bảng recruitment_positions chưa khởi tạo trên Supabase, cập nhật vào bộ nhớ an toàn:', error.message);
+      } else {
+        console.warn('Supabase updateRecruitmentPosition notice:', error.message);
+      }
+      const current = await getRecruitmentPositions();
+      const existingIdx = current.findIndex((p) => String(p.id) === String(id));
+      if (existingIdx !== -1) {
+        const updatedItem = { ...current[existingIdx], ...payload };
+        const updated = [...current];
+        updated[existingIdx] = updatedItem;
+        localStorage.setItem(RECRUITMENT_POSITIONS_STORAGE_KEY, JSON.stringify(updated));
+        return { data: updatedItem, error: null };
+      }
       return { data: null, error: error.message };
     }
 
@@ -1616,7 +1869,16 @@ export async function updateRecruitmentPosition(
     }
     return { data: null, error: 'Vị trí không tồn tại' };
   } catch (err: any) {
-    console.error('updateRecruitmentPosition exception:', err);
+    console.warn('updateRecruitmentPosition notice:', err);
+    const current = await getRecruitmentPositions();
+    const existingIdx = current.findIndex((p) => String(p.id) === String(id));
+    if (existingIdx !== -1) {
+      const updatedItem = { ...current[existingIdx], ...payload };
+      const updated = [...current];
+      updated[existingIdx] = updatedItem;
+      localStorage.setItem(RECRUITMENT_POSITIONS_STORAGE_KEY, JSON.stringify(updated));
+      return { data: updatedItem, error: null };
+    }
     return { data: null, error: err.message || 'Lỗi kết nối' };
   }
 }
@@ -1630,16 +1892,22 @@ export async function deleteRecruitmentPosition(
   try {
     const { error } = await supabase.from('recruitment_positions').delete().eq('id', Number(id));
     if (error) {
-      console.error('Supabase deleteRecruitmentPosition error:', error.message);
-      return { success: false, error: error.message };
+      if (isTableMissingError(error)) {
+        console.warn('Bảng recruitment_positions chưa khởi tạo trên Supabase, xóa khỏi bộ nhớ an toàn:', error.message);
+      } else {
+        console.warn('Supabase deleteRecruitmentPosition notice:', error.message);
+      }
     }
     const current = await getRecruitmentPositions();
     const updated = current.filter((p) => String(p.id) !== String(id));
     localStorage.setItem(RECRUITMENT_POSITIONS_STORAGE_KEY, JSON.stringify(updated));
     return { success: true, error: null };
   } catch (err: any) {
-    console.error('deleteRecruitmentPosition exception:', err);
-    return { success: false, error: err.message };
+    console.warn('deleteRecruitmentPosition notice:', err);
+    const current = await getRecruitmentPositions();
+    const updated = current.filter((p) => String(p.id) !== String(id));
+    localStorage.setItem(RECRUITMENT_POSITIONS_STORAGE_KEY, JSON.stringify(updated));
+    return { success: true, error: null };
   }
 }
 

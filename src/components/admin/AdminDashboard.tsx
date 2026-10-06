@@ -39,6 +39,7 @@ import {
   deleteRecruitmentApplication,
   subscribeToRealtimeCMS,
   SUPABASE_SETUP_SQL,
+  checkSupabaseHealth,
 } from '../../lib/supabase';
 import { HeroSlide, QuoteRequest, StatMetric, QuoteOption, QuoteOptionCategory, BreakingNewsItem } from '../../types';
 import { PostModal } from './PostModal';
@@ -91,6 +92,7 @@ import {
   ChevronDown,
   Users,
   MapPin,
+  X,
 } from 'lucide-react';
 
 interface AdminDashboardProps {
@@ -213,6 +215,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [recruitmentSearchTerm, setRecruitmentSearchTerm] = useState('');
   const [applicationStatusFilter, setApplicationStatusFilter] = useState<'all' | 'new' | 'contacted' | 'interview_scheduled' | 'hired' | 'rejected'>('all');
   const [copiedSql, setCopiedSql] = useState(false);
+  const [dbHealth, setDbHealth] = useState<{ isConnected: boolean; hasTables: boolean }>({ isConnected: true, hasTables: true });
+  const [showDbBanner, setShowDbBanner] = useState(true);
+
+  // Check Supabase database tables health on mount
+  useEffect(() => {
+    checkSupabaseHealth().then((health) => {
+      setDbHealth(health);
+    });
+  }, []);
 
   // Listen to hash changes
   useEffect(() => {
@@ -507,7 +518,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       await toggleBreakingNewsActive(id, !currentActive);
       await loadBreakingNews();
     } catch (err) {
-      console.error(err);
+      console.warn('Lỗi khi bật/tắt tin nhanh:', err);
     }
   };
 
@@ -518,7 +529,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       setDeletingBreakingNewsId(null);
       await loadBreakingNews();
     } catch (err) {
-      console.error(err);
+      console.warn('Lỗi khi xóa tin nhanh:', err);
     }
   };
 
@@ -536,9 +547,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     targetItem.display_order = tempOrder;
 
     setBreakingNews([...sorted]);
-    await updateBreakingNews(currentItem.id, { display_order: currentItem.display_order });
-    await updateBreakingNews(targetItem.id, { display_order: targetItem.display_order });
-    await loadBreakingNews();
+    try {
+      await Promise.all([
+        updateBreakingNews(currentItem.id, { display_order: currentItem.display_order }),
+        updateBreakingNews(targetItem.id, { display_order: targetItem.display_order }),
+      ]);
+      await loadBreakingNews();
+    } catch (err) {
+      console.warn('Lỗi đổi thứ tự tin nhanh:', err);
+    }
   };
 
   const handleResetBreakingNews = async () => {
@@ -970,6 +987,36 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
       {/* Main Content Area */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        {/* Supabase Database Connection / Initialization Status Banner */}
+        {!dbHealth.hasTables && showDbBanner && (
+          <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs animate-fadeIn shadow-2xs">
+            <div className="flex items-start sm:items-center gap-2.5 text-amber-950">
+              <Database className="w-4 h-4 text-amber-700 shrink-0 mt-0.5 sm:mt-0" />
+              <div>
+                <strong>Lưu ý đồng bộ:</strong> Cơ sở dữ liệu Supabase chưa tạo các bảng (như <code>breaking_news</code>, <code>posts</code>...). Hệ thống đang tự động lưu trữ dữ liệu bền vững vào bộ nhớ trình duyệt để không làm mất thông tin của bạn.
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => {
+                  setActiveTab('sql-setup');
+                  window.location.hash = '#admin/sql-setup';
+                }}
+                className="px-3 py-1.5 bg-amber-700 hover:bg-amber-800 text-white font-bold rounded-lg transition-colors cursor-pointer whitespace-nowrap"
+              >
+                Khởi tạo bảng bằng SQL (1-Click)
+              </button>
+              <button
+                onClick={() => setShowDbBanner(false)}
+                className="p-1.5 text-amber-800 hover:text-amber-950 hover:bg-amber-100 rounded-lg cursor-pointer"
+                title="Đóng thông báo"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+        )}
         
         {/* ========================================================= */}
         {/* TAB 1: HIỆU QUẢ THỰC TẾ (KEY STATS MANAGEMENT)            */}
