@@ -30,7 +30,7 @@ import { AdminDashboard } from './components/admin/AdminDashboard';
 
 import { FEATURED_SERVICES } from './data/mockData';
 import { ServiceItem, CaseStudy, ResearchArticle, NewsItem, Certification, HeroSlide, StatMetric, BreakingNewsItem } from './types';
-import { supabase, getPosts, getHeroSlides, getCaseStudies, getStats, getBreakingNews, Post } from './lib/supabase';
+import { supabase, getPosts, getHeroSlides, getCaseStudies, getStats, getBreakingNews, subscribeToRealtimeCMS, Post } from './lib/supabase';
 import { X, Calendar, User, Clock, PhoneCall, ArrowRight } from 'lucide-react';
 
 export default function App() {
@@ -129,27 +129,72 @@ export default function App() {
     window.addEventListener('popstate', handleLocationCheck);
     window.addEventListener('hashchange', handleLocationCheck);
 
-    // Initial load of hero slides, posts, case studies, stats, and breaking news
-    getHeroSlides().then((slides) => {
-      if (slides && slides.length > 0) setHeroSlides(slides);
+    // Database-first data fetching & revalidation
+    const refreshAllData = () => {
+      getHeroSlides().then((slides) => {
+        setHeroSlides(slides || []);
+      });
+      getPosts().then(({ data }) => {
+        setPosts(data || []);
+      });
+      getCaseStudies().then((cs) => {
+        setCaseStudies(cs || []);
+      });
+      getStats().then((st) => {
+        setStats(st || []);
+      });
+      getBreakingNews().then((bn) => {
+        setBreakingNews(bn || []);
+      });
+    };
+
+    // Initial load
+    refreshAllData();
+
+    // Supabase Realtime Synchronization
+    // Connected clients instantly update state across sessions & devices when mutations occur
+    const unsubscribeRealtime = subscribeToRealtimeCMS({
+      onPostsChange: () => {
+        getPosts().then(({ data }) => setPosts(data || []));
+      },
+      onHeroSlidesChange: () => {
+        getHeroSlides().then((slides) => setHeroSlides(slides || []));
+      },
+      onCaseStudiesChange: () => {
+        getCaseStudies().then((cs) => setCaseStudies(cs || []));
+      },
+      onStatsChange: () => {
+        getStats().then((st) => setStats(st || []));
+      },
+      onBreakingNewsChange: () => {
+        getBreakingNews().then((bn) => setBreakingNews(bn || []));
+      },
     });
-    getPosts().then(({ data }) => {
-      if (data && data.length > 0) setPosts(data);
-    });
-    getCaseStudies().then((cs) => {
-      if (cs && cs.length > 0) setCaseStudies(cs);
-    });
-    getStats().then((st) => {
-      if (st && st.length > 0) setStats(st);
-    });
-    getBreakingNews().then((bn) => {
-      if (bn && bn.length > 0) setBreakingNews(bn);
-    });
+
+    // Multi-device & Tab focus / Reconnection Consistency:
+    // Revalidate against the Supabase source of truth upon window focus or reconnection
+    const handleRevalidate = () => {
+      refreshAllData();
+    };
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        refreshAllData();
+      }
+    };
+
+    window.addEventListener('focus', handleRevalidate);
+    window.addEventListener('online', handleRevalidate);
+    document.addEventListener('visibilitychange', handleVisibility);
 
     return () => {
       subscription.unsubscribe();
+      unsubscribeRealtime();
       window.removeEventListener('popstate', handleLocationCheck);
       window.removeEventListener('hashchange', handleLocationCheck);
+      window.removeEventListener('focus', handleRevalidate);
+      window.removeEventListener('online', handleRevalidate);
+      document.removeEventListener('visibilitychange', handleVisibility);
     };
   }, []);
 
@@ -159,16 +204,19 @@ export default function App() {
     setIsAdminView(false);
     // Refresh content after admin changes
     getHeroSlides().then((slides) => {
-      if (slides && slides.length > 0) setHeroSlides(slides);
+      setHeroSlides(slides || []);
     });
     getPosts().then(({ data }) => {
-      if (data && data.length > 0) setPosts(data);
+      setPosts(data || []);
     });
     getCaseStudies().then((cs) => {
-      if (cs && cs.length > 0) setCaseStudies(cs);
+      setCaseStudies(cs || []);
     });
     getStats().then((st) => {
-      if (st && st.length > 0) setStats(st);
+      setStats(st || []);
+    });
+    getBreakingNews().then((bn) => {
+      setBreakingNews(bn || []);
     });
   };
 

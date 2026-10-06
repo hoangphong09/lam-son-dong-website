@@ -1,5 +1,5 @@
 -- ==============================================================================
--- LÂM SƠN ĐỘNG SECURITY - SUPABASE CMS WORKFLOW, RLS & STORAGE SETUP
+-- LÂM SƠN ĐỘNG - SUPABASE CMS WORKFLOW, RLS & STORAGE SETUP
 -- ==============================================================================
 -- File: supabase-cms-setup.sql
 -- Description:
@@ -371,8 +371,25 @@ ON CONFLICT (id) DO NOTHING;
 
 -- CẤP QUYỀN TRUY CẬP CHO ROLE
 GRANT USAGE ON SCHEMA public TO anon, authenticated;
-GRANT ALL ON ALL TABLES IN SCHEMA public TO authenticated;
-GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO authenticated;
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon;
-GRANT INSERT ON public.quote_requests TO anon;
-GRANT INSERT ON public.recruitment_applications TO anon;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO anon, authenticated;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated;
+
+-- ==============================================================================
+-- 6. BẬT SUPABASE REALTIME ĐỒNG BỘ TỨC THÌ TRÊN TOÀN BỘ CÁC BẢNG CMS
+-- ==============================================================================
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_publication WHERE pubname = 'supabase_realtime') THEN
+    CREATE PUBLICATION supabase_realtime;
+  END IF;
+END $$;
+
+ALTER PUBLICATION supabase_realtime ADD TABLE public.posts;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.hero_slides;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.case_studies;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.stats;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.quote_requests;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.quote_options;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.breaking_news;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.recruitment_positions;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.recruitment_applications;

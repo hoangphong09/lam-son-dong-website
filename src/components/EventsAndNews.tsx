@@ -10,7 +10,7 @@ interface EventsAndNewsProps {
 }
 
 export const EventsAndNews: React.FC<EventsAndNewsProps> = ({ onSelectNews, posts }) => {
-  const newsItems: NewsItem[] = posts && posts.length > 0
+  const newsItems: NewsItem[] = posts !== undefined
     ? posts.filter(p => p.published !== false).map(p => {
         const matched = NEWS_EVENTS.find(n => 
           n.title.toLowerCase().trim() === p.title.toLowerCase().trim() ||
@@ -22,8 +22,8 @@ export const EventsAndNews: React.FC<EventsAndNewsProps> = ({ onSelectNews, post
           title: p.title,
           date: p.created_at ? new Date(p.created_at).toLocaleDateString('vi-VN') : (matched?.date || '2026'),
           category: p.category || matched?.category || 'Sự Kiện & Tin Tức',
-          summary: p.excerpt || matched?.summary || (p.content ? p.content.slice(0, 150) + '...' : ''),
-          content: (p.content && p.content.length > 250) ? p.content : (matched?.content || p.content),
+          summary: p.excerpt || (p.content ? p.content.slice(0, 160) + '...' : '') || matched?.summary || '',
+          content: p.content || matched?.content || '',
           imageUrl: p.cover_image || matched?.imageUrl || '/images/training.jpg',
           isFeatured: true,
           author: p.author || matched?.author || 'Ban Chỉ Huy Lâm Sơn Động',

@@ -37,6 +37,7 @@ import {
   getRecruitmentApplications,
   updateRecruitmentApplicationStatus,
   deleteRecruitmentApplication,
+  subscribeToRealtimeCMS,
   SUPABASE_SETUP_SQL,
 } from '../../lib/supabase';
 import { HeroSlide, QuoteRequest, StatMetric, QuoteOption, QuoteOptionCategory, BreakingNewsItem } from '../../types';
@@ -337,6 +338,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   };
 
   useEffect(() => {
+    // Initial load of all CMS entities
     loadStats();
     loadQuoteRequests();
     loadQuoteOptions();
@@ -344,6 +346,62 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     loadPosts();
     loadHeroSlides();
     loadRecruitmentData();
+
+    // Supabase Realtime Synchronization across all connected devices and browser sessions
+    const unsubscribeRealtime = subscribeToRealtimeCMS({
+      onPostsChange: () => {
+        loadPosts();
+      },
+      onBreakingNewsChange: () => {
+        loadBreakingNews();
+      },
+      onStatsChange: () => {
+        loadStats();
+      },
+      onHeroSlidesChange: () => {
+        loadHeroSlides();
+      },
+      onQuoteRequestsChange: () => {
+        loadQuoteRequests();
+      },
+      onQuoteOptionsChange: () => {
+        loadQuoteOptions();
+      },
+      onRecruitmentPositionsChange: () => {
+        loadRecruitmentData();
+      },
+      onRecruitmentApplicationsChange: () => {
+        loadRecruitmentData();
+      },
+    });
+
+    // Multi-device / Tab Focus Consistency
+    const handleRevalidate = () => {
+      loadStats();
+      loadQuoteRequests();
+      loadQuoteOptions();
+      loadBreakingNews();
+      loadPosts();
+      loadHeroSlides();
+      loadRecruitmentData();
+    };
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        handleRevalidate();
+      }
+    };
+
+    window.addEventListener('focus', handleRevalidate);
+    window.addEventListener('online', handleRevalidate);
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      unsubscribeRealtime();
+      window.removeEventListener('focus', handleRevalidate);
+      window.removeEventListener('online', handleRevalidate);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
   }, []);
 
   // RECRUITMENT HANDLERS

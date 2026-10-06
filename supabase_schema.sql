@@ -1,5 +1,5 @@
 -- ==============================================================================
--- CƠ SỞ DỮ LIỆU SUPABASE - LÂM SƠN ĐỘNG SECURITY
+-- CƠ SỞ DỮ LIỆU SUPABASE - LÂM SƠN ĐỘNG
 -- Bản quyền (c) 2026 Công Ty Bảo Vệ Lâm Sơn Động
 -- Hướng dẫn: Mở Supabase Dashboard -> SQL Editor -> New Query -> Dán toàn bộ script và nhấn RUN.
 -- ==============================================================================
@@ -355,7 +355,7 @@ CREATE POLICY "Admin toàn quyền quản lý tin nhanh" ON public.breaking_news
 -- Dữ liệu mẫu ban đầu cho breaking_news
 INSERT INTO public.breaking_news (id, title, link, is_active, display_order)
 VALUES
-  (1, 'Lâm Sơn Động Security vinh dự đón nhận Cúp Vàng "Thương hiệu Dịch vụ An ninh Uy tín Hàng đầu Việt Nam 2026"', '', true, 1),
+  (1, 'Lâm Sơn Động vinh dự đón nhận Cúp Vàng "Thương hiệu Dịch vụ An ninh Uy tín Hàng đầu Việt Nam 2026"', '', true, 1),
   (2, 'Triển khai thành công phương án bảo vệ an ninh trật tự Lễ hội Âm nhạc 20.000 khán giả', '', true, 2),
   (3, 'Bộ Công An chứng nhận đạt chuẩn 100% về Điều kiện An ninh Trật tự & Nghiệp vụ PCCC cứu nạn', '', true, 3),
   (4, 'Mở rộng hệ thống Trung tâm phản ứng nhanh cơ động tại các vùng kinh tế trọng điểm', '', true, 4)
@@ -363,10 +363,25 @@ ON CONFLICT (id) DO NOTHING;
 
 -- Cấp quyền bảng cho vai trò authenticated và anon
 GRANT USAGE ON SCHEMA public TO anon, authenticated;
-GRANT ALL ON ALL TABLES IN SCHEMA public TO authenticated;
-GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO authenticated;
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon;
-GRANT INSERT ON public.quote_requests TO anon;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO anon, authenticated;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated;
+
+-- ==============================================================================
+-- PHẦN 7.1: BẬT SUPABASE REALTIME ĐỒNG BỘ TỨC THÌ TRÊN TOÀN BỘ CÁC THIẾT BỊ
+-- ==============================================================================
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_publication WHERE pubname = 'supabase_realtime') THEN
+    CREATE PUBLICATION supabase_realtime;
+  END IF;
+END $$;
+
+ALTER PUBLICATION supabase_realtime ADD TABLE public.posts;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.hero_slides;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.case_studies;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.stats;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.quote_requests;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.breaking_news;
 
 -- ==============================================================================
 -- 8. CẤU HÌNH SUPABASE STORAGE - BUCKET 'post-images'

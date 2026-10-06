@@ -227,8 +227,9 @@ export const INITIAL_POSTS: Post[] = NEWS_EVENTS.map((n, idx) => ({
 }));
 
 /**
- * Fetch all posts from Supabase `posts` table.
- * Falls back to local storage if table is not yet created or connection fails.
+ * Fetch all posts from Supabase `posts` table (Database-First).
+ * If the database query succeeds, its data is the absolute source of truth.
+ * Only falls back to local cache if database is genuinely unreachable or table not yet created.
  */
 export async function getPosts(): Promise<{ data: Post[]; error: string | null; fromFallback?: boolean }> {
   try {
@@ -237,23 +238,19 @@ export async function getPosts(): Promise<{ data: Post[]; error: string | null; 
       .select('*')
       .order('created_at', { ascending: false });
 
+    if (!error && data) {
+      localStorage.setItem(POSTS_STORAGE_KEY, JSON.stringify(data));
+      return { data, error: null, fromFallback: false };
+    }
+
     if (error) {
       console.warn('Supabase getPosts notice:', error.message);
-      // Load from local storage or defaults
       const saved = localStorage.getItem(POSTS_STORAGE_KEY);
       const localPosts = saved ? JSON.parse(saved) : INITIAL_POSTS;
       return { data: localPosts, error: error.message, fromFallback: true };
     }
 
-    if (data && data.length > 0) {
-      localStorage.setItem(POSTS_STORAGE_KEY, JSON.stringify(data));
-      return { data, error: null, fromFallback: false };
-    }
-
-    // If table is empty, seed with initial posts
-    const saved = localStorage.getItem(POSTS_STORAGE_KEY);
-    const localPosts = saved ? JSON.parse(saved) : INITIAL_POSTS;
-    return { data: localPosts, error: null, fromFallback: true };
+    return { data: [], error: null, fromFallback: false };
   } catch (err: any) {
     console.error('Failed to get posts:', err);
     const saved = localStorage.getItem(POSTS_STORAGE_KEY);
@@ -281,30 +278,22 @@ export async function createPost(post: Omit<Post, 'id' | 'created_at'>): Promise
       .single();
 
     if (error) {
-      console.warn('Supabase createPost fallback:', error.message);
-      // Save locally so admin operation still succeeds
-      const saved = localStorage.getItem(POSTS_STORAGE_KEY);
-      const posts: Post[] = saved ? JSON.parse(saved) : [...INITIAL_POSTS];
-      const localCreated: Post = {
-        ...newPostData,
-        id: `local-${Date.now()}`,
-      };
-      posts.unshift(localCreated);
-      localStorage.setItem(POSTS_STORAGE_KEY, JSON.stringify(posts));
-      return { data: localCreated, error: error.message };
+      console.error('Supabase createPost error:', error.message);
+      return { data: null, error: error.message };
     }
 
-    return { data, error: null };
+    if (data) {
+      // Sync cache with database source of truth
+      const saved = localStorage.getItem(POSTS_STORAGE_KEY);
+      const posts: Post[] = saved ? JSON.parse(saved) : [];
+      posts.unshift(data);
+      localStorage.setItem(POSTS_STORAGE_KEY, JSON.stringify(posts));
+      return { data, error: null };
+    }
+    return { data: null, error: 'Không nhận được dữ liệu phản hồi từ máy chủ' };
   } catch (err: any) {
-    const saved = localStorage.getItem(POSTS_STORAGE_KEY);
-    const posts: Post[] = saved ? JSON.parse(saved) : [...INITIAL_POSTS];
-    const localCreated: Post = {
-      ...newPostData,
-      id: `local-${Date.now()}`,
-    };
-    posts.unshift(localCreated);
-    localStorage.setItem(POSTS_STORAGE_KEY, JSON.stringify(posts));
-    return { data: localCreated, error: err.message || 'Lỗi kết nối' };
+    console.error('createPost exception:', err);
+    return { data: null, error: err.message || 'Lỗi kết nối' };
   }
 }
 
@@ -326,29 +315,26 @@ export async function updatePost(id: string | number, post: Partial<Post>): Prom
       .single();
 
     if (error) {
-      console.warn('Supabase updatePost fallback:', error.message);
-      const saved = localStorage.getItem(POSTS_STORAGE_KEY);
-      const posts: Post[] = saved ? JSON.parse(saved) : [...INITIAL_POSTS];
-      const index = posts.findIndex((p) => String(p.id) === String(id));
-      if (index !== -1) {
-        posts[index] = { ...posts[index], ...updateData };
-        localStorage.setItem(POSTS_STORAGE_KEY, JSON.stringify(posts));
-        return { data: posts[index], error: error.message };
-      }
+      console.error('Supabase updatePost error:', error.message);
       return { data: null, error: error.message };
     }
 
-    return { data, error: null };
-  } catch (err: any) {
-    const saved = localStorage.getItem(POSTS_STORAGE_KEY);
-    const posts: Post[] = saved ? JSON.parse(saved) : [...INITIAL_POSTS];
-    const index = posts.findIndex((p) => String(p.id) === String(id));
-    if (index !== -1) {
-      posts[index] = { ...posts[index], ...updateData };
-      localStorage.setItem(POSTS_STORAGE_KEY, JSON.stringify(posts));
-      return { data: posts[index], error: err.message };
+    if (data) {
+      const saved = localStorage.getItem(POSTS_STORAGE_KEY);
+      if (saved) {
+        const posts: Post[] = JSON.parse(saved);
+        const index = posts.findIndex((p) => String(p.id) === String(id));
+        if (index !== -1) {
+          posts[index] = data;
+          localStorage.setItem(POSTS_STORAGE_KEY, JSON.stringify(posts));
+        }
+      }
+      return { data, error: null };
     }
-    return { data: null, error: err.message };
+    return { data: null, error: 'Không tìm thấy bài viết' };
+  } catch (err: any) {
+    console.error('updatePost exception:', err);
+    return { data: null, error: err.message || 'Lỗi kết nối' };
   }
 }
 
@@ -359,33 +345,28 @@ export async function deletePost(id: string | number): Promise<{ success: boolea
   try {
     const { error } = await supabase.from('posts').delete().eq('id', id);
 
-    // Also update local cache
+    if (error) {
+      console.error('Supabase deletePost error:', error.message);
+      return { success: false, error: error.message };
+    }
+
+    // Update local cache
     const saved = localStorage.getItem(POSTS_STORAGE_KEY);
     if (saved) {
       const posts: Post[] = JSON.parse(saved);
       const filtered = posts.filter((p) => String(p.id) !== String(id));
       localStorage.setItem(POSTS_STORAGE_KEY, JSON.stringify(filtered));
-    }
-
-    if (error) {
-      console.warn('Supabase deletePost fallback:', error.message);
-      return { success: true, error: error.message };
     }
 
     return { success: true, error: null };
   } catch (err: any) {
-    const saved = localStorage.getItem(POSTS_STORAGE_KEY);
-    if (saved) {
-      const posts: Post[] = JSON.parse(saved);
-      const filtered = posts.filter((p) => String(p.id) !== String(id));
-      localStorage.setItem(POSTS_STORAGE_KEY, JSON.stringify(filtered));
-    }
-    return { success: true, error: err.message };
+    console.error('deletePost exception:', err);
+    return { success: false, error: err.message || 'Lỗi kết nối' };
   }
 }
 
 /**
- * Get Hero slides - either from Supabase `hero_slides` table or local storage/defaults
+ * Get Hero slides - Database-First with fallback only on connection error
  */
 export async function getHeroSlides(): Promise<HeroSlide[]> {
   try {
@@ -394,9 +375,12 @@ export async function getHeroSlides(): Promise<HeroSlide[]> {
       .select('*')
       .order('id', { ascending: true });
 
-    if (!error && data && data.length > 0) {
+    if (!error && data) {
       localStorage.setItem(HERO_STORAGE_KEY, JSON.stringify(data));
       return data as HeroSlide[];
+    }
+    if (error) {
+      console.warn('Hero slides query error:', error.message);
     }
   } catch (err) {
     console.warn('Hero slides table query notice:', err);
@@ -417,20 +401,22 @@ export async function getHeroSlides(): Promise<HeroSlide[]> {
  * Save Hero slides to Supabase `hero_slides` and sync local storage
  */
 export async function saveHeroSlides(slides: HeroSlide[]): Promise<{ success: boolean; error?: string }> {
-  localStorage.setItem(HERO_STORAGE_KEY, JSON.stringify(slides));
   try {
     const { error } = await supabase.from('hero_slides').upsert(slides);
     if (error) {
-      return { success: true, error: error.message };
+      console.error('Supabase saveHeroSlides error:', error.message);
+      return { success: false, error: error.message };
     }
+    localStorage.setItem(HERO_STORAGE_KEY, JSON.stringify(slides));
     return { success: true };
   } catch (err: any) {
-    return { success: true, error: err.message };
+    console.error('saveHeroSlides exception:', err);
+    return { success: false, error: err.message };
   }
 }
 
 /**
- * Get Case Studies - either from Supabase `case_studies` table or local cache/defaults
+ * Get Case Studies - Database-First
  */
 export async function getCaseStudies(): Promise<CaseStudy[]> {
   try {
@@ -439,9 +425,12 @@ export async function getCaseStudies(): Promise<CaseStudy[]> {
       .select('*')
       .order('id', { ascending: false });
 
-    if (!error && data && data.length > 0) {
+    if (!error && data) {
       localStorage.setItem(CASE_STUDIES_STORAGE_KEY, JSON.stringify(data));
       return data as CaseStudy[];
+    }
+    if (error) {
+      console.warn('Case studies query error:', error.message);
     }
   } catch (err) {
     console.warn('Case studies query fallback:', err);
@@ -463,6 +452,12 @@ export async function getCaseStudies(): Promise<CaseStudy[]> {
  */
 export async function saveCaseStudy(cs: CaseStudy): Promise<{ success: boolean; data?: CaseStudy; error?: string }> {
   try {
+    const { error } = await supabase.from('case_studies').upsert([cs]);
+    if (error) {
+      console.error('Supabase saveCaseStudy error:', error);
+      return { success: false, data: cs, error: error.message };
+    }
+
     const current = await getCaseStudies();
     const existingIdx = current.findIndex((item) => item.id === cs.id);
     let updated: CaseStudy[];
@@ -473,14 +468,10 @@ export async function saveCaseStudy(cs: CaseStudy): Promise<{ success: boolean; 
       updated = [cs, ...current];
     }
     localStorage.setItem(CASE_STUDIES_STORAGE_KEY, JSON.stringify(updated));
-
-    const { error } = await supabase.from('case_studies').upsert([cs]);
-    if (error) {
-      return { success: true, data: cs, error: error.message };
-    }
     return { success: true, data: cs };
   } catch (err: any) {
-    return { success: true, data: cs, error: err.message };
+    console.error('saveCaseStudy exception:', err);
+    return { success: false, data: cs, error: err.message };
   }
 }
 
@@ -489,17 +480,19 @@ export async function saveCaseStudy(cs: CaseStudy): Promise<{ success: boolean; 
  */
 export async function deleteCaseStudy(id: string): Promise<{ success: boolean; error?: string }> {
   try {
+    const { error } = await supabase.from('case_studies').delete().eq('id', id);
+    if (error) {
+      console.error('Supabase deleteCaseStudy error:', error);
+      return { success: false, error: error.message };
+    }
+
     const current = await getCaseStudies();
     const filtered = current.filter((item) => item.id !== id);
     localStorage.setItem(CASE_STUDIES_STORAGE_KEY, JSON.stringify(filtered));
-
-    const { error } = await supabase.from('case_studies').delete().eq('id', id);
-    if (error) {
-      return { success: true, error: error.message };
-    }
     return { success: true };
   } catch (err: any) {
-    return { success: true, error: err.message };
+    console.error('deleteCaseStudy exception:', err);
+    return { success: false, error: err.message };
   }
 }
 
@@ -510,7 +503,7 @@ export async function deleteCaseStudy(id: string): Promise<{ success: boolean; e
  */
 
 /**
- * Fetch all stats metrics ordered by display_order
+ * Fetch all stats metrics ordered by display_order (Database-First)
  */
 export async function getStats(): Promise<StatMetric[]> {
   try {
@@ -519,7 +512,7 @@ export async function getStats(): Promise<StatMetric[]> {
       .select('*')
       .order('display_order', { ascending: true });
 
-    if (!error && data && data.length > 0) {
+    if (!error && data) {
       const normalized: StatMetric[] = data.map((d: any) => ({
         id: String(d.id),
         title: d.title,
@@ -534,6 +527,9 @@ export async function getStats(): Promise<StatMetric[]> {
       localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(normalized));
       return normalized;
     }
+    if (error) {
+      console.warn('Stats fetch error:', error.message);
+    }
   } catch (err) {
     console.warn('Stats fetch fallback to local:', err);
   }
@@ -547,7 +543,6 @@ export async function getStats(): Promise<StatMetric[]> {
     }
   }
 
-  localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(INITIAL_STATS));
   return INITIAL_STATS;
 }
 
@@ -556,66 +551,72 @@ export async function getStats(): Promise<StatMetric[]> {
  */
 export async function saveStat(stat: Partial<StatMetric>): Promise<{ success: boolean; data?: StatMetric; error?: string }> {
   try {
-    const current = await getStats();
-    let savedRecord: StatMetric;
-    const isEdit = Boolean(stat.id && current.some((s) => String(s.id) === String(stat.id)));
-
-    if (isEdit) {
-      const idx = current.findIndex((s) => String(s.id) === String(stat.id));
-      savedRecord = {
-        ...current[idx],
-        ...stat,
-        unit: stat.unit ?? stat.suffix ?? current[idx].unit ?? '+',
-        suffix: stat.suffix ?? stat.unit ?? current[idx].suffix ?? '+',
-        display_order: Number(stat.display_order ?? current[idx].display_order ?? 0),
-        is_active: stat.is_active !== undefined ? stat.is_active : current[idx].is_active !== false,
-      };
-      current[idx] = savedRecord;
-    } else {
-      savedRecord = {
-        id: stat.id || `stat-${Date.now()}`,
-        title: stat.title || 'Chỉ số an ninh mới',
-        numeric_value: stat.numeric_value || '100',
-        unit: stat.unit || stat.suffix || '+',
-        suffix: stat.suffix || stat.unit || '+',
-        description: stat.description || '',
-        display_order: Number(stat.display_order ?? (current.length + 1)),
-        is_active: stat.is_active !== false,
-        created_at: new Date().toISOString(),
-      };
-      current.push(savedRecord);
-    }
-
-    current.sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
-    localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(current));
-
-    // Persist to Supabase
     const payload: any = {
-      title: savedRecord.title,
-      numeric_value: String(savedRecord.numeric_value),
-      unit: savedRecord.unit,
-      suffix: savedRecord.suffix,
-      description: savedRecord.description,
-      display_order: savedRecord.display_order,
-      is_active: savedRecord.is_active !== false,
+      title: stat.title,
+      numeric_value: String(stat.numeric_value ?? '100'),
+      unit: stat.unit || stat.suffix || '+',
+      suffix: stat.suffix || stat.unit || '+',
+      description: stat.description || '',
+      display_order: stat.display_order !== undefined ? Number(stat.display_order) : 0,
+      is_active: stat.is_active !== undefined ? stat.is_active : true,
     };
 
-    if (isEdit && !isNaN(Number(savedRecord.id))) {
-      await supabase.from('stats').update(payload).eq('id', Number(savedRecord.id));
+    let savedRecord: StatMetric;
+    const isEdit = Boolean(stat.id && !isNaN(Number(stat.id)));
+
+    if (isEdit) {
+      const { data, error } = await supabase
+        .from('stats')
+        .update(payload)
+        .eq('id', Number(stat.id))
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Supabase update stat error:', error);
+        return { success: false, error: error.message };
+      }
+      savedRecord = {
+        id: String(data.id),
+        title: data.title,
+        numeric_value: String(data.numeric_value),
+        unit: data.unit,
+        suffix: data.suffix,
+        description: data.description,
+        display_order: Number(data.display_order),
+        is_active: data.is_active !== false,
+        created_at: data.created_at,
+      };
     } else {
       const { data, error } = await supabase
         .from('stats')
-        .upsert(payload)
+        .insert([payload])
         .select()
         .single();
-      if (!error && data) {
-        savedRecord.id = String(data.id);
+
+      if (error) {
+        console.error('Supabase insert stat error:', error);
+        return { success: false, error: error.message };
       }
+      savedRecord = {
+        id: String(data.id),
+        title: data.title,
+        numeric_value: String(data.numeric_value),
+        unit: data.unit,
+        suffix: data.suffix,
+        description: data.description,
+        display_order: Number(data.display_order),
+        is_active: data.is_active !== false,
+        created_at: data.created_at,
+      };
     }
 
+    const current = await getStats();
+    localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(current));
     return { success: true, data: savedRecord };
   } catch (err: any) {
-    return { success: true, error: err.message };
+    console.error('saveStat exception:', err);
+    return { success: false, error: err.message };
   }
 }
 
@@ -624,18 +625,22 @@ export async function saveStat(stat: Partial<StatMetric>): Promise<{ success: bo
  */
 export async function deleteStat(id: string | number): Promise<{ success: boolean; error?: string }> {
   try {
+    const { error } = !isNaN(Number(id))
+      ? await supabase.from('stats').delete().eq('id', Number(id))
+      : await supabase.from('stats').delete().eq('id', id);
+
+    if (error) {
+      console.error('Supabase deleteStat error:', error);
+      return { success: false, error: error.message };
+    }
+
     const current = await getStats();
     const filtered = current.filter((s) => String(s.id) !== String(id));
     localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(filtered));
-
-    if (!isNaN(Number(id))) {
-      await supabase.from('stats').delete().eq('id', Number(id));
-    } else {
-      await supabase.from('stats').delete().eq('id', id);
-    }
     return { success: true };
   } catch (err: any) {
-    return { success: true, error: err.message };
+    console.error('deleteStat exception:', err);
+    return { success: false, error: err.message };
   }
 }
 
@@ -644,21 +649,25 @@ export async function deleteStat(id: string | number): Promise<{ success: boolea
  */
 export async function toggleStatVisibility(id: string | number, is_active: boolean): Promise<{ success: boolean; error?: string }> {
   try {
+    const { error } = !isNaN(Number(id))
+      ? await supabase.from('stats').update({ is_active }).eq('id', Number(id))
+      : await supabase.from('stats').update({ is_active }).eq('id', id);
+
+    if (error) {
+      console.error('Supabase toggleStatVisibility error:', error);
+      return { success: false, error: error.message };
+    }
+
     const current = await getStats();
     const idx = current.findIndex((s) => String(s.id) === String(id));
     if (idx !== -1) {
       current[idx].is_active = is_active;
       localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(current));
     }
-
-    if (!isNaN(Number(id))) {
-      await supabase.from('stats').update({ is_active }).eq('id', Number(id));
-    } else {
-      await supabase.from('stats').update({ is_active }).eq('id', id);
-    }
     return { success: true };
   } catch (err: any) {
-    return { success: true, error: err.message };
+    console.error('toggleStatVisibility exception:', err);
+    return { success: false, error: err.message };
   }
 }
 
@@ -867,7 +876,7 @@ export async function createQuoteRequest(req: Partial<QuoteRequest>): Promise<{ 
       notes: req.notes || null,
     };
 
-    const { error } = await supabase.from('quote_requests').insert([dbPayload]);
+    const { data: dbInserted, error } = await supabase.from('quote_requests').insert([dbPayload]).select().single();
     
     // Tự động gửi email thông báo chi tiết về congtybaovelamsondong@gmail.com
     try {
@@ -893,12 +902,14 @@ export async function createQuoteRequest(req: Partial<QuoteRequest>): Promise<{ 
     }
 
     if (error) {
-      console.warn('Supabase quote insert error, saved locally:', error.message);
-      return { success: true, data: newRecord, error: error.message };
+      console.error('Supabase quote insert error:', error.message);
+      return { success: false, data: newRecord, error: error.message };
     }
-    return { success: true, data: newRecord };
+    const finalRecord = dbInserted ? { ...newRecord, id: String(dbInserted.id) } : newRecord;
+    return { success: true, data: finalRecord };
   } catch (err: any) {
-    return { success: true, data: newRecord, error: err.message };
+    console.error('createQuoteRequest exception:', err);
+    return { success: false, data: newRecord, error: err.message };
   }
 }
 
@@ -910,6 +921,15 @@ export async function updateQuoteRequest(
   updates: Partial<Pick<QuoteRequest, 'status' | 'notes'>>
 ): Promise<{ success: boolean; error?: string }> {
   try {
+    const { error } = !isNaN(Number(id))
+      ? await supabase.from('quote_requests').update(updates).eq('id', Number(id))
+      : await supabase.from('quote_requests').update(updates).eq('id', id);
+
+    if (error) {
+      console.error('Supabase updateQuoteRequest error:', error.message);
+      return { success: false, error: error.message };
+    }
+
     const current = await getQuoteRequests();
     const index = current.findIndex((item) => String(item.id) === String(id));
     if (index !== -1) {
@@ -917,14 +937,10 @@ export async function updateQuoteRequest(
       localStorage.setItem(QUOTES_STORAGE_KEY, JSON.stringify(current));
     }
 
-    if (!isNaN(Number(id))) {
-      await supabase.from('quote_requests').update(updates).eq('id', Number(id));
-    } else {
-      await supabase.from('quote_requests').update(updates).eq('id', id);
-    }
     return { success: true };
   } catch (err: any) {
-    return { success: true, error: err.message };
+    console.error('updateQuoteRequest exception:', err);
+    return { success: false, error: err.message };
   }
 }
 
@@ -944,18 +960,23 @@ export async function updateQuoteRequestStatus(
  */
 export async function deleteQuoteRequest(id: string): Promise<{ success: boolean; error?: string }> {
   try {
+    const { error } = !isNaN(Number(id))
+      ? await supabase.from('quote_requests').delete().eq('id', Number(id))
+      : await supabase.from('quote_requests').delete().eq('id', id);
+
+    if (error) {
+      console.error('Supabase deleteQuoteRequest error:', error.message);
+      return { success: false, error: error.message };
+    }
+
     const current = await getQuoteRequests();
     const filtered = current.filter((item) => String(item.id) !== String(id));
     localStorage.setItem(QUOTES_STORAGE_KEY, JSON.stringify(filtered));
 
-    if (!isNaN(Number(id))) {
-      await supabase.from('quote_requests').delete().eq('id', Number(id));
-    } else {
-      await supabase.from('quote_requests').delete().eq('id', id);
-    }
     return { success: true };
   } catch (err: any) {
-    return { success: true, error: err.message };
+    console.error('deleteQuoteRequest exception:', err);
+    return { success: false, error: err.message };
   }
 }
 
@@ -1145,23 +1166,27 @@ export async function getQuoteOptions(onlyActive: boolean = false, category?: st
 
     const { data, error } = await query;
 
-    if (error || !data || data.length === 0) {
-      const cached = localStorage.getItem(QUOTE_OPTIONS_STORAGE_KEY);
-      let list: QuoteOption[] = cached ? JSON.parse(cached) : INITIAL_QUOTE_OPTIONS;
-      if (!cached) {
-        localStorage.setItem(QUOTE_OPTIONS_STORAGE_KEY, JSON.stringify(INITIAL_QUOTE_OPTIONS));
-      }
-      if (onlyActive) {
-        list = list.filter((item) => item.is_active !== false);
-      }
-      if (category && category !== 'all') {
-        list = list.filter((item) => item.category === category);
-      }
-      return list.sort((a, b) => (Number(a.display_order) || 0) - (Number(b.display_order) || 0));
+    if (!error && data) {
+      localStorage.setItem(QUOTE_OPTIONS_STORAGE_KEY, JSON.stringify(data));
+      return data;
     }
 
-    localStorage.setItem(QUOTE_OPTIONS_STORAGE_KEY, JSON.stringify(data));
-    return data;
+    if (error) {
+      console.warn('Quote options fetch error:', error.message);
+    }
+
+    const cached = localStorage.getItem(QUOTE_OPTIONS_STORAGE_KEY);
+    let list: QuoteOption[] = cached ? JSON.parse(cached) : INITIAL_QUOTE_OPTIONS;
+    if (!cached) {
+      localStorage.setItem(QUOTE_OPTIONS_STORAGE_KEY, JSON.stringify(INITIAL_QUOTE_OPTIONS));
+    }
+    if (onlyActive) {
+      list = list.filter((item) => item.is_active !== false);
+    }
+    if (category && category !== 'all') {
+      list = list.filter((item) => item.category === category);
+    }
+    return list.sort((a, b) => (Number(a.display_order) || 0) - (Number(b.display_order) || 0));
   } catch (err) {
     const cached = localStorage.getItem(QUOTE_OPTIONS_STORAGE_KEY);
     let list: QuoteOption[] = cached ? JSON.parse(cached) : INITIAL_QUOTE_OPTIONS;
@@ -1181,85 +1206,45 @@ export async function getQuoteOptions(onlyActive: boolean = false, category?: st
 export async function saveQuoteOption(option: Partial<QuoteOption>): Promise<{ success: boolean; data?: QuoteOption; error?: string }> {
   try {
     const isNew = !option.id;
-    let savedData: QuoteOption;
+    const isEdit = Boolean(option.id && !isNaN(Number(option.id)));
+    const payload: any = {
+      category: option.category,
+      label: option.label,
+      value: option.value,
+      price_estimate: Number(option.price_estimate || 0),
+      description: option.description || '',
+      is_active: option.is_active !== false,
+      display_order: Number(option.display_order || 0),
+    };
 
-    if (isNew) {
-      const current = await getQuoteOptions();
-      const nextId = current.length > 0 ? Math.max(...current.map((s) => Number(s.id) || 0)) + 1 : 1;
-      const newOption: QuoteOption = {
-        id: nextId,
-        category: option.category || 'service_type',
-        label: option.label || '',
-        value: option.value || `opt_${nextId}`,
-        price_estimate: Number(option.price_estimate) || 0,
-        description: option.description || '',
-        is_active: option.is_active !== undefined ? option.is_active : true,
-        display_order: option.display_order !== undefined ? Number(option.display_order) : current.length + 1,
-        created_at: new Date().toISOString(),
-      };
+    if (isEdit) {
+      const { data, error } = await supabase
+        .from('quote_options')
+        .update(payload)
+        .eq('id', Number(option.id))
+        .select()
+        .single();
 
-      try {
-        const { data: dbData, error } = await supabase
-          .from('quote_options')
-          .insert([
-            {
-              category: newOption.category,
-              label: newOption.label,
-              value: newOption.value,
-              price_estimate: newOption.price_estimate,
-              description: newOption.description,
-              is_active: newOption.is_active,
-              display_order: newOption.display_order,
-            },
-          ])
-          .select()
-          .single();
-
-        if (!error && dbData) {
-          savedData = dbData;
-        } else {
-          savedData = newOption;
-        }
-      } catch {
-        savedData = newOption;
+      if (error) {
+        console.error('Supabase updateQuoteOption error:', error.message);
+        return { success: false, error: error.message };
       }
-
-      const updatedList = [...current, savedData];
-      localStorage.setItem(QUOTE_OPTIONS_STORAGE_KEY, JSON.stringify(updatedList));
-      return { success: true, data: savedData };
+      return { success: true, data: data as QuoteOption };
     } else {
-      // Update existing
-      const current = await getQuoteOptions();
-      const updatedList = current.map((item) =>
-        String(item.id) === String(option.id)
-          ? {
-              ...item,
-              ...option,
-              price_estimate: option.price_estimate !== undefined ? Number(option.price_estimate) : item.price_estimate,
-              display_order: option.display_order !== undefined ? Number(option.display_order) : item.display_order,
-            }
-          : item
-      );
-      localStorage.setItem(QUOTE_OPTIONS_STORAGE_KEY, JSON.stringify(updatedList));
+      const { data, error } = await supabase
+        .from('quote_options')
+        .insert([payload])
+        .select()
+        .single();
 
-      try {
-        const updatePayload: any = { ...option };
-        delete updatePayload.id;
-        delete updatePayload.created_at;
-
-        if (!isNaN(Number(option.id))) {
-          await supabase.from('quote_options').update(updatePayload).eq('id', Number(option.id));
-        } else {
-          await supabase.from('quote_options').update(updatePayload).eq('id', option.id);
-        }
-      } catch {
-        // Fallback already updated in local cache
+      if (error) {
+        console.error('Supabase insertQuoteOption error:', error.message);
+        return { success: false, error: error.message };
       }
-
-      savedData = updatedList.find((item) => String(item.id) === String(option.id)) || (option as QuoteOption);
-      return { success: true, data: savedData };
+      return { success: true, data: data as QuoteOption };
     }
   } catch (err: any) {
+    console.error('saveQuoteOption exception:', err);
     return { success: false, error: err.message };
   }
 }
@@ -1269,22 +1254,21 @@ export async function saveQuoteOption(option: Partial<QuoteOption>): Promise<{ s
  */
 export async function deleteQuoteOption(id: string | number): Promise<{ success: boolean; error?: string }> {
   try {
+    const { error } = !isNaN(Number(id))
+      ? await supabase.from('quote_options').delete().eq('id', Number(id))
+      : await supabase.from('quote_options').delete().eq('id', id);
+
+    if (error) {
+      console.error('Supabase deleteQuoteOption error:', error.message);
+      return { success: false, error: error.message };
+    }
+
     const current = await getQuoteOptions();
     const updated = current.filter((item) => String(item.id) !== String(id));
     localStorage.setItem(QUOTE_OPTIONS_STORAGE_KEY, JSON.stringify(updated));
-
-    try {
-      if (!isNaN(Number(id))) {
-        await supabase.from('quote_options').delete().eq('id', Number(id));
-      } else {
-        await supabase.from('quote_options').delete().eq('id', id);
-      }
-    } catch {
-      // Offline fallback succeeded
-    }
-
     return { success: true };
   } catch (err: any) {
+    console.error('deleteQuoteOption exception:', err);
     return { success: false, error: err.message };
   }
 }
@@ -1294,24 +1278,23 @@ export async function deleteQuoteOption(id: string | number): Promise<{ success:
  */
 export async function toggleQuoteOptionVisibility(id: string | number, isActive: boolean): Promise<{ success: boolean; error?: string }> {
   try {
+    const { error } = !isNaN(Number(id))
+      ? await supabase.from('quote_options').update({ is_active: isActive }).eq('id', Number(id))
+      : await supabase.from('quote_options').update({ is_active: isActive }).eq('id', id);
+
+    if (error) {
+      console.error('Supabase toggleQuoteOptionVisibility error:', error.message);
+      return { success: false, error: error.message };
+    }
+
     const current = await getQuoteOptions();
     const updated = current.map((item) =>
       String(item.id) === String(id) ? { ...item, is_active: isActive } : item
     );
     localStorage.setItem(QUOTE_OPTIONS_STORAGE_KEY, JSON.stringify(updated));
-
-    try {
-      if (!isNaN(Number(id))) {
-        await supabase.from('quote_options').update({ is_active: isActive }).eq('id', Number(id));
-      } else {
-        await supabase.from('quote_options').update({ is_active: isActive }).eq('id', id);
-      }
-    } catch {
-      // Local fallback handled
-    }
-
     return { success: true };
   } catch (err: any) {
+    console.error('toggleQuoteOptionVisibility exception:', err);
     return { success: false, error: err.message };
   }
 }
@@ -1366,7 +1349,7 @@ export async function getBreakingNews(): Promise<BreakingNewsItem[]> {
       .select('*')
       .order('display_order', { ascending: true });
 
-    if (!error && data && data.length > 0) {
+    if (!error && data) {
       const normalized: BreakingNewsItem[] = data.map((d: any) => ({
         id: d.id,
         title: d.title,
@@ -1399,14 +1382,6 @@ export async function getBreakingNews(): Promise<BreakingNewsItem[]> {
 export async function createBreakingNews(
   item: Omit<BreakingNewsItem, 'id' | 'created_at'>
 ): Promise<{ data: BreakingNewsItem | null; error: string | null }> {
-  const current = await getBreakingNews();
-  const nextId = current.length > 0 ? Math.max(...current.map((c) => Number(c.id) || 0)) + 1 : 1;
-  const newItem: BreakingNewsItem = {
-    ...item,
-    id: nextId,
-    created_at: new Date().toISOString(),
-  };
-
   try {
     const { data, error } = await supabase
       .from('breaking_news')
@@ -1414,14 +1389,19 @@ export async function createBreakingNews(
         {
           title: item.title,
           link: item.link || '',
-          is_active: item.is_active,
-          display_order: item.display_order,
+          is_active: item.is_active !== false,
+          display_order: Number(item.display_order || 0),
         },
       ])
       .select()
       .single();
 
-    if (!error && data) {
+    if (error) {
+      console.error('Supabase createBreakingNews error:', error.message);
+      return { data: null, error: error.message };
+    }
+
+    if (data) {
       const savedItem: BreakingNewsItem = {
         id: data.id,
         title: data.title,
@@ -1430,18 +1410,16 @@ export async function createBreakingNews(
         display_order: Number(data.display_order) || 0,
         created_at: data.created_at,
       };
+      const current = await getBreakingNews();
       const updated = [...current, savedItem];
       localStorage.setItem(BREAKING_NEWS_STORAGE_KEY, JSON.stringify(updated));
       return { data: savedItem, error: null };
     }
+    return { data: null, error: 'Không nhận được dữ liệu phản hồi' };
   } catch (err: any) {
-    console.warn('Supabase createBreakingNews fallback:', err);
+    console.error('createBreakingNews exception:', err);
+    return { data: null, error: err.message || 'Lỗi kết nối' };
   }
-
-  // Fallback to local storage
-  const updated = [...current, newItem];
-  localStorage.setItem(BREAKING_NEWS_STORAGE_KEY, JSON.stringify(updated));
-  return { data: newItem, error: null };
 }
 
 /**
@@ -1455,11 +1433,16 @@ export async function updateBreakingNews(
     const { data, error } = await supabase
       .from('breaking_news')
       .update(updates)
-      .eq('id', id)
+      .eq('id', Number(id))
       .select()
       .single();
 
-    if (!error && data) {
+    if (error) {
+      console.error('Supabase updateBreakingNews error:', error.message);
+      return { data: null, error: error.message };
+    }
+
+    if (data) {
       const updatedItem: BreakingNewsItem = {
         id: data.id,
         title: data.title,
@@ -1473,21 +1456,11 @@ export async function updateBreakingNews(
       localStorage.setItem(BREAKING_NEWS_STORAGE_KEY, JSON.stringify(updatedList));
       return { data: updatedItem, error: null };
     }
+    return { data: null, error: 'Bản tin không tồn tại' };
   } catch (err: any) {
-    console.warn('Supabase updateBreakingNews fallback:', err);
+    console.error('updateBreakingNews exception:', err);
+    return { data: null, error: err.message || 'Lỗi kết nối' };
   }
-
-  const current = await getBreakingNews();
-  let updatedItem: BreakingNewsItem | null = null;
-  const updatedList = current.map((item) => {
-    if (String(item.id) === String(id)) {
-      updatedItem = { ...item, ...updates };
-      return updatedItem;
-    }
-    return item;
-  });
-  localStorage.setItem(BREAKING_NEWS_STORAGE_KEY, JSON.stringify(updatedList));
-  return { data: updatedItem, error: null };
 }
 
 /**
@@ -1497,19 +1470,18 @@ export async function deleteBreakingNews(
   id: string | number
 ): Promise<{ success: boolean; error: string | null }> {
   try {
-    const { error } = await supabase.from('breaking_news').delete().eq('id', id);
+    const { error } = await supabase.from('breaking_news').delete().eq('id', Number(id));
+    if (error) {
+      console.error('Supabase deleteBreakingNews error:', error.message);
+      return { success: false, error: error.message };
+    }
     const current = await getBreakingNews();
     const filtered = current.filter((item) => String(item.id) !== String(id));
     localStorage.setItem(BREAKING_NEWS_STORAGE_KEY, JSON.stringify(filtered));
-    if (error) {
-      return { success: true, error: error.message };
-    }
     return { success: true, error: null };
   } catch (err: any) {
-    const current = await getBreakingNews();
-    const filtered = current.filter((item) => String(item.id) !== String(id));
-    localStorage.setItem(BREAKING_NEWS_STORAGE_KEY, JSON.stringify(filtered));
-    return { success: true, error: err.message };
+    console.error('deleteBreakingNews exception:', err);
+    return { success: false, error: err.message };
   }
 }
 
@@ -1557,27 +1529,20 @@ export async function getRecruitmentPositions(
     }
 
     const { data, error } = await query;
-    if (error) {
-      console.warn('Supabase getRecruitmentPositions notice:', error.message);
-      const saved = localStorage.getItem(RECRUITMENT_POSITIONS_STORAGE_KEY);
-      const list: RecruitmentPosition[] = saved ? JSON.parse(saved) : INITIAL_RECRUITMENT_POSITIONS;
-      return onlyActive ? list.filter((p) => p.is_active !== false) : list;
-    }
-
-    if (data && data.length > 0) {
+    if (!error && data) {
       localStorage.setItem(RECRUITMENT_POSITIONS_STORAGE_KEY, JSON.stringify(data));
       return data;
     }
-
-    const saved = localStorage.getItem(RECRUITMENT_POSITIONS_STORAGE_KEY);
-    const list: RecruitmentPosition[] = saved ? JSON.parse(saved) : INITIAL_RECRUITMENT_POSITIONS;
-    return onlyActive ? list.filter((p) => p.is_active !== false) : list;
+    if (error) {
+      console.warn('Supabase getRecruitmentPositions notice:', error.message);
+    }
   } catch (err) {
     console.error('getRecruitmentPositions error:', err);
-    const saved = localStorage.getItem(RECRUITMENT_POSITIONS_STORAGE_KEY);
-    const list: RecruitmentPosition[] = saved ? JSON.parse(saved) : INITIAL_RECRUITMENT_POSITIONS;
-    return onlyActive ? list.filter((p) => p.is_active !== false) : list;
   }
+
+  const saved = localStorage.getItem(RECRUITMENT_POSITIONS_STORAGE_KEY);
+  const list: RecruitmentPosition[] = saved ? JSON.parse(saved) : INITIAL_RECRUITMENT_POSITIONS;
+  return onlyActive ? list.filter((p) => p.is_active !== false) : list;
 }
 
 /**
@@ -1600,25 +1565,22 @@ export async function createRecruitmentPosition(
       .select()
       .single();
 
-    if (!error && data) {
+    if (error) {
+      console.error('Supabase createRecruitmentPosition error:', error.message);
+      return { data: null, error: error.message };
+    }
+
+    if (data) {
       const current = await getRecruitmentPositions();
       const updated = [data, ...current];
       localStorage.setItem(RECRUITMENT_POSITIONS_STORAGE_KEY, JSON.stringify(updated));
       return { data, error: null };
     }
+    return { data: null, error: 'Không nhận được dữ liệu phản hồi' };
   } catch (err: any) {
-    console.warn('createRecruitmentPosition fallback to local:', err);
+    console.error('createRecruitmentPosition exception:', err);
+    return { data: null, error: err.message || 'Lỗi kết nối' };
   }
-
-  // Fallback to local
-  const current = await getRecruitmentPositions();
-  const created: RecruitmentPosition = {
-    ...newPosData,
-    id: `local-job-${Date.now()}`,
-  };
-  const updated = [created, ...current];
-  localStorage.setItem(RECRUITMENT_POSITIONS_STORAGE_KEY, JSON.stringify(updated));
-  return { data: created, error: null };
 }
 
 /**
@@ -1637,31 +1599,26 @@ export async function updateRecruitmentPosition(
     const { data, error } = await supabase
       .from('recruitment_positions')
       .update(payload)
-      .eq('id', id)
+      .eq('id', Number(id))
       .select()
       .single();
 
-    if (!error && data) {
+    if (error) {
+      console.error('Supabase updateRecruitmentPosition error:', error.message);
+      return { data: null, error: error.message };
+    }
+
+    if (data) {
       const current = await getRecruitmentPositions();
       const updated = current.map((p) => (String(p.id) === String(id) ? data : p));
       localStorage.setItem(RECRUITMENT_POSITIONS_STORAGE_KEY, JSON.stringify(updated));
       return { data, error: null };
     }
+    return { data: null, error: 'Vị trí không tồn tại' };
   } catch (err: any) {
-    console.warn('updateRecruitmentPosition fallback to local:', err);
+    console.error('updateRecruitmentPosition exception:', err);
+    return { data: null, error: err.message || 'Lỗi kết nối' };
   }
-
-  const current = await getRecruitmentPositions();
-  let updatedPos: RecruitmentPosition | null = null;
-  const updated = current.map((p) => {
-    if (String(p.id) === String(id)) {
-      updatedPos = { ...p, ...payload };
-      return updatedPos;
-    }
-    return p;
-  });
-  localStorage.setItem(RECRUITMENT_POSITIONS_STORAGE_KEY, JSON.stringify(updated));
-  return { data: updatedPos, error: null };
 }
 
 /**
@@ -1671,16 +1628,18 @@ export async function deleteRecruitmentPosition(
   id: string | number
 ): Promise<{ success: boolean; error: string | null }> {
   try {
-    const { error } = await supabase.from('recruitment_positions').delete().eq('id', id);
+    const { error } = await supabase.from('recruitment_positions').delete().eq('id', Number(id));
+    if (error) {
+      console.error('Supabase deleteRecruitmentPosition error:', error.message);
+      return { success: false, error: error.message };
+    }
     const current = await getRecruitmentPositions();
     const updated = current.filter((p) => String(p.id) !== String(id));
     localStorage.setItem(RECRUITMENT_POSITIONS_STORAGE_KEY, JSON.stringify(updated));
-    return { success: true, error: error ? error.message : null };
+    return { success: true, error: null };
   } catch (err: any) {
-    const current = await getRecruitmentPositions();
-    const updated = current.filter((p) => String(p.id) !== String(id));
-    localStorage.setItem(RECRUITMENT_POSITIONS_STORAGE_KEY, JSON.stringify(updated));
-    return { success: true, error: err.message };
+    console.error('deleteRecruitmentPosition exception:', err);
+    return { success: false, error: err.message };
   }
 }
 
@@ -1711,16 +1670,19 @@ export async function getRecruitmentApplications(): Promise<RecruitmentApplicati
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (!error && data && data.length > 0) {
+    if (!error && data) {
       localStorage.setItem(RECRUITMENT_APPLICATIONS_STORAGE_KEY, JSON.stringify(data));
       return data;
     }
-    const saved = localStorage.getItem(RECRUITMENT_APPLICATIONS_STORAGE_KEY);
-    return saved ? JSON.parse(saved) : [];
+    if (error) {
+      console.warn('getRecruitmentApplications notice:', error.message);
+    }
   } catch (err) {
-    const saved = localStorage.getItem(RECRUITMENT_APPLICATIONS_STORAGE_KEY);
-    return saved ? JSON.parse(saved) : [];
+    console.warn('getRecruitmentApplications error:', err);
   }
+
+  const saved = localStorage.getItem(RECRUITMENT_APPLICATIONS_STORAGE_KEY);
+  return saved ? JSON.parse(saved) : [];
 }
 
 /**
@@ -1742,22 +1704,21 @@ export async function createRecruitmentApplication(
       .select()
       .single();
 
-    if (!error && data) {
+    if (error) {
+      console.error('Supabase createRecruitmentApplication error:', error.message);
+      return { data: null, error: error.message };
+    }
+
+    if (data) {
       const current = await getRecruitmentApplications();
       localStorage.setItem(RECRUITMENT_APPLICATIONS_STORAGE_KEY, JSON.stringify([data, ...current]));
       return { data, error: null };
     }
+    return { data: null, error: 'Không nhận được dữ liệu phản hồi' };
   } catch (err: any) {
-    console.warn('createRecruitmentApplication fallback to local:', err);
+    console.error('createRecruitmentApplication exception:', err);
+    return { data: null, error: err.message || 'Lỗi kết nối' };
   }
-
-  const created: RecruitmentApplication = {
-    ...payload,
-    id: `app-${Date.now()}`,
-  };
-  const current = await getRecruitmentApplications();
-  localStorage.setItem(RECRUITMENT_APPLICATIONS_STORAGE_KEY, JSON.stringify([created, ...current]));
-  return { data: created, error: null };
 }
 
 /**
@@ -1771,17 +1732,20 @@ export async function updateRecruitmentApplicationStatus(
     const { error } = await supabase
       .from('recruitment_applications')
       .update({ status })
-      .eq('id', id);
+      .eq('id', Number(id));
+
+    if (error) {
+      console.error('Supabase updateRecruitmentApplicationStatus error:', error.message);
+      return { success: false, error: error.message };
+    }
 
     const current = await getRecruitmentApplications();
     const updated = current.map((a) => (String(a.id) === String(id) ? { ...a, status } : a));
     localStorage.setItem(RECRUITMENT_APPLICATIONS_STORAGE_KEY, JSON.stringify(updated));
-    return { success: true, error: error ? error.message : null };
+    return { success: true, error: null };
   } catch (err: any) {
-    const current = await getRecruitmentApplications();
-    const updated = current.map((a) => (String(a.id) === String(id) ? { ...a, status } : a));
-    localStorage.setItem(RECRUITMENT_APPLICATIONS_STORAGE_KEY, JSON.stringify(updated));
-    return { success: true, error: err.message };
+    console.error('updateRecruitmentApplicationStatus exception:', err);
+    return { success: false, error: err.message };
   }
 }
 
@@ -1795,17 +1759,20 @@ export async function deleteRecruitmentApplication(
     const { error } = await supabase
       .from('recruitment_applications')
       .delete()
-      .eq('id', id);
+      .eq('id', Number(id));
+
+    if (error) {
+      console.error('Supabase deleteRecruitmentApplication error:', error.message);
+      return { success: false, error: error.message };
+    }
 
     const current = await getRecruitmentApplications();
     const updated = current.filter((a) => String(a.id) !== String(id));
     localStorage.setItem(RECRUITMENT_APPLICATIONS_STORAGE_KEY, JSON.stringify(updated));
-    return { success: true, error: error ? error.message : null };
+    return { success: true, error: null };
   } catch (err: any) {
-    const current = await getRecruitmentApplications();
-    const updated = current.filter((a) => String(a.id) !== String(id));
-    localStorage.setItem(RECRUITMENT_APPLICATIONS_STORAGE_KEY, JSON.stringify(updated));
-    return { success: true, error: err.message };
+    console.error('deleteRecruitmentApplication exception:', err);
+    return { success: false, error: err.message };
   }
 }
 
@@ -1851,6 +1818,97 @@ export async function checkIsAdminUser(overrideUser?: any): Promise<boolean> {
   } catch {
     return false;
   }
+}
+
+// ==============================================================================
+// 11. SUPABASE REALTIME SYNCHRONIZATION HELPERS
+// ==============================================================================
+
+export interface RealtimeSyncHandlers {
+  onPostsChange?: () => void;
+  onHeroSlidesChange?: () => void;
+  onCaseStudiesChange?: () => void;
+  onStatsChange?: () => void;
+  onBreakingNewsChange?: () => void;
+  onQuoteRequestsChange?: () => void;
+  onQuoteOptionsChange?: () => void;
+  onRecruitmentPositionsChange?: () => void;
+  onRecruitmentApplicationsChange?: () => void;
+}
+
+/**
+ * Subscribes to realtime Postgres changes for a single table.
+ * Returns an unsubscription callback to cleanly tear down the channel.
+ */
+export function subscribeToTable(
+  tableName: string,
+  onChange: (payload?: any) => void
+): () => void {
+  const channelName = `realtime_${tableName}_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+  const channel = supabase
+    .channel(channelName)
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: tableName },
+      (payload) => {
+        onChange(payload);
+      }
+    )
+    .subscribe((status) => {
+      if (status === 'CHANNEL_ERROR') {
+        console.warn(`Supabase Realtime notice on channel ${channelName}: status ${status}`);
+      }
+    });
+
+  return () => {
+    supabase.removeChannel(channel);
+  };
+}
+
+/**
+ * Master Realtime subscription across all CMS entities.
+ * Automatically handles multi-table listening and proper channel teardown on unmount.
+ */
+export function subscribeToRealtimeCMS(handlers: RealtimeSyncHandlers): () => void {
+  const unsubscribers: (() => void)[] = [];
+
+  if (handlers.onPostsChange) {
+    unsubscribers.push(subscribeToTable('posts', handlers.onPostsChange));
+  }
+  if (handlers.onHeroSlidesChange) {
+    unsubscribers.push(subscribeToTable('hero_slides', handlers.onHeroSlidesChange));
+  }
+  if (handlers.onCaseStudiesChange) {
+    unsubscribers.push(subscribeToTable('case_studies', handlers.onCaseStudiesChange));
+  }
+  if (handlers.onStatsChange) {
+    unsubscribers.push(subscribeToTable('stats', handlers.onStatsChange));
+  }
+  if (handlers.onBreakingNewsChange) {
+    unsubscribers.push(subscribeToTable('breaking_news', handlers.onBreakingNewsChange));
+  }
+  if (handlers.onQuoteRequestsChange) {
+    unsubscribers.push(subscribeToTable('quote_requests', handlers.onQuoteRequestsChange));
+  }
+  if (handlers.onQuoteOptionsChange) {
+    unsubscribers.push(subscribeToTable('quote_options', handlers.onQuoteOptionsChange));
+  }
+  if (handlers.onRecruitmentPositionsChange) {
+    unsubscribers.push(subscribeToTable('recruitment_positions', handlers.onRecruitmentPositionsChange));
+  }
+  if (handlers.onRecruitmentApplicationsChange) {
+    unsubscribers.push(subscribeToTable('recruitment_applications', handlers.onRecruitmentApplicationsChange));
+  }
+
+  return () => {
+    unsubscribers.forEach((unsub) => {
+      try {
+        unsub();
+      } catch (err) {
+        console.warn('Realtime channel unsubscribe notice:', err);
+      }
+    });
+  };
 }
 
 /**
@@ -2286,11 +2344,29 @@ CREATE POLICY "Admin toàn quyền quản lý recruitment_applications" ON publi
 
 -- Cấp quyền bảng cho vai trò authenticated và anon
 GRANT USAGE ON SCHEMA public TO anon, authenticated;
-GRANT ALL ON ALL TABLES IN SCHEMA public TO authenticated;
-GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO authenticated;
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon;
-GRANT INSERT ON public.quote_requests TO anon;
-GRANT INSERT ON public.recruitment_applications TO anon;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO anon, authenticated;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO anon, authenticated;
+
+-- ==============================================================================
+-- PHẦN REALTIME: KÍCH HOẠT SUPABASE REALTIME ĐỒNG BỘ TỨC THÌ
+-- ==============================================================================
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_publication WHERE pubname = 'supabase_realtime') THEN
+    CREATE PUBLICATION supabase_realtime;
+  END IF;
+END $$;
+
+ALTER PUBLICATION supabase_realtime ADD TABLE public.posts;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.breaking_news;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.recruitment_positions;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.recruitment_applications;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.hero_slides;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.case_studies;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.stats;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.quote_requests;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.quote_options;
 
 -- ==============================================================================
 -- 10. CẤU HÌNH SUPABASE STORAGE - BUCKET 'content-media', 'blog-images', 'post-images'

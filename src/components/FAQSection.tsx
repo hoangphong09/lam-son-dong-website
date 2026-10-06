@@ -310,7 +310,6 @@ export const FAQSection: React.FC<FAQSectionProps> = ({
                         <span className="text-amber-800 font-bold">
                           {(index + 1).toString().padStart(2, '0')}.
                         </span>
-                        <span>{faq.categoryLabel}</span>
                       </div>
                       <h3
                         className={`text-sm sm:text-base font-bold leading-snug transition-colors ${
