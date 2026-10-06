@@ -35,8 +35,8 @@ export const HERO_SLIDES: HeroSlide[] = [
   {
     id: 'slide-3',
     tag: '',
-    title: 'Liên tục tuyển dụng Nhân viên Bảo vệ',
-    description: 'Cơ hội việc làm với thu nhập ổn định, phúc lợi đảm bảo.',
+    title: 'Tuyển Dụng Nhân Viên An Ninh',
+    description: 'Cơ hội việc làm lý tưởng với mức thu nhập cạnh tranh, chế độ đãi ngộ toàn diện, môi trường làm việc kỷ luật, văn minh và lộ trình thăng tiến rõ ràng.',
     imageUrl: '/images/hero-3.jpg',
     ctaText: 'Dịch Vụ Bảo Vệ',
     secondaryCtaText: 'Đánh Giá Rủi Ro',
@@ -45,10 +45,10 @@ export const HERO_SLIDES: HeroSlide[] = [
 ];
 
 export const BREAKING_NEWS = [
-  'Lâm Sơn Động vinh dự đón nhận Cúp Vàng "Thương hiệu Dịch vụ An ninh Uy tín Hàng đầu Việt Nam 2026"',
-  'Triển khai thành công phương án bảo vệ an ninh trật tự Lễ hội Âm nhạc 200 khán giả',
-  'Bộ Công An chứng nhận đạt chuẩn 100% về Điều kiện An ninh Trật tự & Nghiệp vụ PCCC cứu nạn',
-  'Mở rộng hệ thống Trung tâm phản ứng nhanh cơ động tại các vùng kinh tế trọng điểm',
+  'Lâm Sơn Động vinh dự đón nhận bằng khen Doanh nghiệp đạt chuẩn Quốc Gia',
+  'Triển khai thành công phương án bảo vệ an ninh trật tự Hội nghị doanh nghiệp quận Long Biên',
+  'Lâm Sơn Động tổ chức diễn tập PCCC, bồi dưỡng nghiệp vụ Quý 4/2026',
+  'Mở rộng hệ thống Trung tâm phản ứng nhanh cơ động tại các cứ điểm quan trọng',
 ];
 
 export const CERTIFICATIONS: Certification[] = [

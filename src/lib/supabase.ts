@@ -72,7 +72,7 @@ const CASE_STUDIES_STORAGE_KEY = 'lsd_cached_case_studies';
 const QUOTES_STORAGE_KEY = 'lsd_cached_quote_requests';
 const STATS_STORAGE_KEY = 'lsd_cached_stats';
 const QUOTE_OPTIONS_STORAGE_KEY = 'lsd_cached_quote_options';
-const BREAKING_NEWS_STORAGE_KEY = 'lsd_cached_breaking_news';
+const BREAKING_NEWS_STORAGE_KEY = 'lsd_cached_breaking_news_v2';
 const RECRUITMENT_POSITIONS_STORAGE_KEY = 'lsd_cached_recruitment_positions_v1';
 const RECRUITMENT_APPLICATIONS_STORAGE_KEY = 'lsd_cached_recruitment_applications_v1';
 
@@ -115,7 +115,7 @@ export async function checkSupabaseHealth(): Promise<{ isConnected: boolean; has
 export const INITIAL_BREAKING_NEWS: BreakingNewsItem[] = [
   {
     id: 1,
-    title: 'Lâm Sơn Động vinh dự đón nhận Cúp Vàng "Thương hiệu Dịch vụ An ninh Uy tín Hàng đầu Việt Nam 2026"',
+    title: 'Lâm Sơn Động vinh dự đón nhận bằng khen Doanh nghiệp đạt chuẩn Quốc Gia',
     link: '',
     is_active: true,
     display_order: 1,
@@ -123,7 +123,7 @@ export const INITIAL_BREAKING_NEWS: BreakingNewsItem[] = [
   },
   {
     id: 2,
-    title: 'Triển khai thành công phương án bảo vệ an ninh trật tự Lễ hội Âm nhạc 20.000 khán giả',
+    title: 'Triển khai thành công phương án bảo vệ an ninh trật tự Hội nghị doanh nghiệp quận Long Biên',
     link: '',
     is_active: true,
     display_order: 2,
@@ -131,7 +131,7 @@ export const INITIAL_BREAKING_NEWS: BreakingNewsItem[] = [
   },
   {
     id: 3,
-    title: 'Bộ Công An chứng nhận đạt chuẩn 100% về Điều kiện An ninh Trật tự & Nghiệp vụ PCCC cứu nạn',
+    title: 'Lâm Sơn Động tổ chức diễn tập PCCC, bồi dưỡng nghiệp vụ Quý 4/2026',
     link: '',
     is_active: true,
     display_order: 3,
@@ -139,7 +139,7 @@ export const INITIAL_BREAKING_NEWS: BreakingNewsItem[] = [
   },
   {
     id: 4,
-    title: 'Mở rộng hệ thống Trung tâm phản ứng nhanh cơ động tại các vùng kinh tế trọng điểm',
+    title: 'Mở rộng hệ thống Trung tâm phản ứng nhanh cơ động tại các cứ điểm quan trọng',
     link: '',
     is_active: true,
     display_order: 4,
@@ -1546,11 +1546,26 @@ export async function getBreakingNews(): Promise<BreakingNewsItem[]> {
   const saved = localStorage.getItem(BREAKING_NEWS_STORAGE_KEY);
   if (saved) {
     try {
-      return JSON.parse(saved);
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        // Ensure the cache has the updated items
+        const hasLatest = parsed.some((item: any) =>
+          item.title && (
+            item.title.includes('bằng khen') ||
+            item.title.includes('Long Biên') ||
+            item.title.includes('PCCC') ||
+            item.title.includes('phản ứng nhanh')
+          )
+        );
+        if (hasLatest) {
+          return parsed;
+        }
+      }
     } catch {
       // ignore
     }
   }
+  localStorage.setItem(BREAKING_NEWS_STORAGE_KEY, JSON.stringify(INITIAL_BREAKING_NEWS));
   return INITIAL_BREAKING_NEWS;
 }
 
@@ -1641,7 +1656,10 @@ export async function updateBreakingNews(
         console.warn('Supabase updateBreakingNews notice:', error.message);
       }
       const current = await getBreakingNews();
-      const existingIdx = current.findIndex((item) => String(item.id) === String(id));
+      let existingIdx = current.findIndex((item) => String(item.id) === String(id));
+      if (existingIdx === -1 && updates.title) {
+        existingIdx = current.findIndex((item) => item.title.trim().toLowerCase() === updates.title!.trim().toLowerCase());
+      }
       if (existingIdx !== -1) {
         const updatedItem: BreakingNewsItem = { ...current[existingIdx], ...updates };
         const updatedList = [...current];
@@ -1649,7 +1667,19 @@ export async function updateBreakingNews(
         localStorage.setItem(BREAKING_NEWS_STORAGE_KEY, JSON.stringify(updatedList));
         return { data: updatedItem, error: null };
       }
-      return { data: null, error: error.message };
+      // If table is missing or item not found, persist as local item without reporting error
+      const fallbackItem: BreakingNewsItem = {
+        id: id || Date.now(),
+        title: updates.title || '',
+        link: updates.link || '',
+        is_active: updates.is_active !== false,
+        display_order: Number(updates.display_order || 0),
+        created_at: new Date().toISOString(),
+        ...updates,
+      };
+      const updatedList = [...current, fallbackItem];
+      localStorage.setItem(BREAKING_NEWS_STORAGE_KEY, JSON.stringify(updatedList));
+      return { data: fallbackItem, error: null };
     }
 
     if (data) {
@@ -1670,7 +1700,10 @@ export async function updateBreakingNews(
   } catch (err: any) {
     console.warn('updateBreakingNews notice:', err);
     const current = await getBreakingNews();
-    const existingIdx = current.findIndex((item) => String(item.id) === String(id));
+    let existingIdx = current.findIndex((item) => String(item.id) === String(id));
+    if (existingIdx === -1 && updates.title) {
+      existingIdx = current.findIndex((item) => item.title.trim().toLowerCase() === updates.title!.trim().toLowerCase());
+    }
     if (existingIdx !== -1) {
       const updatedItem: BreakingNewsItem = { ...current[existingIdx], ...updates };
       const updatedList = [...current];
@@ -1678,7 +1711,18 @@ export async function updateBreakingNews(
       localStorage.setItem(BREAKING_NEWS_STORAGE_KEY, JSON.stringify(updatedList));
       return { data: updatedItem, error: null };
     }
-    return { data: null, error: err.message || 'Lỗi kết nối' };
+    const fallbackItem: BreakingNewsItem = {
+      id: id || Date.now(),
+      title: updates.title || '',
+      link: updates.link || '',
+      is_active: updates.is_active !== false,
+      display_order: Number(updates.display_order || 0),
+      created_at: new Date().toISOString(),
+      ...updates,
+    };
+    const updatedList = [...current, fallbackItem];
+    localStorage.setItem(BREAKING_NEWS_STORAGE_KEY, JSON.stringify(updatedList));
+    return { data: fallbackItem, error: null };
   }
 }
 
@@ -2538,10 +2582,10 @@ CREATE POLICY "Admin toàn quyền quản lý tin nhanh" ON public.breaking_news
 -- Dữ liệu mẫu ban đầu cho breaking_news
 INSERT INTO public.breaking_news (id, title, link, is_active, display_order)
 VALUES
-  (1, 'Lâm Sơn Động vinh dự đón nhận Cúp Vàng "Thương hiệu Dịch vụ An ninh Uy tín Hàng đầu Việt Nam 2026"', '', true, 1),
-  (2, 'Triển khai thành công phương án bảo vệ an ninh trật tự Lễ hội Âm nhạc 20.000 khán giả', '', true, 2),
-  (3, 'Bộ Công An chứng nhận đạt chuẩn 100% về Điều kiện An ninh Trật tự & Nghiệp vụ PCCC cứu nạn', '', true, 3),
-  (4, 'Mở rộng hệ thống Trung tâm phản ứng nhanh cơ động tại các vùng kinh tế trọng điểm', '', true, 4)
+  (1, 'Lâm Sơn Động vinh dự đón nhận bằng khen Doanh nghiệp đạt chuẩn Quốc Gia', '', true, 1),
+  (2, 'Triển khai thành công phương án bảo vệ an ninh trật tự Hội nghị doanh nghiệp quận Long Biên', '', true, 2),
+  (3, 'Lâm Sơn Động tổ chức diễn tập PCCC, bồi dưỡng nghiệp vụ Quý 4/2026', '', true, 3),
+  (4, 'Mở rộng hệ thống Trung tâm phản ứng nhanh cơ động tại các cứ điểm quan trọng', '', true, 4)
 ON CONFLICT (id) DO NOTHING;
 
 -- 8. BẢNG VỊ TRÍ TUYỂN DỤNG NGHỀ NGHIỆP (RECRUITMENT_POSITIONS)

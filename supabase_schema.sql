@@ -355,10 +355,10 @@ CREATE POLICY "Admin toàn quyền quản lý tin nhanh" ON public.breaking_news
 -- Dữ liệu mẫu ban đầu cho breaking_news
 INSERT INTO public.breaking_news (id, title, link, is_active, display_order)
 VALUES
-  (1, 'Lâm Sơn Động vinh dự đón nhận Cúp Vàng "Thương hiệu Dịch vụ An ninh Uy tín Hàng đầu Việt Nam 2026"', '', true, 1),
-  (2, 'Triển khai thành công phương án bảo vệ an ninh trật tự Lễ hội Âm nhạc 20.000 khán giả', '', true, 2),
-  (3, 'Bộ Công An chứng nhận đạt chuẩn 100% về Điều kiện An ninh Trật tự & Nghiệp vụ PCCC cứu nạn', '', true, 3),
-  (4, 'Mở rộng hệ thống Trung tâm phản ứng nhanh cơ động tại các vùng kinh tế trọng điểm', '', true, 4)
+  (1, 'Lâm Sơn Động vinh dự đón nhận bằng khen Doanh nghiệp đạt chuẩn Quốc Gia', '', true, 1),
+  (2, 'Triển khai thành công phương án bảo vệ an ninh trật tự Hội nghị doanh nghiệp quận Long Biên', '', true, 2),
+  (3, 'Lâm Sơn Động tổ chức diễn tập PCCC, bồi dưỡng nghiệp vụ Quý 4/2026', '', true, 3),
+  (4, 'Mở rộng hệ thống Trung tâm phản ứng nhanh cơ động tại các cứ điểm quan trọng', '', true, 4)
 ON CONFLICT (id) DO NOTHING;
 
 -- Cấp quyền bảng cho vai trò authenticated và anon
