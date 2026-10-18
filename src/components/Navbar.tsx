@@ -557,7 +557,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <span>Cam kết khảo sát thực địa & lập phương án miễn phí trong <strong>24 Giờ</strong></span>
                   </div>
                   <div className="font-mono text-slate-700">
-                    Hotline hỗ trợ an ninh 24/7: <strong className="text-amber-800 font-bold">0339.269.524</strong>
+                    Hotline hỗ trợ an ninh 24/7: <strong className="text-amber-800 font-bold">0985.507.624</strong>
                   </div>
                 </div>
               </div>

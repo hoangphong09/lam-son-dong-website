@@ -225,10 +225,10 @@ export const Footer: React.FC<FooterProps> = ({
 
                 {/* Zalo */}
                 <a 
-                  href="https://zalo.me/0339269524" 
+                  href="https://zalo.me/0985507624" 
                   target="_blank" 
                   rel="noreferrer"
-                  title="Zalo Trực ban: 0339.269.524"
+                  title="Zalo Trực ban: 0985.507.624"
                   aria-label="Zalo Lâm Sơn Động"
                   className="w-7.5 h-7.5 sm:w-8 sm:h-8 rounded-lg overflow-hidden flex items-center justify-center transition-all duration-200 cursor-pointer shadow-xs hover:scale-105 hover:shadow-sm active:scale-95 group bg-white border border-slate-700/60 p-0.5"
                 >
@@ -413,7 +413,7 @@ export const Footer: React.FC<FooterProps> = ({
                   </p>
                   <h4 className="font-bold text-white text-sm">3. Quyền của chủ thể dữ liệu</h4>
                   <p>
-                    Quý khách có toàn quyền yêu cầu chỉnh sửa, cập nhật hoặc hủy bỏ việc nhận bản tin bất kỳ lúc nào thông qua đường link hủy đăng ký ở cuối mỗi email hoặc liên hệ hotline: 0339.269.524.
+                    Quý khách có toàn quyền yêu cầu chỉnh sửa, cập nhật hoặc hủy bỏ việc nhận bản tin bất kỳ lúc nào thông qua đường link hủy đăng ký ở cuối mỗi email hoặc liên hệ hotline: 0985.507.624.
                   </p>
                 </>
               ) : (

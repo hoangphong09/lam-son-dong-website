@@ -457,7 +457,7 @@ export default function App() {
         bullets: [
           'Bán kính chi viện khẩn cấp chỉ từ 10 - 15 phút tại các vùng kinh tế trọng điểm phía Bắc.',
           'Trang bị đầy đủ công cụ hỗ trợ chuẩn C06 Bộ Công An: dùi cui điện, súng bắn đạn cao su, bộ đàm cự ly xa.',
-          'Hotline điều hành tác chiến thường trực 24/7: 0339.269.524 sẵn sàng chi viện khẩn cấp.',
+          'Hotline điều hành tác chiến thường trực 24/7: 0985.507.624 sẵn sàng chi viện khẩn cấp.',
         ],
       };
     }
@@ -480,7 +480,7 @@ export default function App() {
       bullets: [
         'Đội tuần tra cơ động phản ứng nhanh thường trực 24/7.',
         'Bảo đảm an toàn tuyệt đối về người và tài sản cho doanh nghiệp đối tác.',
-        'Hotline tư vấn và chi viện an ninh khẩn cấp: 0339.269.524.',
+        'Hotline tư vấn và chi viện an ninh khẩn cấp: 0985.507.624.',
       ],
     };
   };
@@ -887,11 +887,11 @@ export default function App() {
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
                 {/* Hotline */}
                 <a
-                  href="tel:0339269524"
+                  href="tel:0985507624"
                   className="h-11 sm:h-12 px-4 sm:px-5 bg-white hover:bg-slate-100 border border-slate-200 text-slate-900 font-semibold text-xs sm:text-sm rounded-xl shadow-2xs transition-all flex items-center justify-center gap-2 whitespace-nowrap shrink-0"
                 >
                   <PhoneCall className="w-4 h-4 text-amber-700" />
-                  <span className="font-mono font-bold tracking-tight">0339.269.524</span>
+                  <span className="font-mono font-bold tracking-tight">0985.507.624</span>
                 </a>
 
                 {/* Consultation */}

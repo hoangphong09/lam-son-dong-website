@@ -129,13 +129,13 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
             {/* Elegant Phone Button */}
             <a
-              href="tel:0339269524"
+              href="tel:0985507624"
               className="h-11 sm:h-12 px-4 sm:px-5 bg-white hover:bg-amber-50/60 border border-slate-200 hover:border-amber-400 text-slate-800 hover:text-amber-900 font-semibold text-xs sm:text-sm rounded-xl shadow-2xs hover:shadow-xs transition-all flex items-center justify-center gap-2 whitespace-nowrap group shrink-0"
             >
               <div className="w-6 h-6 rounded-full bg-amber-50 group-hover:bg-amber-100/80 flex items-center justify-center transition-colors">
                 <PhoneCall className="w-3.5 h-3.5 text-amber-700" />
               </div>
-              <span className="font-mono font-bold tracking-tight">0339.269.524</span>
+              <span className="font-mono font-bold tracking-tight">0985.507.624</span>
             </a>
 
             {/* Premium Gold Quote CTA Button */}

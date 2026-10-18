@@ -91,7 +91,7 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({ initialData 
 
       if (res && res.error) {
         console.error('Error submitting quote request:', res.error);
-        setErrorMessage('Không thể gửi yêu cầu lúc này. Vui lòng thử lại hoặc gọi trực tiếp Hotline 0339.269.524!');
+        setErrorMessage('Không thể gửi yêu cầu lúc này. Vui lòng thử lại hoặc gọi trực tiếp Hotline 0985.507.624!');
         setLoading(false);
         return;
       }
@@ -188,10 +188,10 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({ initialData 
                 Liên hệ trực tiếp Hotline 24/7:
               </p>
               <a 
-                href="tel:0339269524" 
+                href="tel:0985507624" 
                 className="inline-block text-2xl font-mono font-black text-slate-950 hover:text-amber-700 transition-colors pt-1"
               >
-                0339.269.524
+                0985.507.624
               </a>
             </div>
 

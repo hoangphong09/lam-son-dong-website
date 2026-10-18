@@ -307,7 +307,7 @@ export const QuoteCalculatorModal: React.FC<QuoteCalculatorModalProps> = ({ isOp
                     <input
                       type="tel"
                       required
-                      placeholder="VD: 0339 269 524"
+                      placeholder="VD: 0985 507 624"
                       value={contactPhone}
                       onChange={(e) => setContactPhone(e.target.value)}
                       className="w-full px-4 py-3 bg-slate-50 border border-slate-300 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-hidden focus:bg-white focus:border-amber-600 focus:ring-1 focus:ring-amber-600 font-mono rounded-lg transition-all"

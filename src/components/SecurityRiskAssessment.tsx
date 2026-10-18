@@ -195,10 +195,10 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
       if (res.success) {
         setContactSubmitted(true);
       } else {
-        setContactError(res.error || 'Không thể gửi thông tin. Quý khách vui lòng gọi trực tiếp hotline 0339.269.524!');
+        setContactError(res.error || 'Không thể gửi thông tin. Quý khách vui lòng gọi trực tiếp hotline 0985.507.624!');
       }
     } catch (err: any) {
-      setContactError('Lỗi kết nối. Quý khách vui lòng gọi trực tiếp hotline 0339.269.524 để được hỗ trợ tức thì!');
+      setContactError('Lỗi kết nối. Quý khách vui lòng gọi trực tiếp hotline 0985.507.624 để được hỗ trợ tức thì!');
     } finally {
       setIsSubmittingContact(false);
     }
@@ -695,11 +695,11 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
                     </p>
                     <div className="pt-2 flex flex-wrap gap-3">
                       <a
-                        href="tel:0339269524"
+                        href="tel:0985507624"
                         className="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-700 hover:bg-amber-800 text-white text-xs font-mono font-bold rounded-lg transition-all"
                       >
                         <PhoneCall className="w-4 h-4" />
-                        Gọi ngay Hotline khẩn cấp: 0339.269.524
+                        Gọi ngay Hotline khẩn cấp: 0985.507.624
                       </a>
                       <button
                         type="button"
@@ -803,11 +803,11 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
                         <div className="flex items-center gap-4 text-xs font-mono">
                           <span className="text-slate-500">Hoặc gọi Hotline 24/7:</span>
                           <a
-                            href="tel:0339269524"
+                            href="tel:0985507624"
                             className="font-bold text-amber-900 hover:underline flex items-center gap-1.5"
                           >
                             <PhoneCall className="w-3.5 h-3.5 text-amber-700" />
-                            0339.269.524
+                            0985.507.624
                           </a>
                         </div>
                       </div>

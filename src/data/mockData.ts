@@ -120,7 +120,7 @@ export const PROVINCE_LOCATIONS: ProvinceLocation[] = [
     region: 'Bắc',
     guardCount: '1,200+ quân số',
     targetCount: '180 mục tiêu',
-    hotline: '0339.269.524',
+    hotline: '0985.507.624',
     address: 'Tầng 18, Tháp V-Guard Tower, Phạm Hùng, Nam Từ Liêm, Hà Nội',
   },
   {
@@ -129,7 +129,7 @@ export const PROVINCE_LOCATIONS: ProvinceLocation[] = [
     region: 'Nam',
     guardCount: '1,450+ quân số',
     targetCount: '220 mục tiêu',
-    hotline: '0339.269.524',
+    hotline: '0985.507.624',
     address: 'Số 88 Nguyễn Văn Linh, P. Tân Phong, Quận 7, TP. HCM',
   },
   {
@@ -138,7 +138,7 @@ export const PROVINCE_LOCATIONS: ProvinceLocation[] = [
     region: 'Trung',
     guardCount: '450+ quân số',
     targetCount: '65 mục tiêu',
-    hotline: '0339.269.524',
+    hotline: '0985.507.624',
     address: 'Số 126 Nguyễn Tri Phương, P. Chính Gián, Q. Thanh Khê, Đà Nẵng',
   },
   {
@@ -147,7 +147,7 @@ export const PROVINCE_LOCATIONS: ProvinceLocation[] = [
     region: 'Nam',
     guardCount: '600+ quân số',
     targetCount: '120 mục tiêu',
-    hotline: '0339.269.524',
+    hotline: '0985.507.624',
     address: 'KCN VSIP 1, TP. Thuận An, Bình Dương',
   },
   {
@@ -156,7 +156,7 @@ export const PROVINCE_LOCATIONS: ProvinceLocation[] = [
     region: 'Bắc',
     guardCount: '350+ quân số',
     targetCount: '55 mục tiêu',
-    hotline: '0339.269.524',
+    hotline: '0985.507.624',
     address: 'KCN Đình Vũ, Q. Hải An, TP. Hải Phòng',
   },
   {
@@ -165,7 +165,7 @@ export const PROVINCE_LOCATIONS: ProvinceLocation[] = [
     region: 'Nam',
     guardCount: '280+ quân số',
     targetCount: '40 mục tiêu',
-    hotline: '0339.269.524',
+    hotline: '0985.507.624',
     address: 'Đường 30/4, P. Hưng Lợi, Q. Ninh Kiều, TP. Cần Thơ',
   },
 ];
@@ -830,7 +830,7 @@ export const CLIENT_PARTNERS: ClientPartner[] = [
 export const FOOTER_DATA = {
   companyInfo: {
     headquarters: 'Số 14, 422/14/10 Ngô Gia Tự, Long Biên, Hà Nội, Việt Nam',
-    hotline: '0339.269.524',
+    hotline: '0985.507.624',
     email: 'congtybaovelamsondong@gmail.com',
     license: 'Giấy phép C06/BCA số 118/GCN-ANBV cấp bởi Cục Cảnh sát QLHC về TTXH - Bộ Công An',
     taxId: '0108992348 - Sở Kế hoạch & Đầu tư TP. Hà Nội',

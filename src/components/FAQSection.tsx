@@ -277,11 +277,11 @@ export const FAQSection: React.FC<FAQSectionProps> = ({
                 Đặt lại bộ lọc
               </button>
               <a
-                href="tel:0339269524"
+                href="tel:0985507624"
                 className="px-4 py-2 bg-amber-700 hover:bg-amber-800 text-white text-xs font-mono font-bold rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <PhoneCall className="w-3.5 h-3.5" />
-                <span>Gọi 0339.269.524</span>
+                <span>Gọi 0985.507.624</span>
               </a>
             </div>
           </div>
