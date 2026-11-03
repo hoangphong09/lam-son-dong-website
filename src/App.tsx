@@ -578,6 +578,8 @@ export default function App() {
             onSelectService={handleSelectServiceById}
             onScrollToRisk={() => scrollToSection('risk-assessment-section')}
             onScrollToServices={() => scrollToSection('featured-services-section')}
+            onOpenRecruitment={() => setIsRecruitmentModalOpen(true)}
+            onNavigateToRecruitment={navigateToRecruitment}
             slides={heroSlides}
           />
 

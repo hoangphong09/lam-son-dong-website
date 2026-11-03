@@ -118,12 +118,12 @@ export const RecruitmentPage: React.FC<RecruitmentPageProps> = ({
                   <div>
                     <span className="text-xs font-mono font-bold text-slate-900 uppercase">TUYỂN LIÊN TỤC</span>
                     <h3 className="text-lg sm:text-xl font-bold text-slate-900 mt-0.5">
-                      Nhân Viên Bảo Vệ Mục Tiêu – Hà Nội
+                      Nhân Viên Bảo Vệ Mục Tiêu – Hà Nội (Ưu tiên khu vực Long Biên)
                     </h3>
                   </div>
                   <div className="sm:text-right">
                     <span className="text-base sm:text-lg font-extrabold text-slate-900">
-                      Lên tới 10.000.000 VNĐ
+                      Lên tới 7.000.000 VNĐ
                     </span>
                     <div className="text-xs text-slate-600">/ tháng</div>
                   </div>
@@ -139,7 +139,7 @@ export const RecruitmentPage: React.FC<RecruitmentPageProps> = ({
                   <div>
                     <strong className="text-slate-900">Yêu cầu ứng viên:</strong>
                     <ul className="list-disc pl-5 mt-1 space-y-1">
-                      <li>Nam/Nữ từ 18 đến 50 tuổi, lý lịch trong sạch, không tiền án tiền sự.</li>
+                      <li>Nam/Nữ từ 18 đến 65 tuổi, lý lịch trong sạch, không tiền án tiền sự.</li>
                       <li>Tốt nghiệp THCS, THPT trở lên, sức khỏe tốt, không có hình xăm lớn.</li>
                       <li>Tác phong nghiêm túc, trung thực, có tinh thần trách nhiệm và kỷ luật.</li>
                     </ul>
@@ -167,7 +167,7 @@ export const RecruitmentPage: React.FC<RecruitmentPageProps> = ({
                     href="tel:0981962288"
                     className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold text-xs uppercase tracking-wider rounded-lg transition-colors border border-slate-300"
                   >
-                    Gọi: 0981 962 288
+                    Gọi: 0985 507 624
                   </a>
                 </div>
               </div>
@@ -209,7 +209,7 @@ export const RecruitmentPage: React.FC<RecruitmentPageProps> = ({
                     href="tel:0975751246"
                     className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold text-xs uppercase tracking-wider rounded-lg transition-colors border border-slate-300"
                   >
-                    Gọi: 0975 751 246
+                    Gọi: 0985 507 624
                   </a>
                 </div>
               </div>

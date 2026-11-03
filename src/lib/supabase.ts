@@ -67,7 +67,7 @@ export interface RecruitmentApplication {
 
 // Local cache keys for offline/fallback stability
 const POSTS_STORAGE_KEY = 'lsd_cached_posts_v8';
-const HERO_STORAGE_KEY = 'lsd_cached_hero_slides';
+const HERO_STORAGE_KEY = 'lsd_cached_hero_slides_v3';
 const CASE_STUDIES_STORAGE_KEY = 'lsd_cached_case_studies';
 const QUOTES_STORAGE_KEY = 'lsd_cached_quote_requests';
 const STATS_STORAGE_KEY = 'lsd_cached_stats';
@@ -465,7 +465,7 @@ export async function getHeroSlides(): Promise<HeroSlide[]> {
       .select('*')
       .order('id', { ascending: true });
 
-    if (!error && data) {
+    if (!error && data && data.length > 0) {
       localStorage.setItem(HERO_STORAGE_KEY, JSON.stringify(data));
       return data as HeroSlide[];
     }

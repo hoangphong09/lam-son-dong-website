@@ -8,12 +8,16 @@ interface HeroCarouselProps {
   onSelectService?: (serviceId: string) => void;
   onScrollToRisk: () => void;
   onScrollToServices?: () => void;
+  onOpenRecruitment?: () => void;
+  onNavigateToRecruitment?: () => void;
   slides?: HeroSlide[];
 }
 
 export const HeroCarousel: React.FC<HeroCarouselProps> = ({ 
   onScrollToRisk,
   onScrollToServices,
+  onOpenRecruitment,
+  onNavigateToRecruitment,
   slides
 }) => {
   const activeSlides = slides && slides.length > 0 ? slides : HERO_SLIDES;
@@ -54,14 +58,26 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
     setCurrentIndex((prev) => (prev + 1) % activeSlides.length);
   }, [activeSlides.length]);
 
-  // Auto-advance interval (5 seconds) with pause-on-hover behavior
+  // Dynamic auto-advance interval with per-slide duration
+  // Tuyển dụng nhân viên an ninh: 10 seconds (10,000ms), other slides: 5 seconds (5,000ms)
   useEffect(() => {
     if (activeSlides.length <= 1 || isPaused) return;
-    const interval = setInterval(() => {
+
+    const currentSlide = activeSlides[currentIndex];
+    const isRecruitment =
+      currentSlide?.id === 'slide-1' ||
+      currentSlide?.duration === 10000 ||
+      currentSlide?.title?.toLowerCase().includes('tuyển dụng') ||
+      currentSlide?.category?.toLowerCase().includes('tuyển dụng');
+
+    const duration = currentSlide?.duration || (isRecruitment ? 10000 : 5000);
+
+    const timer = setTimeout(() => {
       handleNext();
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [activeSlides.length, isPaused, handleNext]);
+    }, duration);
+
+    return () => clearTimeout(timer);
+  }, [currentIndex, activeSlides, isPaused, handleNext]);
 
   const handleGoToServices = () => {
     if (onScrollToServices) {
@@ -93,10 +109,10 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
       const parts = rawTitle.split(':');
       return (
         <span className="flex flex-col gap-2 sm:gap-2.5">
-          <span className="text-2xl sm:text-3xl md:text-4xl lg:text-[40px] font-bold text-white tracking-normal drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
+          <span className="text-2xl sm:text-3xl md:text-4xl lg:text-[40px] font-bold text-white tracking-normal drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)]">
             {parts[0].trim()}
           </span>
-          <span className="text-3xl sm:text-4xl md:text-5xl lg:text-[48px] font-black text-[#e5be5a] tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
+          <span className="text-3xl sm:text-4xl md:text-5xl lg:text-[48px] font-black text-[#e5be5a] tracking-tight drop-shadow-[0_2px_14px_rgba(0,0,0,0.95)]">
             {parts.slice(1).join(':').trim()}
           </span>
         </span>
@@ -104,22 +120,27 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
     }
     
     // Check for strategic keyword highlights
-    const keywords = ['An Ninh 4.0', 'Nhân viên Bảo vệ', 'Lâm Sơn Động', 'Thành Phố Hà Nội'];
+    const keywords = ['Nhân Viên An Ninh', 'Tuyển Dụng', 'An Ninh 4.0', 'Nhân viên Bảo vệ', 'Lâm Sơn Động', 'Thành Phố Hà Nội'];
     for (const kw of keywords) {
-      if (rawTitle.includes(kw)) {
-        const parts = rawTitle.split(kw);
+      const lowerRaw = rawTitle.toLowerCase();
+      const lowerKw = kw.toLowerCase();
+      if (lowerRaw.includes(lowerKw)) {
+        const start = lowerRaw.indexOf(lowerKw);
+        const before = rawTitle.substring(0, start);
+        const match = rawTitle.substring(start, start + kw.length);
+        const after = rawTitle.substring(start + kw.length);
         return (
-          <span className="text-3xl sm:text-4xl md:text-5xl lg:text-[46px] font-extrabold text-white leading-[1.2] tracking-tight">
-            <span>{parts[0]}</span>
-            <span className="text-[#e5be5a] font-black">{kw}</span>
-            <span>{parts.slice(1).join(kw)}</span>
+          <span className="text-3xl sm:text-4xl md:text-5xl lg:text-[46px] font-extrabold text-white leading-[1.2] tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)]">
+            <span>{before}</span>
+            <span className="text-[#e5be5a] font-black">{match}</span>
+            <span>{after}</span>
           </span>
         );
       }
     }
 
     return (
-      <span className="text-3xl sm:text-4xl md:text-5xl lg:text-[46px] font-extrabold text-white leading-[1.2] tracking-tight">
+      <span className="text-3xl sm:text-4xl md:text-5xl lg:text-[46px] font-extrabold text-white leading-[1.2] tracking-tight drop-shadow-[0_2px_12px_rgba(0,0,0,0.95)]">
         {rawTitle}
       </span>
     );
@@ -141,73 +162,111 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({
         className="flex w-full h-full transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] will-change-transform"
         style={{ transform: `translate3d(-${currentIndex * 100}%, 0, 0)` }}
       >
-        {activeSlides.map((slide, index) => (
-          <div
-            key={slide.id || index}
-            className="w-full min-w-full shrink-0 relative flex items-center min-h-[540px] sm:min-h-[600px] lg:min-h-[660px] overflow-hidden"
-          >
-            {/* Background Image Container */}
-            <div className="absolute inset-0 z-0 overflow-hidden">
-              <img
-                src={getOptimizedHeroImageUrl(slide.imageUrl)}
-                alt={`Lâm Sơn Động - ${slide.title}`}
-                loading={index === 0 ? 'eager' : 'lazy'}
-                decoding="async"
-                fetchPriority={index === 0 ? 'high' : 'low'}
-                width={1920}
-                height={1080}
-                sizes="100vw"
-                onError={(e) => {
-                  (e.currentTarget as HTMLImageElement).src = '/images/hero-1.jpg';
-                }}
-                className="w-full h-full object-cover object-[70%_center] sm:object-center lg:object-[78%_center] filter contrast-[1.08] saturate-[1.12] brightness-[0.96]"
-              />
+        {activeSlides.map((slide, index) => {
+          const isRecruitmentSlide =
+            slide.id === 'slide-1' ||
+            slide.title?.toLowerCase().includes('tuyển dụng') ||
+            slide.category?.toLowerCase().includes('tuyển dụng');
 
-              {/* Left-to-right subtle dark gradient overlay for optimal text contrast */}
-              <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/70 to-slate-950/20 sm:to-transparent pointer-events-none" />
+          return (
+            <div
+              key={slide.id || index}
+              className="w-full min-w-full shrink-0 relative flex items-center min-h-[540px] sm:min-h-[600px] lg:min-h-[660px] overflow-hidden"
+            >
+              {/* Background Image Container */}
+              <div className="absolute inset-0 z-0 overflow-hidden">
+                <img
+                  src={getOptimizedHeroImageUrl(slide.imageUrl)}
+                  alt={`Lâm Sơn Động - ${slide.title}`}
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                  decoding="async"
+                  fetchPriority={index === 0 ? 'high' : 'low'}
+                  width={1920}
+                  height={1080}
+                  sizes="100vw"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = '/images/hero-1.jpg';
+                  }}
+                  className={`w-full h-full object-cover filter contrast-[1.02] saturate-[1.06] brightness-[1.02] ${
+                    slide.imageUrl?.includes('image_86a8f051.png')
+                      ? 'object-[50%_35%] sm:object-[60%_35%] lg:object-[65%_35%]'
+                      : 'object-[70%_center] sm:object-center lg:object-[78%_center]'
+                  }`}
+                />
 
-              {/* Bottom gradient transition */}
-              <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-slate-950/90 via-slate-950/50 to-transparent pointer-events-none" />
-            </div>
+                {/* Reduced dark gradient overlay - significantly softer and lighter for a brighter hero background */}
+                <div className="absolute inset-0 bg-gradient-to-r from-slate-950/65 via-slate-950/35 to-transparent sm:to-black/10 pointer-events-none" />
 
-            {/* Slide Content Box: Stays perfectly in sync with the slide background */}
-            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24 w-full flex flex-col justify-center">
-              <div className="max-w-2xl lg:max-w-3xl">
-                {/* Primary Headline */}
-                <h1 className="font-['Plus_Jakarta_Sans',sans-serif] mb-5">
-                  {renderFormattedTitle(slide.title)}
-                </h1>
+                {/* Subtle bottom gradient transition */}
+                <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-slate-950/50 via-slate-950/20 to-transparent pointer-events-none" />
+              </div>
 
-                {/* Subtitle Description */}
-                <p className="text-base sm:text-lg md:text-xl text-slate-100 font-normal leading-relaxed max-w-xl lg:max-w-2xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] mb-8">
-                  {slide.description}
-                </p>
+              {/* Slide Content Box: Stays perfectly in sync with the slide background */}
+              <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24 w-full flex flex-col justify-center">
+                <div className="max-w-2xl lg:max-w-3xl">
+                  {/* Primary Headline */}
+                  <h1 className="font-['Plus_Jakarta_Sans',sans-serif] mb-5">
+                    {renderFormattedTitle(slide.title)}
+                  </h1>
 
-                {/* Action CTA Buttons */}
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 sm:gap-4">
-                  {/* Primary Action Button: Dịch Vụ Bảo Vệ */}
-                  <button
-                    id={`hero-services-cta-btn-${index}`}
-                    onClick={handleGoToServices}
-                    className="flex items-center justify-center gap-2.5 bg-gradient-to-r from-[#c5a059] to-[#b8860b] hover:from-[#d4af37] hover:to-[#c5a059] text-slate-950 font-extrabold text-xs sm:text-sm uppercase tracking-wider font-['Plus_Jakarta_Sans',sans-serif] px-7 py-3.5 sm:py-4 rounded-xl shadow-lg shadow-black/40 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer group"
-                  >
-                    <span>Dịch Vụ Bảo Vệ</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </button>
+                  {/* Subtitle Description */}
+                  <p className="text-base sm:text-lg md:text-xl text-white font-medium leading-relaxed max-w-xl lg:max-w-2xl drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] mb-8">
+                    {slide.description}
+                  </p>
 
-                  {/* Secondary Action Button: Đánh Giá Rủi Ro */}
-                  <button
-                    id={`hero-risk-cta-btn-${index}`}
-                    onClick={handleGoToRisk}
-                    className="flex items-center justify-center backdrop-blur-md bg-white/10 hover:bg-white/20 text-white border border-white/25 hover:border-white/40 text-xs sm:text-sm font-bold uppercase tracking-wider font-['Plus_Jakarta_Sans',sans-serif] px-7 py-3.5 sm:py-4 rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer hover:-translate-y-0.5 active:translate-y-0"
-                  >
-                    <span>Đánh Giá Rủi Ro</span>
-                  </button>
+                  {/* Action CTA Buttons */}
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 sm:gap-4">
+                    {/* Primary Action Button */}
+                    {isRecruitmentSlide || slide.ctaText?.toLowerCase().includes('ứng tuyển') ? (
+                      <a
+                        href="/tuyen-dung"
+                        id={`hero-services-cta-btn-${index}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (onNavigateToRecruitment) {
+                            onNavigateToRecruitment();
+                          } else {
+                            window.history.pushState(null, '', '/tuyen-dung');
+                            window.dispatchEvent(new PopStateEvent('popstate'));
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }
+                        }}
+                        className="flex items-center justify-center gap-2.5 bg-gradient-to-r from-[#c5a059] to-[#b8860b] hover:from-[#d4af37] hover:to-[#c5a059] text-slate-950 font-extrabold text-xs sm:text-sm uppercase tracking-wider font-['Plus_Jakarta_Sans',sans-serif] px-7 py-3.5 sm:py-4 rounded-xl shadow-lg shadow-black/40 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer group"
+                      >
+                        <span>{slide.ctaText || 'Ứng Tuyển Ngay'}</span>
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </a>
+                    ) : (
+                      <button
+                        id={`hero-services-cta-btn-${index}`}
+                        onClick={handleGoToServices}
+                        className="flex items-center justify-center gap-2.5 bg-gradient-to-r from-[#c5a059] to-[#b8860b] hover:from-[#d4af37] hover:to-[#c5a059] text-slate-950 font-extrabold text-xs sm:text-sm uppercase tracking-wider font-['Plus_Jakarta_Sans',sans-serif] px-7 py-3.5 sm:py-4 rounded-xl shadow-lg shadow-black/40 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer group"
+                      >
+                        <span>{slide.ctaText || 'Dịch Vụ Bảo Vệ'}</span>
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </button>
+                    )}
+
+                    {/* Secondary Action Button */}
+                    <button
+                      id={`hero-risk-cta-btn-${index}`}
+                      onClick={() => {
+                        if (isRecruitmentSlide) {
+                          handleGoToServices();
+                        } else {
+                          handleGoToRisk();
+                        }
+                      }}
+                      className="flex items-center justify-center backdrop-blur-md bg-slate-900/60 hover:bg-slate-900/80 text-white border border-white/30 hover:border-white/50 text-xs sm:text-sm font-bold uppercase tracking-wider font-['Plus_Jakarta_Sans',sans-serif] px-7 py-3.5 sm:py-4 rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer hover:-translate-y-0.5 active:translate-y-0"
+                    >
+                      <span>{slide.secondaryCtaText || (isRecruitmentSlide ? 'Dịch Vụ Bảo Vệ' : 'Đánh Giá Rủi Ro')}</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* ========================================================================= */}

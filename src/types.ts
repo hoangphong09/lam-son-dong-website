@@ -19,6 +19,7 @@ export interface HeroSlide {
   ctaText: string;
   secondaryCtaText?: string;
   category: string;
+  duration?: number;
 }
 
 export interface Certification {
