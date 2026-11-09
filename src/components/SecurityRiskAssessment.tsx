@@ -10,6 +10,7 @@ import {
   Clock
 } from 'lucide-react';
 import { createQuoteRequest } from '../lib/supabase';
+import { trackRiskToolCompleted, trackQuoteSubmitted, trackHotlineClick } from '../lib/analytics';
 
 interface SecurityRiskAssessmentProps {
   onOpenConsultationWithData: (riskData: any) => void;
@@ -143,6 +144,14 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
   const metrics = calculateRiskMetrics();
 
   const handleFinishScan = () => {
+    trackRiskToolCompleted({
+      facilityType,
+      facilityLabel: getFacilityLabel(facilityType),
+      areaSize: getAreaLabel(areaSize),
+      riskScore: metrics.score,
+      riskLevel: metrics.level,
+      selectedRisksCount: selectedRisks.length,
+    });
     setStep(4);
   };
 
@@ -193,6 +202,11 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
       });
 
       if (res.success) {
+        trackQuoteSubmitted({
+          source: 'risk_assessment_demo',
+          clientName: contactName.trim() || 'Khách hàng (Khảo sát trực tuyến)',
+          serviceType: getFacilityLabel(facilityType),
+        });
         setContactSubmitted(true);
       } else {
         setContactError(res.error || 'Không thể gửi thông tin. Quý khách vui lòng gọi trực tiếp hotline 0985.507.624!');
@@ -696,6 +710,7 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
                     <div className="pt-2 flex flex-wrap gap-3">
                       <a
                         href="tel:0985507624"
+                        onClick={() => trackHotlineClick('risk_assessment_success')}
                         className="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-700 hover:bg-amber-800 text-white text-xs font-mono font-bold rounded-lg transition-all"
                       >
                         <PhoneCall className="w-4 h-4" />
@@ -804,6 +819,7 @@ export const SecurityRiskAssessment: React.FC<SecurityRiskAssessmentProps> = ({
                           <span className="text-slate-500">Hoặc gọi Hotline 24/7:</span>
                           <a
                             href="tel:0985507624"
+                            onClick={() => trackHotlineClick('risk_assessment_form')}
                             className="font-bold text-amber-900 hover:underline flex items-center gap-1.5"
                           >
                             <PhoneCall className="w-3.5 h-3.5 text-amber-700" />

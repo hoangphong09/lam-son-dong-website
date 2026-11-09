@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-  <!-- Trang chủ & Landing Page Chính -->
+
+  <!-- ============================================================= -->
+  <!-- 1. TRANG CHỦ & HOMEPAGE (VIETNAMESE & ENGLISH)                -->
+  <!-- ============================================================= -->
   <url>
     <loc>https://baovelamsondong.com.vn/</loc>
-    <lastmod>2026-09-14</lastmod>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://baovelamsondong.com.vn/" />
+    <lastmod>2026-11-09</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
     <image:image>
@@ -18,59 +25,273 @@
     </image:image>
   </url>
 
-  <!-- Các phân đoạn dịch vụ cốt lõi (Anchors/Landmarks) -->
   <url>
-    <loc>https://baovelamsondong.com.vn/#featured-services-section</loc>
-    <lastmod>2026-09-14</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://baovelamsondong.com.vn/#solutions-matrix-section</loc>
-    <lastmod>2026-09-14</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://baovelamsondong.com.vn/#certifications-section</loc>
-    <lastmod>2026-09-14</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://baovelamsondong.com.vn/#risk-assessment-section</loc>
-    <lastmod>2026-09-14</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://baovelamsondong.com.vn/#casestudies-section</loc>
-    <lastmod>2026-09-14</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://baovelamsondong.com.vn/#library-section</loc>
-    <lastmod>2026-09-14</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://baovelamsondong.com.vn/#news-section</loc>
-    <lastmod>2026-09-14</lastmod>
+    <loc>https://baovelamsondong.com.vn/en</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://baovelamsondong.com.vn/" />
+    <lastmod>2026-11-09</lastmod>
     <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- ============================================================= -->
+  <!-- 2. VỀ CHÚNG TÔI / ABOUT US                                     -->
+  <!-- ============================================================= -->
+  <url>
+    <loc>https://baovelamsondong.com.vn/ve-chung-toi</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/ve-chung-toi" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en/about-us" />
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://baovelamsondong.com.vn/en/about-us</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/ve-chung-toi" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en/about-us" />
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+
+  <!-- ============================================================= -->
+  <!-- 3. TUYỂN DỤNG / CAREERS & RECRUITMENT                          -->
+  <!-- ============================================================= -->
   <url>
-    <loc>https://baovelamsondong.com.vn/#recruitment-section</loc>
-    <lastmod>2026-09-14</lastmod>
+    <loc>https://baovelamsondong.com.vn/tuyen-dung</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/tuyen-dung" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en/careers" />
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://baovelamsondong.com.vn/en/careers</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/tuyen-dung" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en/careers" />
+    <lastmod>2026-11-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
+
+  <!-- ============================================================= -->
+  <!-- 4. DỊCH VỤ CỐT LÕI / CORE SECURITY SERVICES                    -->
+  <!-- ============================================================= -->
   <url>
-    <loc>https://baovelamsondong.com.vn/#consultation-section</loc>
-    <lastmod>2026-09-14</lastmod>
+    <loc>https://baovelamsondong.com.vn/dich-vu</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/dich-vu" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en/services" />
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://baovelamsondong.com.vn/en/services</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/dich-vu" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en/services" />
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://baovelamsondong.com.vn/dich-vu/bao-ve-nha-may-kcn</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/dich-vu/bao-ve-nha-may-kcn" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en/services/factory-industrial-security" />
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://baovelamsondong.com.vn/en/services/factory-industrial-security</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/dich-vu/bao-ve-nha-may-kcn" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en/services/factory-industrial-security" />
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://baovelamsondong.com.vn/dich-vu/bao-ve-toa-nha-cao-oc</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/dich-vu/bao-ve-toa-nha-cao-oc" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en/services/building-office-security" />
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://baovelamsondong.com.vn/en/services/building-office-security</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/dich-vu/bao-ve-toa-nha-cao-oc" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en/services/building-office-security" />
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://baovelamsondong.com.vn/dich-vu/ve-si-vip</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/dich-vu/ve-si-vip" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en/services/vip-bodyguard" />
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://baovelamsondong.com.vn/en/services/vip-bodyguard</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/dich-vu/ve-si-vip" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en/services/vip-bodyguard" />
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://baovelamsondong.com.vn/dich-vu/bao-ve-su-kien</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/dich-vu/bao-ve-su-kien" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en/services/event-security" />
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://baovelamsondong.com.vn/en/services/event-security</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/dich-vu/bao-ve-su-kien" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en/services/event-security" />
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+
+  <url>
+    <loc>https://baovelamsondong.com.vn/dich-vu/ap-tai-tien-kim-loai-quy</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/dich-vu/ap-tai-tien-kim-loai-quy" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en/services/cash-in-transit" />
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://baovelamsondong.com.vn/en/services/cash-in-transit</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/dich-vu/ap-tai-tien-kim-loai-quy" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en/services/cash-in-transit" />
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+
+  <!-- ============================================================= -->
+  <!-- 5. GIẢI PHÁP, ĐÁNH GIÁ RỦI RO & FAQ                           -->
+  <!-- ============================================================= -->
+  <url>
+    <loc>https://baovelamsondong.com.vn/giai-phap-an-ninh</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/giai-phap-an-ninh" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en/security-solutions" />
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://baovelamsondong.com.vn/en/security-solutions</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/giai-phap-an-ninh" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en/security-solutions" />
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://baovelamsondong.com.vn/danh-gia-rui-ro</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/danh-gia-rui-ro" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en/risk-assessment" />
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://baovelamsondong.com.vn/en/risk-assessment</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/danh-gia-rui-ro" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en/risk-assessment" />
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://baovelamsondong.com.vn/hoi-dap-an-ninh</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/hoi-dap-an-ninh" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en/faq" />
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://baovelamsondong.com.vn/en/faq</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/hoi-dap-an-ninh" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en/faq" />
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+
+  <!-- ============================================================= -->
+  <!-- 6. THƯ VIỆN & TIN TỨC SỰ KIỆN                                  -->
+  <!-- ============================================================= -->
+  <url>
+    <loc>https://baovelamsondong.com.vn/thu-vien-an-ninh</loc>
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://baovelamsondong.com.vn/tin-tuc-su-kien</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/tin-tuc-su-kien" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en/news-events" />
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://baovelamsondong.com.vn/en/news-events</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/tin-tuc-su-kien" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en/news-events" />
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.75</priority>
+  </url>
+
+  <!-- ============================================================= -->
+  <!-- 7. LIÊN HỆ & BÁO GIÁ / CONTACT & REQUEST A QUOTE              -->
+  <!-- ============================================================= -->
+  <url>
+    <loc>https://baovelamsondong.com.vn/lien-he</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/lien-he" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en/contact" />
+    <lastmod>2026-11-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
+
+  <url>
+    <loc>https://baovelamsondong.com.vn/en/contact</loc>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://baovelamsondong.com.vn/lien-he" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://baovelamsondong.com.vn/en/contact" />
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
 </urlset>

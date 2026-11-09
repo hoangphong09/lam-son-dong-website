@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createQuoteRequest } from '../lib/supabase';
+import { trackQuoteSubmitted, trackHotlineClick } from '../lib/analytics';
 
 interface ConsultationFormProps {
   initialData?: any;
@@ -99,6 +100,12 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({ initialData 
       const newId = res?.data?.[0]?.id || `LSD-${Date.now().toString().slice(-6)}`;
       setSubmittedId(newId);
       setSubmitted(true);
+      trackQuoteSubmitted({
+        source: 'consultation_form',
+        clientName: fullName.trim(),
+        serviceType,
+        region,
+      });
       setLoading(false);
     } catch (err: any) {
       console.error('Unexpected submission error:', err);
@@ -189,6 +196,7 @@ export const ConsultationForm: React.FC<ConsultationFormProps> = ({ initialData 
               </p>
               <a 
                 href="tel:0985507624" 
+                onClick={() => trackHotlineClick('consultation_section')}
                 className="inline-block text-2xl font-mono font-black text-slate-950 hover:text-amber-700 transition-colors pt-1"
               >
                 0985.507.624

@@ -7,6 +7,7 @@ import {
   ShieldCheck,
   X,
 } from 'lucide-react';
+import { trackHotlineClick } from '../lib/analytics';
 
 export interface FAQItem {
   id: string;
@@ -278,6 +279,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({
               </button>
               <a
                 href="tel:0985507624"
+                onClick={() => trackHotlineClick('faq_empty_search')}
                 className="px-4 py-2 bg-amber-700 hover:bg-amber-800 text-white text-xs font-mono font-bold rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer"
               >
                 <PhoneCall className="w-3.5 h-3.5" />
@@ -301,6 +303,8 @@ export const FAQSection: React.FC<FAQSectionProps> = ({
                   {/* Accordion Header / Question */}
                   <button
                     type="button"
+                    id={`faq-question-${faq.id}`}
+                    aria-controls={`faq-answer-${faq.id}`}
                     onClick={() => toggleFAQ(faq.id)}
                     aria-expanded={isExpanded}
                     className="w-full text-left px-5 sm:px-6 py-4 sm:py-4.5 flex items-start justify-between gap-4 cursor-pointer select-none group"
@@ -333,35 +337,46 @@ export const FAQSection: React.FC<FAQSectionProps> = ({
                     </div>
                   </button>
 
-                  {/* Accordion Body / Answer */}
-                  {isExpanded && (
-                    <div className="px-5 sm:px-6 pb-5 pt-1 border-t border-slate-100 text-xs sm:text-sm text-slate-700 leading-relaxed font-normal animate-fadeIn">
-                      <p className="whitespace-pre-line leading-relaxed text-slate-700 mb-3.5">
-                        {faq.answer}
-                      </p>
+                  {/* Accordion Body / Answer - ALWAYS rendered in DOM for 100% SEO indexability */}
+                  <div
+                    id={`faq-answer-${faq.id}`}
+                    role="region"
+                    aria-labelledby={`faq-question-${faq.id}`}
+                    className={`grid transition-all duration-300 ease-in-out ${
+                      isExpanded
+                        ? 'grid-rows-[1fr] opacity-100'
+                        : 'grid-rows-[0fr] opacity-0'
+                    }`}
+                  >
+                    <div className="overflow-hidden">
+                      <div className="px-5 sm:px-6 pb-5 pt-1 border-t border-slate-100 text-xs sm:text-sm text-slate-700 leading-relaxed font-normal">
+                        <p className="whitespace-pre-line leading-relaxed text-slate-700 mb-3.5">
+                          {faq.answer}
+                        </p>
 
-                      {/* Highlighted Takeaways */}
-                      {faq.highlightPoints && faq.highlightPoints.length > 0 && (
-                        <div className="p-3.5 bg-amber-50/60 border border-amber-200/60 rounded-lg space-y-2 mt-2">
-                          <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-amber-900 uppercase tracking-wider">
-                            <ShieldCheck className="w-3.5 h-3.5 text-amber-700" />
-                            <span>Điểm cốt lõi cam kết:</span>
+                        {/* Highlighted Takeaways */}
+                        {faq.highlightPoints && faq.highlightPoints.length > 0 && (
+                          <div className="p-3.5 bg-amber-50/60 border border-amber-200/60 rounded-lg space-y-2 mt-2">
+                            <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-amber-900 uppercase tracking-wider">
+                              <ShieldCheck className="w-3.5 h-3.5 text-amber-700" />
+                              <span>Điểm cốt lõi cam kết:</span>
+                            </div>
+                            <ul className="space-y-1.5">
+                              {faq.highlightPoints.map((point, ptIdx) => (
+                                <li
+                                  key={ptIdx}
+                                  className="flex items-start gap-2 text-xs text-slate-700"
+                                >
+                                  <span className="w-1.5 h-1.5 rounded-full bg-amber-600 mt-1.5 shrink-0" />
+                                  <span>{point}</span>
+                                </li>
+                              ))}
+                            </ul>
                           </div>
-                          <ul className="space-y-1.5">
-                            {faq.highlightPoints.map((point, ptIdx) => (
-                              <li
-                                key={ptIdx}
-                                className="flex items-start gap-2 text-xs text-slate-700"
-                              >
-                                <span className="w-1.5 h-1.5 rounded-full bg-amber-600 mt-1.5 shrink-0" />
-                                <span>{point}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
-                  )}
+                  </div>
                 </div>
               );
             })}

@@ -8,6 +8,7 @@ import {
   UserCheck
 } from 'lucide-react';
 import { ServiceItem } from '../types';
+import { trackHotlineClick } from '../lib/analytics';
 
 interface ServiceDetailModalProps {
   service: ServiceItem | null;
@@ -130,6 +131,7 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
             {/* Elegant Phone Button */}
             <a
               href="tel:0985507624"
+              onClick={() => trackHotlineClick('service_modal')}
               className="h-11 sm:h-12 px-4 sm:px-5 bg-white hover:bg-amber-50/60 border border-slate-200 hover:border-amber-400 text-slate-800 hover:text-amber-900 font-semibold text-xs sm:text-sm rounded-xl shadow-2xs hover:shadow-xs transition-all flex items-center justify-center gap-2 whitespace-nowrap group shrink-0"
             >
               <div className="w-6 h-6 rounded-full bg-amber-50 group-hover:bg-amber-100/80 flex items-center justify-center transition-colors">

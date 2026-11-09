@@ -9,6 +9,7 @@ import {
   Cpu
 } from 'lucide-react';
 import { createQuoteRequest } from '../lib/supabase';
+import { trackQuoteSubmitted } from '../lib/analytics';
 
 interface QuoteCalculatorModalProps {
   isOpen: boolean;
@@ -82,6 +83,12 @@ export const QuoteCalculatorModal: React.FC<QuoteCalculatorModalProps> = ({ isOp
 
     setLoading(false);
     setSubmitted(true);
+    trackQuoteSubmitted({
+      source: 'quote_calculator',
+      clientName: contactName,
+      serviceType: targetTypeLabels[targetType] || targetType,
+      totalEstimate,
+    });
   };
 
   return (

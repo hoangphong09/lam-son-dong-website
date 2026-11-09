@@ -7,17 +7,38 @@ interface KeyStatsFootprintProps {
   stats?: StatMetric[];
 }
 
+// Bot detection helper to ensure search engine crawlers always see real stats immediately
+const isSearchBot = (): boolean => {
+  if (typeof navigator === 'undefined' || !navigator.userAgent) return true;
+  return /bot|crawler|spider|googlebot|bingbot|slurp|duckduckbot|baiduspider|yandexbot|sogou|exabot|facebot|facebookexternalhit|ia_archiver/i.test(navigator.userAgent);
+};
+
 const AnimatedCounter: React.FC<{ value: string; isVisible: boolean }> = ({ value, isVisible }) => {
-  const [displayValue, setDisplayValue] = useState<string>('0');
+  // Initialize with real actual target value (500+, 150+, 100%, 28+) rather than 0
+  const [displayValue, setDisplayValue] = useState<string>(value);
   const numericTarget = parseFloat(value.replace(/,/g, ''));
   const isNumeric = !isNaN(numericTarget);
   const decimals = value.includes('.') ? value.split('.')[1].length : 0;
+  const hasAnimatedRef = useRef(false);
 
   useEffect(() => {
-    if (!isVisible) {
-      setDisplayValue('0');
+    // If the visitor is a search engine crawler, never reset to 0 and skip animation
+    if (isSearchBot()) {
+      setDisplayValue(value);
       return;
     }
+
+    // Only start counting animation when real user scrolls to it for the first time
+    if (!isVisible) {
+      return;
+    }
+
+    if (hasAnimatedRef.current) {
+      setDisplayValue(value);
+      return;
+    }
+
+    hasAnimatedRef.current = true;
 
     if (!isNumeric) {
       setDisplayValue(value);
@@ -56,165 +77,95 @@ const AnimatedCounter: React.FC<{ value: string; isVisible: boolean }> = ({ valu
   return <>{displayValue}</>;
 };
 
-// Strategic Enterprise Partners & Clients (Corporate Clients Only - No Country Flags)
+// Strategic Enterprise Partners & Clients with fully branded SVG logos (No loose single letters)
 interface EnterprisePartner {
   id: string;
   name: string;
-  renderLogo: () => React.ReactNode;
+  logoSrc: string;
 }
+
+const svgDataUri = (svgString: string) => `data:image/svg+xml;utf8,${encodeURIComponent(svgString)}`;
 
 const ENTERPRISE_PARTNERS: EnterprisePartner[] = [
   {
     id: 'samsung',
-    name: 'SAMSUNG',
-    renderLogo: () => (
-      <span className="text-[11px] sm:text-xs font-black tracking-tight text-[#1428A0] font-sans">
-        SAMSUNG
-      </span>
-    ),
+    name: 'Samsung',
+    logoSrc: svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 32" fill="none"><text x="70" y="23" text-anchor="middle" fill="#1428A0" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-weight="900" font-size="20" letter-spacing="2">SAMSUNG</text></svg>`),
   },
   {
     id: 'vingroup',
-    name: 'VINGROUP',
-    renderLogo: () => (
-      <div className="flex flex-col items-center">
-        <svg className="w-5 h-5 text-[#c8102e]" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 3L16 19l4-14-3 3-1-5-4 13L8 6 5 3l7 16z" />
-        </svg>
-        <span className="text-[9px] font-black text-[#c8102e] tracking-tighter -mt-0.5">VIN</span>
-      </div>
-    ),
+    name: 'Vingroup',
+    logoSrc: svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 32" fill="none"><g transform="translate(6, 3)"><path d="M14 26L20 4l6 22-3.5-3.5L20 12l-2.5 10.5L14 26z" fill="#C5A059"/><path d="M7 11c4.5 1 9 4.5 13 11-3.5-6.5-6.5-9-13-11z" fill="#B8860B"/><path d="M33 11c-4.5 1-9 4.5-13 11 3.5-6.5 6.5-9 13-11z" fill="#B8860B"/></g><text x="44" y="22" fill="#C8102E" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-weight="900" font-size="16" letter-spacing="1">VINGROUP</text></svg>`),
   },
   {
-    id: 'lg',
-    name: 'LG DISPLAY',
-    renderLogo: () => (
-      <div className="relative w-8 h-8 rounded-full bg-[#a50034] flex items-center justify-center">
-        <span className="text-white font-black text-xs">L</span>
-        <span className="w-1.5 h-1.5 rounded-full bg-white absolute top-2 right-2" />
-      </div>
-    ),
+    id: 'lg-display',
+    name: 'LG Display',
+    logoSrc: svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 32" fill="none"><g transform="translate(6, 3)"><circle cx="13" cy="13" r="13" fill="#A50034"/><path d="M13 7v8h7" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="10" r="1.5" fill="white"/></g><text x="38" y="21" fill="#A50034" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-weight="800" font-size="15">LG Display</text></svg>`),
   },
   {
     id: 'honda',
-    name: 'HONDA',
-    renderLogo: () => (
-      <span className="text-[#cc0000] font-black text-xl font-serif leading-none">
-        H
-      </span>
-    ),
+    name: 'Honda',
+    logoSrc: svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 32" fill="none"><g transform="translate(6, 3)"><rect x="1" y="1" width="24" height="24" rx="4" stroke="#CC0000" stroke-width="2" fill="none"/><path d="M6 6v14h3v-5h8v5h3V6h-3v5H9V6H6z" fill="#CC0000"/></g><text x="38" y="22" fill="#CC0000" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-weight="900" font-size="16" letter-spacing="2">HONDA</text></svg>`),
   },
   {
-    id: 'aeon',
-    name: 'AEON MALL',
-    renderLogo: () => (
-      <span className="text-[#e4007f] font-black text-xs font-sans tracking-tight">
-        ÆON
-      </span>
-    ),
+    id: 'aeon-mall',
+    name: 'Aeon Mall',
+    logoSrc: svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 32" fill="none"><text x="6" y="23" fill="#E4007F" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-weight="900" font-size="20" letter-spacing="0.5">ÆON</text><text x="62" y="23" fill="#0F172A" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-weight="900" font-size="15" letter-spacing="1">MALL</text></svg>`),
   },
   {
     id: 'foxconn',
-    name: 'FOXCONN',
-    renderLogo: () => (
-      <span className="text-[#005a9c] font-black text-[11px] tracking-tight font-sans">
-        FOXCONN
-      </span>
-    ),
+    name: 'Foxconn',
+    logoSrc: svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 32" fill="none"><text x="65" y="22" text-anchor="middle" fill="#005A9C" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-weight="900" font-size="18" letter-spacing="1">FOXCONN</text></svg>`),
   },
   {
     id: 'canon',
-    name: 'CANON',
-    renderLogo: () => (
-      <span className="text-[#cc0000] font-black text-xs font-serif tracking-tight">
-        Canon
-      </span>
-    ),
+    name: 'Canon',
+    logoSrc: svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 32" fill="none"><text x="60" y="23" text-anchor="middle" fill="#CC0000" font-family="'Plus Jakarta Sans', Georgia, serif" font-weight="900" font-size="20" letter-spacing="1.5">Canon</text></svg>`),
   },
   {
     id: 'viettel',
-    name: 'VIETTEL',
-    renderLogo: () => (
-      <span className="text-[#ee0033] font-black text-xs font-sans">
-        viettel
-      </span>
-    ),
+    name: 'Viettel',
+    logoSrc: svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 32" fill="none"><text x="60" y="22" text-anchor="middle" fill="#EE0033" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-weight="900" font-size="19" letter-spacing="0.5">viettel</text></svg>`),
   },
   {
     id: 'vinfast',
-    name: 'VINFAST',
-    renderLogo: () => (
-      <div className="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center">
-        <span className="text-white font-black text-sm italic font-sans">V</span>
-      </div>
-    ),
+    name: 'VinFast',
+    logoSrc: svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 32" fill="none"><g transform="translate(6, 3)"><path d="M4 4l8 17 8-17-3 1-5 11-5-11L4 4z" fill="#1B5EE2"/><path d="M1 6l11 17 11-17-2 0-9 14L3 6H1z" fill="#0F172A"/></g><text x="34" y="21" fill="#1B5EE2" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-weight="900" font-size="16" letter-spacing="1">VINFAST</text></svg>`),
   },
   {
     id: 'panasonic',
-    name: 'PANASONIC',
-    renderLogo: () => (
-      <span className="text-[#004098] font-black text-[10px] tracking-tighter font-sans">
-        Panasonic
-      </span>
-    ),
+    name: 'Panasonic',
+    logoSrc: svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 32" fill="none"><text x="65" y="22" text-anchor="middle" fill="#004098" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-weight="900" font-size="16" letter-spacing="0.5">Panasonic</text></svg>`),
   },
   {
     id: 'techcombank',
-    name: 'TECHCOMBANK',
-    renderLogo: () => (
-      <div className="w-6 h-6 bg-[#ea1c24] rotate-45 flex items-center justify-center">
-        <div className="w-2.5 h-2.5 bg-white" />
-      </div>
-    ),
+    name: 'Techcombank',
+    logoSrc: svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 32" fill="none"><g transform="translate(4, 3)"><path d="M13 2l11 11-11 11L2 13 13 2z" fill="#EA1C24"/><path d="M18 7l6 6-6 6-6-6 6-6z" fill="white"/></g><text x="33" y="21" fill="#0F172A" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-weight="900" font-size="13" letter-spacing="1">TECHCOMBANK</text></svg>`),
   },
   {
     id: 'masan',
-    name: 'MASAN',
-    renderLogo: () => (
-      <span className="text-[#e31e24] font-black text-xs tracking-tight font-sans">
-        MASAN
-      </span>
-    ),
+    name: 'Masan',
+    logoSrc: svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 32" fill="none"><g transform="translate(6, 4)"><path d="M4 4c5 0 9 4 9 9s-4 9-9 9" stroke="#E31E24" stroke-width="2.8" stroke-linecap="round"/><path d="M8 8c3 0 5 2.2 5 5s-2 5-5 5" stroke="#F68B1F" stroke-width="2" stroke-linecap="round"/></g><text x="28" y="22" fill="#0F172A" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-weight="900" font-size="16" letter-spacing="1.5">MASAN</text></svg>`),
   },
   {
     id: 'fpt',
-    name: 'FPT CORP',
-    renderLogo: () => (
-      <div className="flex items-center gap-0.5 font-black text-xs font-sans">
-        <span className="text-[#f37021]">F</span>
-        <span className="text-[#005ba9]">P</span>
-        <span className="text-[#00a84f]">T</span>
-      </div>
-    ),
+    name: 'FPT Corp',
+    logoSrc: svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 32" fill="none"><g transform="translate(6, 4)"><circle cx="8" cy="12" r="5.5" fill="#F37021"/><circle cx="19" cy="12" r="5.5" fill="#005BA9"/><circle cx="30" cy="12" r="5.5" fill="#00A84F"/></g><text x="44" y="21" fill="#005BA9" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-weight="900" font-size="15" letter-spacing="1">FPT CORP</text></svg>`),
   },
   {
     id: 'hyundai',
-    name: 'HYUNDAI',
-    renderLogo: () => (
-      <span className="text-[#002c5f] font-black text-lg font-sans italic leading-none">
-        H
-      </span>
-    ),
+    name: 'Hyundai',
+    logoSrc: svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 32" fill="none"><g transform="translate(6, 3)"><ellipse cx="13" cy="13" rx="13" ry="9" stroke="#002C5F" stroke-width="1.8" fill="none"/><path d="M8 9v8h2v-3.5h6v3.5h2V9h-2v3H10V9H8z" fill="#002C5F"/></g><text x="34" y="21" fill="#002C5F" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-weight="900" font-size="15" letter-spacing="1.5">HYUNDAI</text></svg>`),
   },
   {
     id: 'toyota',
-    name: 'TOYOTA',
-    renderLogo: () => (
-      <svg className="w-8 h-6 text-[#eb0a1e]" viewBox="0 0 40 28" fill="currentColor">
-        <ellipse cx="20" cy="14" rx="18" ry="12" fill="none" stroke="currentColor" strokeWidth="2.5" />
-        <ellipse cx="20" cy="14" rx="7" ry="10" fill="none" stroke="currentColor" strokeWidth="2.2" />
-        <ellipse cx="20" cy="9" rx="13" ry="5" fill="none" stroke="currentColor" strokeWidth="2.2" />
-      </svg>
-    ),
+    name: 'Toyota',
+    logoSrc: svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 32" fill="none"><g transform="translate(6, 3)"><ellipse cx="14" cy="13" rx="13" ry="9" fill="none" stroke="#EB0A1E" stroke-width="1.8"/><ellipse cx="14" cy="13" rx="5" ry="7.5" fill="none" stroke="#EB0A1E" stroke-width="1.5"/><ellipse cx="14" cy="9" rx="9.5" ry="3.8" fill="none" stroke="#EB0A1E" stroke-width="1.5"/></g><text x="38" y="21" fill="#EB0A1E" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-weight="900" font-size="15" letter-spacing="1.5">TOYOTA</text></svg>`),
   },
   {
     id: 'thaco',
     name: 'THACO',
-    renderLogo: () => (
-      <span className="text-[#004f9e] font-black text-xs tracking-wider font-sans">
-        THACO
-      </span>
-    ),
+    logoSrc: svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 32" fill="none"><text x="60" y="22" text-anchor="middle" fill="#004F9E" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-weight="900" font-size="18" letter-spacing="2">THACO</text></svg>`),
   },
 ];
 
@@ -386,22 +337,59 @@ export const KeyStatsFootprint: React.FC<KeyStatsFootprintProps> = ({ stats: pro
 
             {/* Continuous Conveyor Track (Seamless loop) */}
             <div className="flex items-center marquee-track-left">
-              {[...ENTERPRISE_PARTNERS, ...ENTERPRISE_PARTNERS].map((partner, idx) => (
-                <div 
-                  key={`${partner.id}-${idx}`}
-                  className="flex flex-col items-center shrink-0 group cursor-pointer w-28 sm:w-36 text-center mx-3 sm:mx-6"
-                >
-                  {/* Clean Corporate Logo Container */}
-                  <div className="h-12 sm:h-14 w-full flex items-center justify-center p-1 transition-all duration-300 group-hover:scale-110">
-                    {partner.renderLogo()}
-                  </div>
+              {/* Primary list of 16 Enterprise Partners for SEO and accessibility */}
+              <div className="flex items-center">
+                {ENTERPRISE_PARTNERS.map((partner) => (
+                  <div 
+                    key={`partner-primary-${partner.id}`}
+                    className="flex flex-col items-center shrink-0 group cursor-pointer w-28 sm:w-36 text-center mx-3 sm:mx-6"
+                  >
+                    {/* Clean Corporate Logo Container */}
+                    <div className="h-12 sm:h-14 w-full flex items-center justify-center p-1 transition-all duration-300 group-hover:scale-110">
+                      <img
+                        src={partner.logoSrc}
+                        alt={`Đối tác dịch vụ bảo vệ an ninh ${partner.name} - Công ty Bảo vệ Lâm Sơn Động`}
+                        width="130"
+                        height="32"
+                        className="h-7 sm:h-8 w-auto max-w-[120px] object-contain"
+                        loading="lazy"
+                      />
+                    </div>
 
-                  {/* Name Underneath */}
-                  <span className="text-[11px] sm:text-xs font-bold text-slate-600 uppercase tracking-wider mt-2 group-hover:text-slate-950 transition-colors">
-                    {partner.name}
-                  </span>
-                </div>
-              ))}
+                    {/* Name Underneath */}
+                    <span className="text-[11px] sm:text-xs font-bold text-slate-600 uppercase tracking-wider mt-2 group-hover:text-slate-950 transition-colors">
+                      {partner.name}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Cloned marquee list for CSS infinite loop - excluded from search crawlers & screen readers */}
+              <div className="flex items-center" aria-hidden="true" data-nosnippet>
+                {ENTERPRISE_PARTNERS.map((partner, idx) => (
+                  <div 
+                    key={`partner-clone-${partner.id}-${idx}`}
+                    className="flex flex-col items-center shrink-0 group cursor-pointer w-28 sm:w-36 text-center mx-3 sm:mx-6"
+                  >
+                    {/* Clean Corporate Logo Container */}
+                    <div className="h-12 sm:h-14 w-full flex items-center justify-center p-1 transition-all duration-300 group-hover:scale-110">
+                      <img
+                        src={partner.logoSrc}
+                        alt=""
+                        width="130"
+                        height="32"
+                        className="h-7 sm:h-8 w-auto max-w-[120px] object-contain"
+                        loading="lazy"
+                      />
+                    </div>
+
+                    {/* Name Underneath */}
+                    <span className="text-[11px] sm:text-xs font-bold text-slate-600 uppercase tracking-wider mt-2 group-hover:text-slate-950 transition-colors">
+                      {partner.name}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>

@@ -832,11 +832,11 @@ export const CLIENT_PARTNERS: ClientPartner[] = [
 
 export const FOOTER_DATA = {
   companyInfo: {
-    headquarters: 'Số 14, 422/14/10 Ngô Gia Tự, Long Biên, Hà Nội, Việt Nam',
+    fullName: 'Công ty Cổ phần Dịch vụ Bảo vệ Lâm Sơn Động',
+    executiveOffice: 'Số 14, 422/14/10 Ngô Gia Tự, Long Biên, Hà Nội',
+    headquarters: 'Thôn Nội Am, Liên Ninh, Thanh Trì, Hà Nội',
     hotline: '0985.507.624',
-    email: 'congtybaovelamsondong@gmail.com',
-    license: 'Giấy phép C06/BCA số 118/GCN-ANBV cấp bởi Cục Cảnh sát QLHC về TTXH - Bộ Công An',
-    taxId: '0108992348 - Sở Kế hoạch & Đầu tư TP. Hà Nội',
+    email: 'lienhe@baovelamsondong.com.vn',
   },
   services: [
     'Bảo vệ Khu Công Nghiệp & Nhà Máy',

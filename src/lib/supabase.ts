@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import { HeroSlide, CaseStudy, QuoteRequest, StatMetric, QuoteOption, BreakingNewsItem } from '../types';
 import { HERO_SLIDES as DEFAULT_HERO_SLIDES, NEWS_EVENTS, CASE_STUDIES as DEFAULT_CASE_STUDIES } from '../data/mockData';
 import { sendQuoteNotification } from './emailService';
+import { trackQuoteSubmitted } from './analytics';
 
 // Priority: Vite environment variables, with fallback to provided project credentials
 const supabaseUrl =
@@ -70,7 +71,7 @@ const POSTS_STORAGE_KEY = 'lsd_cached_posts_v8';
 const HERO_STORAGE_KEY = 'lsd_cached_hero_slides_v3';
 const CASE_STUDIES_STORAGE_KEY = 'lsd_cached_case_studies';
 const QUOTES_STORAGE_KEY = 'lsd_cached_quote_requests';
-const STATS_STORAGE_KEY = 'lsd_cached_stats';
+const STATS_STORAGE_KEY = 'lsd_cached_stats_v5';
 const QUOTE_OPTIONS_STORAGE_KEY = 'lsd_cached_quote_options';
 const BREAKING_NEWS_STORAGE_KEY = 'lsd_cached_breaking_news_v2';
 const RECRUITMENT_POSITIONS_STORAGE_KEY = 'lsd_cached_recruitment_positions_v1';
@@ -152,7 +153,7 @@ export const INITIAL_STATS: StatMetric[] = [
   {
     id: 1,
     title: 'Nhân sự bảo vệ & Vệ sĩ',
-    numeric_value: '300',
+    numeric_value: '500',
     unit: '+',
     suffix: '+',
     description: 'Huấn luyện võ thuật, nghiệp vụ, pháp luật định kỳ',
@@ -163,7 +164,7 @@ export const INITIAL_STATS: StatMetric[] = [
   {
     id: 2,
     title: 'Mục tiêu trọng điểm bảo vệ',
-    numeric_value: '100',
+    numeric_value: '150',
     unit: '+',
     suffix: '+',
     description: 'KCN, Cao ốc, Ngân hàng, Bệnh viện, Nhà máy 24/7',
@@ -185,7 +186,7 @@ export const INITIAL_STATS: StatMetric[] = [
   {
     id: 4,
     title: 'Tỉnh thành phủ sóng',
-    numeric_value: '20',
+    numeric_value: '28',
     unit: '+',
     suffix: '+',
     description: 'Đội cơ động phản ứng nhanh có mặt trong 15 phút',
@@ -1046,6 +1047,13 @@ export async function createQuoteRequest(req: Partial<QuoteRequest>): Promise<{ 
       return { success: false, data: newRecord, error: error.message };
     }
     const finalRecord = dbInserted ? { ...newRecord, id: String(dbInserted.id) } : newRecord;
+    trackQuoteSubmitted({
+      source: req.source || 'quote_request',
+      clientName,
+      serviceType: serviceNeeded,
+      totalEstimate: req.totalEstimate,
+      region: (req as any).region,
+    });
     return { success: true, data: finalRecord };
   } catch (err: any) {
     console.error('createQuoteRequest exception:', err);

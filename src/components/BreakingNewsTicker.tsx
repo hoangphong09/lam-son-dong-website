@@ -31,16 +31,7 @@ export const BreakingNewsTicker: React.FC<BreakingNewsTickerProps> = ({ newsItem
     return valid.length > 0 ? valid : INITIAL_BREAKING_NEWS;
   }, [items]);
 
-  // Construct a seamless repeating array for infinite smooth sliding marquee
-  const tickerItems = useMemo(() => {
-    const list: BreakingNewsItem[] = [];
-    const repeatCount = Math.max(3, Math.ceil(8 / activeItems.length));
-    for (let i = 0; i < repeatCount; i++) {
-      list.push(...activeItems);
-    }
-    // Duplicate the entire sequence for the -50% translateX CSS keyframe
-    return [...list, ...list];
-  }, [activeItems]);
+
 
   const handleItemClick = (item: BreakingNewsItem) => {
     if (item.link) {
@@ -95,20 +86,41 @@ export const BreakingNewsTicker: React.FC<BreakingNewsTickerProps> = ({ newsItem
         {/* Center: Smooth continuous sliding track with soft edge masks */}
         <div className="relative flex-1 overflow-hidden h-7 sm:h-8 flex items-center [mask-image:linear-gradient(to_right,transparent,black_3%,black_97%,transparent)]">
           <div className="ticker-slide-track flex items-center whitespace-nowrap">
-            {tickerItems.map((item, idx) => (
-              <div 
-                key={`${item.id}-${idx}`}
-                className="inline-flex items-center group/item cursor-pointer"
-                onClick={() => handleItemClick(item)}
-              >
-                <span className="text-xs sm:text-sm text-slate-100 group-hover/item:text-amber-300 font-medium transition-colors">
-                  {item.title}
-                </span>
-                <span className="mx-5 sm:mx-7 text-amber-500/60 font-bold select-none text-xs">
-                  •
-                </span>
-              </div>
-            ))}
+            {/* Primary unique list for SEO & accessibility without redundant duplicates */}
+            <div className="flex items-center">
+              {activeItems.map((item) => (
+                <div 
+                  key={`news-primary-${item.id}`}
+                  className="inline-flex items-center group/item cursor-pointer"
+                  onClick={() => handleItemClick(item)}
+                >
+                  <span className="text-xs sm:text-sm text-slate-100 group-hover/item:text-amber-300 font-medium transition-colors">
+                    {item.title}
+                  </span>
+                  <span className="mx-5 sm:mx-7 text-amber-500/60 font-bold select-none text-xs">
+                    •
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Cloned track for CSS marquee infinite loop - hidden from search crawlers & screen readers */}
+            <div className="flex items-center" aria-hidden="true" data-nosnippet>
+              {activeItems.map((item, idx) => (
+                <div 
+                  key={`news-clone-${item.id}-${idx}`}
+                  className="inline-flex items-center group/item cursor-pointer"
+                  onClick={() => handleItemClick(item)}
+                >
+                  <span className="text-xs sm:text-sm text-slate-100 group-hover/item:text-amber-300 font-medium transition-colors">
+                    {item.title}
+                  </span>
+                  <span className="mx-5 sm:mx-7 text-amber-500/60 font-bold select-none text-xs">
+                    •
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 

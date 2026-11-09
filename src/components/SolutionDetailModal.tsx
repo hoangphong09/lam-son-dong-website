@@ -6,6 +6,7 @@ import {
   CalendarCheck,
   Check
 } from 'lucide-react';
+import { trackHotlineClick } from '../lib/analytics';
 
 interface SolutionDetailModalProps {
   solution: {
@@ -261,6 +262,7 @@ export const SolutionDetailModal: React.FC<SolutionDetailModalProps> = ({
             {/* Phone Button */}
             <a
               href="tel:0985507624"
+              onClick={() => trackHotlineClick('solution_modal')}
               className="h-11 sm:h-12 px-4 sm:px-5 bg-white hover:bg-slate-100 border border-slate-200 text-slate-900 font-semibold text-xs sm:text-sm rounded-xl shadow-2xs transition-all flex items-center justify-center gap-2 whitespace-nowrap shrink-0"
             >
               <PhoneCall className="w-4 h-4 text-amber-700" />

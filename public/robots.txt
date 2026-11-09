@@ -1,5 +1,5 @@
 # Robots.txt for Cong ty Co phan Dich vu Bao ve Lam Son Dong
-# Website: https://baovelamsondong.com.vn
+# Official Domain: https://baovelamsondong.com.vn
 
 User-agent: *
 Allow: /
@@ -8,6 +8,8 @@ Disallow: /admin/*
 Disallow: /*?*preview=true
 Disallow: /*?*token=*
 
-# Host & Sitemap definition
+# Host directive
 Host: https://baovelamsondong.com.vn
+
+# Multilingual XML Sitemap index
 Sitemap: https://baovelamsondong.com.vn/sitemap.xml

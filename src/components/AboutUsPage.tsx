@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FOOTER_DATA } from '../data/mockData';
+import { trackHotlineClick } from '../lib/analytics';
 
 interface AboutUsPageProps {
   onNavigateToHome: (sectionId?: string) => void;
@@ -512,6 +513,7 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = ({
 
             <a
               href={`tel:${FOOTER_DATA.companyInfo.hotline.replace(/\./g, '')}`}
+              onClick={() => trackHotlineClick('about_us_page')}
               className="px-6 py-3 bg-transparent hover:bg-slate-900 text-white border border-slate-700 font-bold text-xs uppercase tracking-wider rounded-lg transition-colors"
             >
               Hotline: {FOOTER_DATA.companyInfo.hotline}

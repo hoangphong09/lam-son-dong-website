@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { sendNewsletterNotification } from '../lib/emailService';
 import { FOOTER_DATA } from '../data/mockData';
+import { trackHotlineClick, trackZaloChatClick } from '../lib/analytics';
 
 interface FooterProps {
   onScrollToSection: (sectionId: string) => void;
@@ -197,14 +198,16 @@ export const Footer: React.FC<FooterProps> = ({
               </ul>
             </div>
 
-            {/* Column 3: Kết nối thêm với Lâm Sơn Động */}
-            <div className="sm:col-span-5">
-              <h4 className="text-[15px] font-bold text-white tracking-wide mb-4 font-['Plus_Jakarta_Sans',sans-serif]">
-                Kết nối thêm với Lâm Sơn Động
-              </h4>
+            {/* Column 3: Thông tin doanh nghiệp & Tiêu chuẩn */}
+            <div className="sm:col-span-5 space-y-3.5">
+              <div>
+                <h4 className="text-[14.5px] font-bold text-white tracking-wide font-['Plus_Jakarta_Sans',sans-serif] leading-snug">
+                  Công ty Cổ phần Dịch vụ Bảo vệ Lâm Sơn Động
+                </h4>
+              </div>
               
               {/* Social Media Icons (Square & Compact) */}
-              <div className="flex items-center gap-2.5 mb-4">
+              <div className="flex items-center gap-2.5">
                 {/* Facebook */}
                 <a 
                   href="https://www.facebook.com/lamsondongbv/" 
@@ -228,6 +231,7 @@ export const Footer: React.FC<FooterProps> = ({
                   href="https://zalo.me/0985507624" 
                   target="_blank" 
                   rel="noreferrer"
+                  onClick={() => trackZaloChatClick('footer')}
                   title="Zalo Trực ban: 0985.507.624"
                   aria-label="Zalo Lâm Sơn Động"
                   className="w-7.5 h-7.5 sm:w-8 sm:h-8 rounded-lg overflow-hidden flex items-center justify-center transition-all duration-200 cursor-pointer shadow-xs hover:scale-105 hover:shadow-sm active:scale-95 group bg-white border border-slate-700/60 p-0.5"
@@ -242,25 +246,35 @@ export const Footer: React.FC<FooterProps> = ({
                 </a>
               </div>
 
-              {/* Direct Contact Snippet with Full Email Display */}
-              <div className="space-y-2.5 text-[12px] text-slate-400">
-                <div className="flex items-center gap-2">
-                  <Phone className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                  <span>Hotline: <strong className="text-white font-mono">{FOOTER_DATA.companyInfo.hotline}</strong></span>
-                </div>
-                <div className="flex items-start gap-2 pt-0.5">
-                  <Mail className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
-                  <a 
-                    href={`mailto:${FOOTER_DATA.companyInfo.email}`}
-                    title={FOOTER_DATA.companyInfo.email}
-                    className="break-all sm:break-normal text-[11.5px] text-slate-300 hover:text-[#e5be5a] transition-colors leading-snug"
-                  >
-                    {FOOTER_DATA.companyInfo.email}
-                  </a>
-                </div>
-                <div className="flex items-start gap-2 pt-0.5 text-[11px] leading-relaxed">
+              {/* Direct Information & Contact */}
+              <div className="space-y-2 text-[12px] text-slate-400 leading-relaxed border-t border-slate-800/80 pt-3">
+                <div className="flex items-start gap-1.5 pt-0.5 text-[11.5px] leading-snug">
                   <MapPin className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
-                  <span>{FOOTER_DATA.companyInfo.headquarters}</span>
+                  <span>
+                    <strong className="text-slate-300 font-semibold">Văn phòng điều hành:</strong> Số 14, 422/14/10 Ngô Gia Tự, Long Biên, Hà Nội
+                  </span>
+                </div>
+                <div className="flex items-start gap-1.5 text-[11.5px] leading-snug">
+                  <MapPin className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
+                  <span>
+                    <strong className="text-slate-300 font-semibold">Trụ sở ĐKKD:</strong> Thôn Nội Am, Liên Ninh, Thanh Trì, Hà Nội
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 pt-1">
+                  <Phone className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                  <span>
+                    Hotline: <a href="tel:0985507624" onClick={() => trackHotlineClick('footer')} className="text-white font-mono font-bold hover:text-[#e5be5a] transition-colors">0985.507.624</a>
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Mail className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                  <a 
+                    href="mailto:lienhe@baovelamsondong.com.vn"
+                    title="lienhe@baovelamsondong.com.vn"
+                    className="text-slate-300 hover:text-[#e5be5a] transition-colors text-[11.5px]"
+                  >
+                    lienhe@baovelamsondong.com.vn
+                  </a>
                 </div>
               </div>
             </div>

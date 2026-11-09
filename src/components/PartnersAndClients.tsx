@@ -272,30 +272,56 @@ export const PartnersAndClients: React.FC = () => {
         <div className="pointer-events-none absolute inset-y-0 left-0 w-20 sm:w-36 bg-gradient-to-r from-white via-white/90 to-transparent z-10" />
         <div className="pointer-events-none absolute inset-y-0 right-0 w-20 sm:w-36 bg-gradient-to-l from-white via-white/90 to-transparent z-10" />
 
-        {/* Row 1: Scrolling Left (Seamless Loop by Doubling the Array) */}
+        {/* Row 1: Scrolling Left */}
         <div className="flex items-center marquee-track-left mb-6">
-          {[...BRAND_ROW_1, ...BRAND_ROW_1].map((brand, idx) => (
-            <div
-              key={`${brand.id}-row1-${idx}`}
-              className="w-[180px] sm:w-[220px] h-[64px] sm:h-[72px] shrink-0 mx-4 sm:mx-6 flex items-center justify-center cursor-pointer opacity-90 hover:opacity-100 hover:scale-108 transition-all duration-300"
-              title={brand.name}
-            >
-              {brand.renderLogo()}
-            </div>
-          ))}
+          <div className="flex items-center">
+            {BRAND_ROW_1.map((brand) => (
+              <div
+                key={`${brand.id}-row1-main`}
+                className="w-[180px] sm:w-[220px] h-[64px] sm:h-[72px] shrink-0 mx-4 sm:mx-6 flex items-center justify-center cursor-pointer opacity-90 hover:opacity-100 hover:scale-108 transition-all duration-300"
+                title={brand.name}
+              >
+                {brand.renderLogo()}
+              </div>
+            ))}
+          </div>
+          <div className="flex items-center" aria-hidden="true" data-nosnippet>
+            {BRAND_ROW_1.map((brand, idx) => (
+              <div
+                key={`${brand.id}-row1-clone-${idx}`}
+                className="w-[180px] sm:w-[220px] h-[64px] sm:h-[72px] shrink-0 mx-4 sm:mx-6 flex items-center justify-center cursor-pointer opacity-90 hover:opacity-100 hover:scale-108 transition-all duration-300"
+                title=""
+              >
+                {brand.renderLogo()}
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Row 2: Scrolling Right (Seamless Loop by Doubling the Array) */}
+        {/* Row 2: Scrolling Right */}
         <div className="flex items-center marquee-track-right">
-          {[...BRAND_ROW_2, ...BRAND_ROW_2].map((brand, idx) => (
-            <div
-              key={`${brand.id}-row2-${idx}`}
-              className="w-[180px] sm:w-[220px] h-[64px] sm:h-[72px] shrink-0 mx-4 sm:mx-6 flex items-center justify-center cursor-pointer opacity-90 hover:opacity-100 hover:scale-108 transition-all duration-300"
-              title={brand.name}
-            >
-              {brand.renderLogo()}
-            </div>
-          ))}
+          <div className="flex items-center">
+            {BRAND_ROW_2.map((brand) => (
+              <div
+                key={`${brand.id}-row2-main`}
+                className="w-[180px] sm:w-[220px] h-[64px] sm:h-[72px] shrink-0 mx-4 sm:mx-6 flex items-center justify-center cursor-pointer opacity-90 hover:opacity-100 hover:scale-108 transition-all duration-300"
+                title={brand.name}
+              >
+                {brand.renderLogo()}
+              </div>
+            ))}
+          </div>
+          <div className="flex items-center" aria-hidden="true" data-nosnippet>
+            {BRAND_ROW_2.map((brand, idx) => (
+              <div
+                key={`${brand.id}-row2-clone-${idx}`}
+                className="w-[180px] sm:w-[220px] h-[64px] sm:h-[72px] shrink-0 mx-4 sm:mx-6 flex items-center justify-center cursor-pointer opacity-90 hover:opacity-100 hover:scale-108 transition-all duration-300"
+                title=""
+              >
+                {brand.renderLogo()}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

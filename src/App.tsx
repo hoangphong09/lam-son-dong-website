@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Analytics } from '@vercel/analytics/react';
+// In-memory stub for platform analytics in AI Studio
+const Analytics = () => null;
 import { Navbar } from './components/Navbar';
 import { HeroCarousel } from './components/HeroCarousel';
 import { BreakingNewsTicker } from './components/BreakingNewsTicker';
@@ -30,7 +31,8 @@ import { AdminDashboard } from './components/admin/AdminDashboard';
 
 import { FEATURED_SERVICES } from './data/mockData';
 import { ServiceItem, CaseStudy, ResearchArticle, NewsItem, Certification, HeroSlide, StatMetric, BreakingNewsItem } from './types';
-import { supabase, getPosts, getHeroSlides, getCaseStudies, getStats, getBreakingNews, subscribeToRealtimeCMS, Post } from './lib/supabase';
+import { supabase, getPosts, getHeroSlides, getCaseStudies, getStats, getBreakingNews, subscribeToRealtimeCMS, Post, INITIAL_STATS } from './lib/supabase';
+import { trackHotlineClick } from './lib/analytics';
 import { X, Calendar, User, Clock, PhoneCall, ArrowRight, ShieldCheck, Share2 } from 'lucide-react';
 
 export default function App() {
@@ -52,7 +54,7 @@ export default function App() {
   const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
   const [posts, setPosts] = useState<Post[]>([]);
   const [caseStudies, setCaseStudies] = useState<CaseStudy[]>([]);
-  const [stats, setStats] = useState<StatMetric[]>([]);
+  const [stats, setStats] = useState<StatMetric[]>(INITIAL_STATS);
   const [breakingNews, setBreakingNews] = useState<BreakingNewsItem[]>([]);
 
   // Modal states
@@ -890,6 +892,7 @@ export default function App() {
                 {/* Hotline */}
                 <a
                   href="tel:0985507624"
+                  onClick={() => trackHotlineClick('modal_footer')}
                   className="h-11 sm:h-12 px-4 sm:px-5 bg-white hover:bg-slate-100 border border-slate-200 text-slate-900 font-semibold text-xs sm:text-sm rounded-xl shadow-2xs transition-all flex items-center justify-center gap-2 whitespace-nowrap shrink-0"
                 >
                   <PhoneCall className="w-4 h-4 text-amber-700" />
